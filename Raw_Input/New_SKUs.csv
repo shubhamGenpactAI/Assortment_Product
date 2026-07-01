@@ -1,0 +1,10 @@
+SKU_ID,Category,Sub_Category,Segment,Attribute_Claim,Pack_Size_ml,Price_Band,List_Price_USD,Unit_Cost_USD,Hair_Type,Gender,Age_Group,Ingredient_1,Ingredient_2,Ingredient_3,Ingredient_4,Sulphate_Free_Flag,Paraben_Free_Flag,Organic_Flag,Dandruff_Flag,Hair_Fall_Flag,Color_Protection_Flag
+NEW_SKU0007,Hair Care,Hair Color,Mainstream,Color Protection,100,Premium,37.29,23.12,Coily,Unisex,Senior,Argan Oil,Biotin,Aloe Vera,Rosemary,No,Yes,Yes,No,Yes,No
+NEW_SKU0013,Hair Care,Hair Serum,Mainstream,Argan Oil,200,Economy,14.67,11,Wavy,Unisex,Teen,Argan Oil,Caffeine,Collagen,Rosemary,Yes,Yes,No,No,No,Yes
+NEW_SKU0021,Hair Care,Hair Oil,Mainstream,Color Protection,400,Mainstream,16.36,10.14,Straight,Women,Senior,Biotin,Caffeine,Rosemary,Tea Tree,Yes,No,Yes,No,No,No
+NEW_SKU0030,Hair Care,Anti-Dandruff Treatment,Economy,Anti Dandruff,250,Mainstream,16.06,10.92,Fine,Unisex,Senior,Keratin,Biotin,Argan Oil,Tea Tree,No,No,No,No,No,No
+NEW_SKU0035,Hair Care,Hair Oil,Economy,Smoothening,150,Mainstream,17.19,10.31,Thick,Women,Senior,Keratin,Tea Tree,Collagen,Rosemary,No,Yes,Yes,No,No,No
+NEW_SKU0045,Hair Care,Hair Oil,Mainstream,Color Protection,100,Economy,14.23,10.96,Thick,Women,Senior,Caffeine,Collagen,Rosemary,Biotin,Yes,Yes,Yes,No,No,No
+NEW_SKU0052,Hair Care,Anti-Dandruff Treatment,Mainstream,Argan Oil,200,Mainstream,24.85,17.64,Thick,Women,Teen,Biotin,Argan Oil,Caffeine,Aloe Vera,Yes,No,No,Yes,No,No
+NEW_SKU0056,Hair Care,Conditioner,Economy,Biotin,500,Mainstream,15.9,12.56,Wavy,Men,Adult,Rosemary,Aloe Vera,Collagen,Biotin,Yes,Yes,No,No,No,No
+NEW_SKU0058,Hair Care,Hair Mask,Mainstream,Sulphate Free,300,Premium,28.89,17.05,Fine,Women,Adult,Biotin,Keratin,Argan Oil,Tea Tree,No,Yes,No,No,No,No

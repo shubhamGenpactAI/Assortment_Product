@@ -1,0 +1,12 @@
+# Environment variables
+.env
+.env.*
+
+# Virtual environments
+.venv
+venv/
+env/
+
+# Data folders — raw inputs and generated outputs (CSV/XLSX not tracked)
+Raw_Input/
+Outputs/

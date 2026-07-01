@@ -1,0 +1,16 @@
+Store_ID,Geography,Region,Store_Format,Store_Size_SqFt,Urban_Rural,Store_Size_Sqft,Population_5km,Median_HH_Income_USD,Traffic_Density_Score,Footfall_Daily,Competitor_Count_5km,Distance_City_Center_KM,Annual_Sales_Million,Avg_Basket_Value,Transactions_Daily,Grocery_Sales_Pct,Apparel_Sales_Pct,Electronics_Sales_Pct,Loyalty_Member_Pct,Online_Order_Pct,Population_Growth_Pct,Distance_DC_KM
+ST01,North America,US-West,Convenience,Small,Urban,180000,450000,95000,92,7200,15,4,145,78,1850,42,18,22,68,24,3.5,80
+ST02,North America,Canada,Hypermarket,Small,Rural,160000,380000,88000,85,6100,12,7,128,75,1620,45,17,18,65,22,3.1,95
+ST03,EMEA,UK,Supermarket,Small,Rural,220000,290000,72000,68,4800,6,18,102,89,1100,52,14,10,71,15,2.8,120
+ST04,EMEA,Middle East,Supermarket,Medium,Rural,90000,85000,52000,38,1700,2,45,28,61,450,65,8,5,49,7,1.2,180
+ST05,APAC,SEA,Supermarket,Big,Rural,120000,140000,58000,48,2300,3,32,41,65,620,61,10,8,52,9,1.8,150
+ST06,APAC,India,Convenience,Medium,Rural,210000,520000,120000,97,8400,18,3,182,105,1950,35,24,28,74,31,4.2,60
+ST07,APAC,SEA,Pharmacy,Big,Semi Urban,150000,260000,67000,62,3600,5,22,73,72,980,55,12,9,63,12,2.4,135
+ST08,North America,US-East,Supermarket,Small,Semi Urban,110000,180000,64000,58,2900,4,28,55,69,760,58,11,8,60,11,2.0,145
+ST09,North America,Canada,Supermarket,Big,Urban,240000,600000,135000,99,9600,22,2,225,118,2200,30,26,32,81,38,5.1,50
+ST10,North America,US-East,Hypermarket,Small,Urban,130000,320000,82000,76,4200,8,12,84,81,1050,48,15,16,67,18,3.0,110
+ST11,North America,US-West,Supermarket,Medium,Urban,175000,420000,98000,89,6800,14,5,160,82,1780,43,17,21,70,25,3.8,75
+ST12,North America,US-East,Hypermarket,Big,Semi Urban,260000,350000,86000,80,7500,10,11,195,90,2100,38,20,24,66,20,2.9,100
+ST13,North America,Canada,Convenience,Small,Urban,95000,510000,91000,93,7000,17,3,118,76,1900,40,16,19,68,27,4.0,65
+ST14,North America,US-West,Supermarket,Medium,Semi Urban,145000,275000,79000,60,3100,5,20,78,74,840,57,12,9,62,13,2.4,130
+ST15,APAC,Australia,Supermarket,Big,Urban,200000,380000,87000,84,6200,9,7,138,88,1650,45,18,18,71,22,3.5,90
