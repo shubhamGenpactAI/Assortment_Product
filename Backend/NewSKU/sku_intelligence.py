@@ -24,6 +24,7 @@ from typing import Any
 
 import pandas as pd
 
+from ..db import read_table_or_csv
 from .hierarchical_forecast import build_hierarchical_forecast
 from .cannibalization         import estimate_cannibalization
 from .store_recommender       import recommend_stores
@@ -47,7 +48,7 @@ _cache: dict[str, pd.DataFrame] = {}
 
 def _load(key: str, path: Path) -> pd.DataFrame:
     if key not in _cache:
-        _cache[key] = pd.read_csv(path) if path.exists() else pd.DataFrame()
+        _cache[key] = read_table_or_csv(path.stem.lower(), path)
     return _cache[key]
 
 def _sim_scores()  -> pd.DataFrame: return _load("sim",  _OUT / "new_sku_similarity_scores.csv")

@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react'
 import { X, ChevronRight, TrendingUp, TrendingDown, Minus, Sparkles, ArrowRight, GitCompare } from 'lucide-react'
 import type {
-  SKURecommendation, AssortmentData, TransferCandidate, DecisionType
+  SKURecommendation, AssortmentData, TransferCandidate, DecisionType, SKUMasterInfo
 } from '../../types/assortment'
+import { saveAssortmentDecision, type AssortmentDecisionPayload } from '../../api/assortmentData'
 import { DecisionBadge } from './DecisionBadge'
 import { KPITooltip } from './KPITooltip'
 import { TrendChart } from './TrendChart'
@@ -75,31 +76,135 @@ const ACTION_LABELS: Partial<Record<DecisionType, { label: string; color: string
   DELIST:      { label: 'Confirm Delist',        color: 'bg-red-600 hover:bg-red-700',        impact: 'Remove at next reset. Cancel open POs. Reallocate space.' },
 }
 
-function ActionCenter({ decision }: { decision: DecisionType | null | undefined }) {
-  const [clicked, setClicked] = useState(false)
+interface ActionCenterProps {
+  decision:    DecisionType | null | undefined
+  sku:         SKURecommendation
+  masterInfo:  SKUMasterInfo | undefined
+  productName: string
+}
+
+function ActionCenter({ decision, sku, masterInfo, productName }: ActionCenterProps) {
+  const [actionDone,    setActionDone]    = useState(false)
+  const [saving,        setSaving]        = useState(false)
+  const [saveError,     setSaveError]     = useState<string | null>(null)
+  const [comment,       setComment]       = useState('')
+  const [commentSaving, setCommentSaving] = useState(false)
+  const [commentSaved,  setCommentSaved]  = useState(false)
+
   if (!decision || !(decision in ACTION_LABELS)) return null
   const cfg = ACTION_LABELS[decision]!
+
+  function buildPayload(overrideComment = ''): AssortmentDecisionPayload {
+    return {
+      decision_label:       cfg.label,
+      decision_type:        decision,
+      comment:              overrideComment,
+      sku_id:               sku.SKU_ID,
+      product_name:         productName,
+      brand:                masterInfo?.Brand ?? null,
+      category:             masterInfo?.Category ?? null,
+      sub_category:         sku.Sub_Category,
+      view_label:           sku.granularity_level === 'Global'
+                              ? 'Global'
+                              : `${sku.granularity_level}: ${sku.granularity_value}`,
+      scope:                sku.granularity_level,
+      granularity_value:    sku.granularity_value,
+      abc_class:            sku.ABC_Class,
+      health_score:         sku.Health_Score,
+      delist_score:         sku.delist_score,
+      gmroi:                sku.GMROI,
+      forecast_growth_pct:  sku.Forecast_Growth_Pct,
+      health_band:          sku.Health_Band,
+      delist_band:          sku.Delist_Band,
+      basket_role:          sku.Basket_Role,
+      total_revenue:        sku.total_revenue,
+      total_margin:         sku.total_margin,
+      price_band:           masterInfo?.Price_Band ?? null,
+      list_price_usd:       masterInfo?.List_Price_USD ?? null,
+      decision_reason:      sku.Decision_Reason,
+      recommended_action:   sku.Recommended_Action,
+    }
+  }
+
+  async function handleActionClick() {
+    setSaving(true)
+    setSaveError(null)
+    try {
+      await saveAssortmentDecision(buildPayload())
+      setActionDone(true)
+    } catch {
+      setSaveError('Could not save — check server connection.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleCommentSubmit() {
+    if (!comment.trim()) return
+    setCommentSaving(true)
+    try {
+      await saveAssortmentDecision(buildPayload(comment.trim()))
+      setCommentSaved(true)
+      setComment('')
+      setTimeout(() => setCommentSaved(false), 3000)
+    } catch {
+      // best-effort; button re-enables automatically
+    } finally {
+      setCommentSaving(false)
+    }
+  }
 
   return (
     <div className="px-5 pb-5 pt-3 border-t border-gray-100">
       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Action Center</p>
-      {!clicked ? (
+
+      {/* Decision button */}
+      {!actionDone ? (
         <button
-          onClick={() => setClicked(true)}
-          className={`w-full ${cfg.color} text-white font-bold text-sm rounded-2xl py-3 px-4 transition-colors flex items-center justify-center gap-2`}
+          onClick={handleActionClick}
+          disabled={saving}
+          className={`w-full ${cfg.color} text-white font-bold text-sm rounded-2xl py-3 px-4 transition-colors flex items-center justify-center gap-2 disabled:opacity-60`}
         >
           <ArrowRight size={15} />
-          {cfg.label}
+          {saving ? 'Saving…' : cfg.label}
         </button>
       ) : (
         <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 animate-fade-in">
-          <p className="text-[11px] font-bold text-emerald-700 mb-1">Action Queued</p>
+          <p className="text-[11px] font-bold text-emerald-700 mb-1">Action Saved</p>
           <p className="text-[12px] text-emerald-600">{cfg.impact}</p>
-          <button onClick={() => setClicked(false)} className="mt-2 text-[10px] text-gray-400 hover:text-gray-600">
-            ← Cancel
+          <button
+            onClick={() => setActionDone(false)}
+            className="mt-2 text-[10px] text-gray-400 hover:text-gray-600"
+          >
+            ← Undo
           </button>
         </div>
       )}
+
+      {saveError && (
+        <p className="text-[11px] text-red-500 mt-2">{saveError}</p>
+      )}
+
+      {/* Manager comment */}
+      <div className="mt-4">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
+          Manager Comment
+        </p>
+        <textarea
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Disagree with this recommendation? Add your reasoning…"
+          rows={3}
+          className="w-full text-[12px] text-gray-700 bg-gray-50 border border-gray-200 rounded-xl p-3 resize-none focus:outline-none focus:border-indigo-300 focus:bg-white transition-all placeholder:text-gray-400"
+        />
+        <button
+          onClick={handleCommentSubmit}
+          disabled={commentSaving || !comment.trim()}
+          className="mt-2 w-full bg-gray-100 hover:bg-indigo-50 hover:text-indigo-700 text-gray-600 font-semibold text-[12px] rounded-xl py-2 px-4 transition-colors disabled:opacity-50"
+        >
+          {commentSaving ? 'Submitting…' : commentSaved ? '✓ Comment Saved' : 'Submit Comment'}
+        </button>
+      </div>
     </div>
   )
 }
@@ -468,7 +573,12 @@ export function SKUDrawer({ open, sku, data, skuNames, onClose }: Props) {
         </div>
 
         {/* Sticky action footer */}
-        <ActionCenter decision={sku.Decision} />
+        <ActionCenter
+          decision={sku.Decision}
+          sku={sku}
+          masterInfo={masterInfo}
+          productName={productName}
+        />
       </aside>
     </>
   )

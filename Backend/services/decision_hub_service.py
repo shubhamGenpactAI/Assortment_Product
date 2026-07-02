@@ -12,6 +12,8 @@ from pathlib import Path
 from functools import lru_cache
 from typing import Optional
 
+from ..db import read_table_or_csv
+
 _SVC  = Path(__file__).resolve().parent
 _PROJ = _SVC.parent.parent
 _OUT  = _PROJ / "Outputs"
@@ -23,26 +25,26 @@ _RAW  = _PROJ / "Raw_Input"
 # ---------------------------------------------------------------------------
 @lru_cache(maxsize=1)
 def _sku():
-    return pd.read_csv(_RAW / "SKU_Master.csv")
+    return read_table_or_csv("sku_master", _RAW / "SKU_Master.csv")
 
 @lru_cache(maxsize=1)
 def _store():
-    return pd.read_csv(_RAW / "Store_Master.csv")
+    return read_table_or_csv("store_master", _RAW / "Store_Master.csv")
 
 @lru_cache(maxsize=1)
 def _clusters():
-    return pd.read_csv(_OUT / "store_clusters.csv")
+    return read_table_or_csv("store_clusters", _OUT / "store_clusters.csv")
 
 @lru_cache(maxsize=1)
 def _demand_raw():
-    df = pd.read_csv(_OUT / "weekly_demand_output.csv")
+    df = read_table_or_csv("weekly_demand_output", _OUT / "weekly_demand_output.csv")
     df["Quantity_Sold"]      = pd.to_numeric(df["Quantity_Sold"],      errors="coerce").fillna(0)
     df["Quantity_Available"] = pd.to_numeric(df["Quantity_Available"], errors="coerce").fillna(0)
     return df
 
 @lru_cache(maxsize=1)
 def _forecast_raw():
-    df = pd.read_csv(_OUT / "Forecast_Output.csv")
+    df = read_table_or_csv("forecast_output", _OUT / "Forecast_Output.csv")
     for c in ["Final_Forecast","Forecast_Lower","Forecast_Upper",
               "Total_Sales","Total_Margin","List_Price_USD","Unit_Cost_USD"]:
         if c in df.columns:
@@ -51,7 +53,7 @@ def _forecast_raw():
 
 @lru_cache(maxsize=1)
 def _delist_raw():
-    df = pd.read_csv(_OUT / "delisting_recommendations.csv")
+    df = read_table_or_csv("delisting_recommendations", _OUT / "delisting_recommendations.csv")
     for c in ["Health_Score","GMROI","delist_score","Forecast_Growth_Pct"]:
         if c in df.columns:
             df[c] = pd.to_numeric(df[c], errors="coerce")
@@ -59,11 +61,11 @@ def _delist_raw():
 
 @lru_cache(maxsize=1)
 def _assoc_raw():
-    return pd.read_csv(_OUT / "association_rules.csv")
+    return read_table_or_csv("association_rules", _OUT / "association_rules.csv")
 
 @lru_cache(maxsize=1)
 def _basket_raw():
-    return pd.read_csv(_OUT / "sku_basket_insights.csv")
+    return read_table_or_csv("sku_basket_insights", _OUT / "sku_basket_insights.csv")
 
 
 # ---------------------------------------------------------------------------

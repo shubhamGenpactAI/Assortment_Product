@@ -1,14 +1,11 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import NavBar from './components/NavBar'
 
-const WorkspacePage      = lazy(() => import('./pages/WorkspacePage'))
-const DashboardPage      = lazy(() => import('./pages/DashboardPage'))
-const SkuPerformancePage = lazy(() => import('./pages/SkuPerformancePage'))
-const NewSkuPage         = lazy(() => import('./pages/NewSkuPage'))
-const DataQualityPage    = lazy(() => import('./pages/DataQualityPage'))
-const DecisionHubPage    = lazy(() => import('./pages/DecisionHubPage'))
+const WorkspacePage   = lazy(() => import('./pages/WorkspacePage'))
+const NewSkuPage      = lazy(() => import('./pages/NewSkuPage'))
+const DecisionHubPage = lazy(() => import('./pages/DecisionHubPage'))
 
 function PageLoader() {
   return (
@@ -44,11 +41,9 @@ export default function App() {
               <main className="pt-[96px]">
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
-                    <Route path="/"              element={<DashboardPage />}       />
-                    <Route path="/decision-hub" element={<DecisionHubPage />}      />
-                    <Route path="/sku"          element={<SkuPerformancePage />}   />
-                    <Route path="/new-sku"      element={<NewSkuPage />}           />
-                    <Route path="/data-quality" element={<DataQualityPage />}      />
+                    <Route path="/"              element={<Navigate to="/workspace" replace />} />
+                    <Route path="/decision-hub"  element={<DecisionHubPage />} />
+                    <Route path="/new-sku"        element={<NewSkuPage />}     />
                   </Routes>
                 </Suspense>
               </main>

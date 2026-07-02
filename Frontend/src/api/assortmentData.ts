@@ -5,3 +5,42 @@ export async function loadAssortmentData(): Promise<AssortmentData> {
   if (!res.ok) throw new Error(`Failed to load workspace data: ${res.status}`)
   return (await res.json()) as AssortmentData
 }
+
+// ── Assortment Decision Save ───────────────────────────────────────────────
+
+export interface AssortmentDecisionPayload {
+  decision_label:      string
+  decision_type?:      string | null
+  comment?:            string
+  sku_id:              string
+  product_name?:       string | null
+  brand?:              string | null
+  category?:           string | null
+  sub_category?:       string | null
+  view_label?:         string | null
+  scope?:              string | null
+  granularity_value?:  string | null
+  abc_class?:          string | null
+  health_score?:       number | null
+  delist_score?:       number | null
+  gmroi?:              number | null
+  forecast_growth_pct?: number | null
+  health_band?:        string | null
+  delist_band?:        string | null
+  basket_role?:        string | null
+  total_revenue?:      number | null
+  total_margin?:       number | null
+  price_band?:         string | null
+  list_price_usd?:     number | null
+  decision_reason?:    string | null
+  recommended_action?: string | null
+}
+
+export async function saveAssortmentDecision(payload: AssortmentDecisionPayload): Promise<void> {
+  const res = await fetch('/api/assortment-decisions', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(payload),
+  })
+  if (!res.ok) throw new Error(`Failed to save decision: ${res.status}`)
+}

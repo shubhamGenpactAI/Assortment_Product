@@ -56,7 +56,7 @@ export default function AICopilot({ filters }: Props) {
         <div className="flex items-center gap-2">
           <Sparkles size={15} className="text-[#F2A93B]" />
           <span className="text-[12px] font-bold text-[#1A1D2E] uppercase tracking-wider">AI Copilot</span>
-          <span className="text-[9px] bg-[#F2A93B]/20 text-[#B8760A] px-1.5 py-0.5 rounded-full font-semibold">OpenRouter</span>
+          <span className="text-[9px] bg-[#F2A93B]/20 text-[#B8760A] px-1.5 py-0.5 rounded-full font-semibold">OpenAI o3-mini</span>
         </div>
         <button
           onClick={() => generate()}

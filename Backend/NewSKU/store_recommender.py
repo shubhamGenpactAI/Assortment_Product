@@ -28,6 +28,8 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
+from ..db import read_table_or_csv
+
 _ROOT = Path(__file__).resolve().parent.parent.parent
 _OUT  = _ROOT / "Outputs"
 _RAW  = _ROOT / "Raw_Input"
@@ -36,7 +38,7 @@ _cache: dict[str, Any] = {}
 
 def _load_csv(key: str, path: Path) -> pd.DataFrame:
     if key not in _cache:
-        _cache[key] = pd.read_csv(path) if path.exists() else pd.DataFrame()
+        _cache[key] = read_table_or_csv(path.stem.lower(), path)
     return _cache[key]
 
 def _load_json(key: str, path: Path) -> dict:

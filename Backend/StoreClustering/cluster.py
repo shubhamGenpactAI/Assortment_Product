@@ -37,6 +37,7 @@ import argparse
 import json
 import os
 import sys
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -44,10 +45,26 @@ from scipy.cluster.hierarchy import fcluster, linkage
 from sklearn.preprocessing import StandardScaler
 
 # ---------------------------------------------------------------------------
+# DB import (try; fall back gracefully if not available)
+# ---------------------------------------------------------------------------
+_BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _BACKEND_DIR not in sys.path:
+    sys.path.insert(0, _BACKEND_DIR)
+try:
+    from db import read_table_or_csv as _db_read
+    _DB_AVAILABLE = True
+except ImportError:
+    _DB_AVAILABLE = False
+
+# ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STORE_FILE = os.path.join(BASE_DIR, "Store_Master.csv")
+# Prefer Raw_Input/Store_Master.csv; keep legacy path as fallback
+_PROJECT_DIR = os.path.dirname(os.path.dirname(BASE_DIR))
+STORE_FILE = os.path.join(_PROJECT_DIR, "Raw_Input", "Store_Master.csv")
+if not os.path.isfile(STORE_FILE):
+    STORE_FILE = os.path.join(BASE_DIR, "Store_Master.csv")
 CLUSTER_CSV = os.path.join(BASE_DIR, "store_clusters.csv")
 CLUSTER_JSON = os.path.join(BASE_DIR, "store_clusters_summary.json")
 
@@ -157,9 +174,12 @@ _BADGE_COLORS = [
 # Step 1 – Load
 # ---------------------------------------------------------------------------
 def load_store_data(path=STORE_FILE):
-    if not os.path.isfile(path):
+    if _DB_AVAILABLE:
+        df = _db_read("store_master", Path(path))
+    elif os.path.isfile(path):
+        df = pd.read_csv(path)
+    else:
         raise FileNotFoundError(f"Store data file not found: {path}")
-    df = pd.read_csv(path)
     if df.empty:
         raise ValueError(f"{path} is empty — nothing to cluster.")
     print(f"[load] {len(df)} stores loaded from {path}")

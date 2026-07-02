@@ -1,0 +1,103 @@
+"""
+db.py — Centralized PostgreSQL connection for all Backend modules.
+
+Reads connection parameters from the project-root .env file.
+Provides read_table_or_csv() which tries PostgreSQL first and falls back
+to the CSV/XLSX path when the table is absent or the DB is unreachable.
+"""
+import logging
+import os
+from functools import lru_cache
+from pathlib import Path
+
+import pandas as pd
+
+log = logging.getLogger(__name__)
+
+# Project root = Assortment/  (two levels up from Backend/db.py)
+_ROOT = Path(__file__).resolve().parent.parent
+
+
+def _load_env() -> None:
+    """Load .env into os.environ; only sets keys not already present."""
+    env_path = _ROOT / ".env"
+    if not env_path.exists():
+        return
+    with open(env_path) as fh:
+        for line in fh:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key = key.strip()
+            val = val.strip().strip("'\"")
+            if key not in os.environ:
+                os.environ[key] = val
+
+
+_load_env()
+
+_PG_HOST = os.getenv("PGHOST",     "localhost")
+_PG_PORT = os.getenv("PGPORT",     "5432")
+_PG_DB   = os.getenv("PGDATABASE", "Assortment")
+_PG_USER = os.getenv("PGUSER",     "postgres")
+_PG_PASS = os.getenv("PGPASSWORD", "")
+
+
+@lru_cache(maxsize=1)
+def get_engine():
+    """Return a cached SQLAlchemy engine for the PostgreSQL database."""
+    from sqlalchemy import create_engine
+    url = (
+        f"postgresql+psycopg2://{_PG_USER}:{_PG_PASS}"
+        f"@{_PG_HOST}:{_PG_PORT}/{_PG_DB}"
+    )
+    return create_engine(url, pool_pre_ping=True)
+
+
+def _try_table(table: str):
+    """
+    Try SELECT * from table (exact name, then lowercase).
+    Returns a DataFrame on success, None on any failure.
+    """
+    from sqlalchemy import text
+    candidates = list(dict.fromkeys([table, table.lower()]))
+    for t in candidates:
+        try:
+            with get_engine().connect() as conn:
+                result = conn.execute(text(f'SELECT * FROM "{t}"'))
+                df = pd.DataFrame(result.fetchall(), columns=list(result.keys()))
+                log.debug("PostgreSQL read: table=%s rows=%d", t, len(df))
+                return df
+        except Exception:
+            continue
+    return None
+
+
+def read_table_or_csv(table: str, csv_path: Path) -> pd.DataFrame:
+    """
+    Try PostgreSQL first; fall back to the CSV/XLSX flat file when the table
+    is absent or the database is unreachable.
+
+    Parameters
+    ----------
+    table    : PostgreSQL table name (case-insensitive lookup applied).
+    csv_path : Absolute path to the fallback flat file.
+    """
+    df = _try_table(table)
+    if df is not None:
+        return df
+
+    csv_path = Path(csv_path)
+    if csv_path.exists():
+        log.info("PG table '%s' not found — falling back to %s", table, csv_path.name)
+        suffix = csv_path.suffix.lower()
+        if suffix in (".xlsx", ".xls"):
+            return pd.read_excel(csv_path)
+        return pd.read_csv(csv_path)
+
+    log.warning(
+        "Neither PG table '%s' nor file '%s' exists; returning empty DataFrame.",
+        table, csv_path,
+    )
+    return pd.DataFrame()

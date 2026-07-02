@@ -1,12 +1,9 @@
 import { NavLink } from 'react-router-dom'
 
 const NAV = [
-  { to: '/workspace',    label: '🧠 Category Intelligence'     },
-  { to: '/',             label: '📊 Dashboard'                },
-  { to: '/decision-hub', label: '⚡ Decision Hub'              },
-  { to: '/sku',          label: '📋 SKU Performance'           },
-  { to: '/new-sku',      label: '🧠 New SKU Intelligence'       },
-  { to: '/data-quality', label: '🩺 Data Quality'              },
+  { to: '/workspace',    label: '🧠 Category Intelligence' },
+  { to: '/decision-hub', label: '⚡ Decision Hub'          },
+  { to: '/new-sku',      label: '✨ New SKU Intelligence'  },
 ]
 
 export default function NavBar() {

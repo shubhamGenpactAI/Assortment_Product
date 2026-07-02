@@ -9,6 +9,7 @@ from typing import Any, Optional
 
 import pandas as pd
 
+from ..db import read_table_or_csv
 from ..NewSKU.sku_intelligence import run_new_sku_intelligence
 from ..NewSKU.hierarchical_forecast import build_hierarchical_forecast
 from ..NewSKU.cannibalization        import estimate_cannibalization
@@ -25,7 +26,7 @@ _sim_cache: dict = {}
 def _sim_df() -> pd.DataFrame:
     if "df" not in _sim_cache:
         p = _OUT / "new_sku_similarity_scores.csv"
-        _sim_cache["df"] = pd.read_csv(p) if p.exists() else pd.DataFrame()
+        _sim_cache["df"] = read_table_or_csv("new_sku_similarity_scores", p)
     return _sim_cache["df"]
 
 

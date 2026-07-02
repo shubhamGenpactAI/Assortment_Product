@@ -20,6 +20,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from ..db import read_table_or_csv
+
 warnings.filterwarnings("ignore")
 
 # ---------------------------------------------------------------------------
@@ -36,10 +38,7 @@ _cache: dict[str, pd.DataFrame] = {}
 
 def _load(key: str, path: Path) -> pd.DataFrame:
     if key not in _cache:
-        if path.exists():
-            _cache[key] = pd.read_csv(path)
-        else:
-            _cache[key] = pd.DataFrame()
+        _cache[key] = read_table_or_csv(path.stem.lower(), path)
     return _cache[key]
 
 def _analog_forecast(sku_id: str = "") -> pd.DataFrame:

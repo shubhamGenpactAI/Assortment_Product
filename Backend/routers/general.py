@@ -1,56 +1,71 @@
 """
-general.py — routes for all non-forecast pages
+general.py — routes for stores, delisting risk, new-SKU similarity,
+             and assortment decisions (Category Intelligence).
 """
 
+import csv
+from datetime import datetime
+from pathlib import Path
 from typing import Optional
+
 from fastapi import APIRouter, Query
+from pydantic import BaseModel
+
 from ..services.general_service import (
-    get_dashboard_kpis, get_manager_recommendations,
-    get_abc_data, get_basket_top_pairs, get_sales_trend, get_store_ranking,
-    get_sku_performance, get_brand_share, get_store_list,
-    get_assortment_recs,
+    get_store_list,
     get_delist_data,
-    get_data_quality,
     get_similarity_data, get_analog_forecast,
 )
 
 router = APIRouter()
 
-# ── Dashboard ──────────────────────────────────────────────────────────────
-@router.get("/dashboard/kpis")
-def dashboard_kpis(): return get_dashboard_kpis()
+# Project root (Backend/routers/ → Backend/ → Assortment/)
+_PROJ = Path(__file__).resolve().parent.parent.parent
+_DECISIONS_CSV = _PROJ / "Outputs" / "Assortment decision.csv"
 
-@router.get("/dashboard/recommendations")
-def dashboard_recs(): return get_manager_recommendations()
+_DECISION_HEADERS = [
+    "Timestamp", "Decision", "Decision_Type", "Comment",
+    "SKU_ID", "Product_Name", "Brand", "Category", "Sub_Category",
+    "View_Label", "Scope", "Granularity_Value",
+    "ABC_Class", "Health_Score", "Delist_Score", "GMROI",
+    "Forecast_Growth_Pct", "Health_Band", "Delist_Band",
+    "Basket_Role", "Total_Revenue", "Total_Margin",
+    "Price_Band", "List_Price_USD", "Decision_Reason", "Recommended_Action",
+]
 
-@router.get("/dashboard/abc")
-def dashboard_abc(store_id: Optional[str] = None, sub_cat: Optional[str] = None):
-    return get_abc_data(store_id, sub_cat)
 
-@router.get("/dashboard/basket-pairs")
-def dashboard_basket(n: int = 8): return get_basket_top_pairs(n)
+class AssortmentDecisionIn(BaseModel):
+    decision_label:      str
+    decision_type:       Optional[str]   = None
+    comment:             Optional[str]   = ""
+    sku_id:              str
+    product_name:        Optional[str]   = None
+    brand:               Optional[str]   = None
+    category:            Optional[str]   = None
+    sub_category:        Optional[str]   = None
+    view_label:          Optional[str]   = None
+    scope:               Optional[str]   = None
+    granularity_value:   Optional[str]   = None
+    abc_class:           Optional[str]   = None
+    health_score:        Optional[float] = None
+    delist_score:        Optional[float] = None
+    gmroi:               Optional[float] = None
+    forecast_growth_pct: Optional[float] = None
+    health_band:         Optional[str]   = None
+    delist_band:         Optional[str]   = None
+    basket_role:         Optional[str]   = None
+    total_revenue:       Optional[float] = None
+    total_margin:        Optional[float] = None
+    price_band:          Optional[str]   = None
+    list_price_usd:      Optional[float] = None
+    decision_reason:     Optional[str]   = None
+    recommended_action:  Optional[str]   = None
 
-@router.get("/dashboard/sales-trend")
-def dashboard_trend(store_id: Optional[str] = None, sub_cat: Optional[str] = None):
-    return get_sales_trend(store_id, sub_cat)
-
-@router.get("/dashboard/store-ranking")
-def dashboard_ranking(): return get_store_ranking()
 
 # ── Common lookups ─────────────────────────────────────────────────────────
 @router.get("/stores")
 def stores(): return get_store_list()
 
-# ── SKU Performance ────────────────────────────────────────────────────────
-@router.get("/sku-performance")
-def sku_perf(store_id: str = Query(...)): return get_sku_performance(store_id)
-
-@router.get("/brand-share")
-def brand_share(store_id: str = Query(...)): return get_brand_share(store_id)
-
-# ── Assortment ─────────────────────────────────────────────────────────────
-@router.get("/assortment")
-def assortment(store_id: str = Query(...)): return get_assortment_recs(store_id)
 
 # ── Delisting ──────────────────────────────────────────────────────────────
 @router.get("/delist")
@@ -60,9 +75,6 @@ def delist(
     abc_cls:    Optional[str] = None,
 ): return get_delist_data(rec_filter, sub_cat, abc_cls)
 
-# ── Data Quality ───────────────────────────────────────────────────────────
-@router.get("/data-quality")
-def data_quality(): return get_data_quality()
 
 # ── New SKU / Similarity ───────────────────────────────────────────────────
 @router.get("/similarity")
@@ -70,3 +82,47 @@ def similarity(): return get_similarity_data()
 
 @router.get("/analog-forecast")
 def analog_forecast(new_sku_id: str = Query(...)): return get_analog_forecast(new_sku_id)
+
+
+# ── Assortment Decisions ───────────────────────────────────────────────────
+@router.post("/assortment-decisions")
+def save_assortment_decision(payload: AssortmentDecisionIn):
+    row = {
+        "Timestamp":           datetime.now().isoformat(timespec="seconds"),
+        "Decision":            payload.decision_label,
+        "Decision_Type":       payload.decision_type or "",
+        "Comment":             payload.comment or "",
+        "SKU_ID":              payload.sku_id,
+        "Product_Name":        payload.product_name or "",
+        "Brand":               payload.brand or "",
+        "Category":            payload.category or "",
+        "Sub_Category":        payload.sub_category or "",
+        "View_Label":          payload.view_label or "",
+        "Scope":               payload.scope or "",
+        "Granularity_Value":   payload.granularity_value or "",
+        "ABC_Class":           payload.abc_class or "",
+        "Health_Score":        "" if payload.health_score        is None else payload.health_score,
+        "Delist_Score":        "" if payload.delist_score        is None else payload.delist_score,
+        "GMROI":               "" if payload.gmroi               is None else payload.gmroi,
+        "Forecast_Growth_Pct": "" if payload.forecast_growth_pct is None else payload.forecast_growth_pct,
+        "Health_Band":         payload.health_band or "",
+        "Delist_Band":         payload.delist_band or "",
+        "Basket_Role":         payload.basket_role or "",
+        "Total_Revenue":       "" if payload.total_revenue  is None else payload.total_revenue,
+        "Total_Margin":        "" if payload.total_margin   is None else payload.total_margin,
+        "Price_Band":          payload.price_band or "",
+        "List_Price_USD":      "" if payload.list_price_usd is None else payload.list_price_usd,
+        "Decision_Reason":     payload.decision_reason or "",
+        "Recommended_Action":  payload.recommended_action or "",
+    }
+
+    _DECISIONS_CSV.parent.mkdir(parents=True, exist_ok=True)
+    write_header = not _DECISIONS_CSV.exists()
+
+    with _DECISIONS_CSV.open("a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=_DECISION_HEADERS)
+        if write_header:
+            writer.writeheader()
+        writer.writerow(row)
+
+    return {"status": "saved"}

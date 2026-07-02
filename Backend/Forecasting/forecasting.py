@@ -18,11 +18,24 @@ Outputs written to Outputs/:
 import os
 import sys
 import warnings
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 warnings.filterwarnings("ignore")
+
+# ---------------------------------------------------------------------------
+# DB import (try; fall back gracefully if not available)
+# ---------------------------------------------------------------------------
+_BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _BACKEND_DIR not in sys.path:
+    sys.path.insert(0, _BACKEND_DIR)
+try:
+    from db import read_table_or_csv as _db_read
+    _DB_AVAILABLE = True
+except ImportError:
+    _DB_AVAILABLE = False
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -96,7 +109,18 @@ LGB_PARAMS_UPPER = dict(
 # 1. LOAD
 # ===========================================================================
 def load_data():
-    if os.path.isfile(INPUT_XLSX):
+    if _DB_AVAILABLE:
+        # Try PostgreSQL first; csv_path = XLSX preferred, CSV as next fallback
+        _csv_path = Path(INPUT_XLSX) if os.path.isfile(INPUT_XLSX) else Path(INPUT_CSV)
+        df = _db_read("weekly_demand_output", _csv_path)
+        if not df.empty:
+            source = "PostgreSQL (or file fallback)"
+            print(f"[load_data] Loaded {len(df):,} rows from {source}.")
+        else:
+            raise FileNotFoundError(
+                f"weekly_demand_output not found in PostgreSQL and no file at {_csv_path}."
+            )
+    elif os.path.isfile(INPUT_XLSX):
         df = pd.read_excel(INPUT_XLSX)
         source = INPUT_XLSX
     elif os.path.isfile(INPUT_CSV):
@@ -370,35 +394,55 @@ def enrich_forecast(forecast_df):
                 "Segment", "Attribute_Claim", "Brand",
                 "List_Price_USD", "Unit_Cost_USD"]
     try:
-        available_cols = pd.read_csv(SKU_MASTER, nrows=0).columns.tolist()
-        fetch = [c for c in sku_cols if c in available_cols]
-        sku_master = pd.read_csv(SKU_MASTER, usecols=fetch)
-        df = df.merge(sku_master, on="SKU_ID", how="left")
-        print(f"[enrich_forecast] Merged SKU attributes from {os.path.basename(SKU_MASTER)}.")
+        if _DB_AVAILABLE:
+            sku_master = _db_read("sku_master", Path(SKU_MASTER))
+        else:
+            sku_master = pd.read_csv(SKU_MASTER)
+        if not sku_master.empty:
+            fetch = [c for c in sku_cols if c in sku_master.columns]
+            df = df.merge(sku_master[fetch], on="SKU_ID", how="left")
+            print(f"[enrich_forecast] Merged SKU attributes.")
+        else:
+            raise FileNotFoundError
     except FileNotFoundError:
-        print(f"[enrich_forecast] WARNING: {SKU_MASTER} not found — SKU attributes blank.")
+        print(f"[enrich_forecast] WARNING: sku_master not found — SKU attributes blank.")
         for c in sku_cols[1:]:
             df[c] = np.nan
 
     # Store attributes
     store_cols = ["Store_ID", "Geography", "Region"]
     try:
-        store_master = pd.read_csv(STORE_MASTER, usecols=store_cols)
-        df = df.merge(store_master, on="Store_ID", how="left")
-        print(f"[enrich_forecast] Merged store attributes from {os.path.basename(STORE_MASTER)}.")
+        if _DB_AVAILABLE:
+            store_master = _db_read("store_master", Path(STORE_MASTER))
+        else:
+            store_master = pd.read_csv(STORE_MASTER)
+        if not store_master.empty:
+            fetch = [c for c in store_cols if c in store_master.columns]
+            df = df.merge(store_master[fetch], on="Store_ID", how="left")
+            print(f"[enrich_forecast] Merged store attributes.")
+        else:
+            raise FileNotFoundError
     except FileNotFoundError:
-        print(f"[enrich_forecast] WARNING: {STORE_MASTER} not found — store attributes blank.")
+        print(f"[enrich_forecast] WARNING: store_master not found — store attributes blank.")
         for c in store_cols[1:]:
             df[c] = np.nan
 
     # Store cluster
     try:
-        store_cluster = pd.read_csv(STORE_CLUSTER, usecols=["Store_ID", "Cluster_Label"])
-        store_cluster = store_cluster.rename(columns={"Cluster_Label": "Cluster"})
-        df = df.merge(store_cluster, on="Store_ID", how="left")
-        print(f"[enrich_forecast] Merged cluster labels from {os.path.basename(STORE_CLUSTER)}.")
+        if _DB_AVAILABLE:
+            store_cluster = _db_read("store_clusters", Path(STORE_CLUSTER))
+        else:
+            store_cluster = pd.read_csv(STORE_CLUSTER)
+        if not store_cluster.empty and "Cluster_Label" in store_cluster.columns:
+            store_cluster = store_cluster[["Store_ID", "Cluster_Label"]].rename(
+                columns={"Cluster_Label": "Cluster"}
+            )
+            df = df.merge(store_cluster, on="Store_ID", how="left")
+            print(f"[enrich_forecast] Merged cluster labels.")
+        else:
+            raise FileNotFoundError
     except FileNotFoundError:
-        print(f"[enrich_forecast] WARNING: {STORE_CLUSTER} not found — Cluster blank.")
+        print(f"[enrich_forecast] WARNING: store_clusters not found — Cluster blank.")
         df["Cluster"] = np.nan
 
     # Derive Sales and Margin with prediction interval propagation

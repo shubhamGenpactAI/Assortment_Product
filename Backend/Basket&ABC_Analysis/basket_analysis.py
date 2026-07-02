@@ -30,17 +30,11 @@ from typing import Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-
-from sqlalchemy import create_engine, text
-
-# connection details
-username = "postgres"
-password = "284241"
-host = "localhost"
-port = "5432"
-database = "Assortment"
-
-engine = create_engine(f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}")
+_BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _BACKEND_DIR not in sys.path:
+    sys.path.insert(0, _BACKEND_DIR)
+from db import get_engine
+from sqlalchemy import text
 
 
 # =============================================================================
@@ -132,9 +126,9 @@ def _check_required_columns(df: pd.DataFrame, required: List[str], file_label: s
 
 def _read_table(table: str) -> pd.DataFrame:
     """Read an entire PostgreSQL table into a DataFrame."""
-    with engine.connect() as conn:
+    with get_engine().connect() as conn:
         result = conn.execute(text(f'SELECT * FROM "{table}"'))
-        return pd.DataFrame(result.fetchall(), columns=result.keys())
+        return pd.DataFrame(result.fetchall(), columns=list(result.keys()))
 
 
 def load_and_validate() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:

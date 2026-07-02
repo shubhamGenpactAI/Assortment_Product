@@ -13,6 +13,8 @@ from pathlib import Path
 from functools import lru_cache
 from typing import Any
 
+from ..db import read_table_or_csv
+
 # ---------------------------------------------------------------------------
 # Paths (service lives at backend/services/, data at project Outputs/)
 # ---------------------------------------------------------------------------
@@ -40,7 +42,7 @@ FORECAST_COLS = [
 # ---------------------------------------------------------------------------
 @lru_cache(maxsize=1)
 def _load_forecast() -> pd.DataFrame:
-    df = pd.read_csv(FORECAST_FILE)
+    df = read_table_or_csv("forecast_output", FORECAST_FILE)
     for col in FORECAST_COLS:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0.0)
@@ -49,7 +51,7 @@ def _load_forecast() -> pd.DataFrame:
 
 @lru_cache(maxsize=1)
 def _load_demand() -> pd.DataFrame:
-    df = pd.read_csv(DEMAND_FILE)
+    df = read_table_or_csv("weekly_demand_output", DEMAND_FILE)
     df["Quantity_Sold"] = pd.to_numeric(df["Quantity_Sold"], errors="coerce").fillna(0.0)
     return df
 
