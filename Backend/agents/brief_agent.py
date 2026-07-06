@@ -16,7 +16,7 @@ from typing import Optional
 
 import pandas as pd
 
-from ..db import read_table_or_csv
+from ..database.connection import read_table_or_csv
 
 log = logging.getLogger(__name__)
 

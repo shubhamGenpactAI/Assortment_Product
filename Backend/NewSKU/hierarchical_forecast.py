@@ -20,7 +20,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from ..db import read_table_or_csv
+from ..database.connection import read_table_or_csv
 
 warnings.filterwarnings("ignore")
 

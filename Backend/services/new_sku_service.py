@@ -9,7 +9,7 @@ from typing import Any, Optional
 
 import pandas as pd
 
-from ..db import read_table_or_csv
+from ..database.connection import read_table_or_csv
 from ..NewSKU.sku_intelligence import run_new_sku_intelligence
 from ..NewSKU.hierarchical_forecast import build_hierarchical_forecast
 from ..NewSKU.cannibalization        import estimate_cannibalization

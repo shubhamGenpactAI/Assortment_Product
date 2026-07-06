@@ -51,7 +51,7 @@ _BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _BACKEND_DIR not in sys.path:
     sys.path.insert(0, _BACKEND_DIR)
 try:
-    from db import read_table_or_csv as _db_read
+    from database.connection import read_table_or_csv as _db_read
     _DB_AVAILABLE = True
 except ImportError:
     _DB_AVAILABLE = False

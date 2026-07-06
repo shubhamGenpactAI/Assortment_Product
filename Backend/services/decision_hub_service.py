@@ -12,7 +12,7 @@ from pathlib import Path
 from functools import lru_cache
 from typing import Optional
 
-from ..db import read_table_or_csv
+from ..database.connection import read_table_or_csv
 
 _SVC  = Path(__file__).resolve().parent
 _PROJ = _SVC.parent.parent

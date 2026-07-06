@@ -1,5 +1,5 @@
 """
-db.py — Centralized PostgreSQL connection for all Backend modules.
+connection.py — Centralized PostgreSQL connection for all Backend modules.
 
 Reads connection parameters from the project-root .env file.
 Provides read_table_or_csv() which tries PostgreSQL first and falls back
@@ -12,7 +12,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from .config.settings import load_env
+try:
+    from ..config.settings import load_env
+except ImportError:
+    # Standalone pipeline scripts import this module flatly (via a sys.path
+    # hack that adds Backend/ to sys.path), which doesn't support relative
+    # imports — fall back to an absolute import in that context.
+    from config.settings import load_env
 
 log = logging.getLogger(__name__)
 

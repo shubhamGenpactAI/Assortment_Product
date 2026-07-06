@@ -33,7 +33,7 @@ import pandas as pd
 _BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _BACKEND_DIR not in sys.path:
     sys.path.insert(0, _BACKEND_DIR)
-from db import get_engine
+from database.connection import get_engine
 from sqlalchemy import text
 
 

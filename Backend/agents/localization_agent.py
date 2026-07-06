@@ -15,7 +15,7 @@ from typing import Optional
 
 import pandas as pd
 
-from ..db import read_table_or_csv
+from ..database.connection import read_table_or_csv
 from .agent_core import divergence_magnitude, score_to_decision
 
 log = logging.getLogger(__name__)

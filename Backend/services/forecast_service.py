@@ -13,7 +13,7 @@ from pathlib import Path
 from functools import lru_cache
 from typing import Any
 
-from ..db import read_table_or_csv
+from ..database.connection import read_table_or_csv
 
 # ---------------------------------------------------------------------------
 # Paths (service lives at backend/services/, data at project Outputs/)

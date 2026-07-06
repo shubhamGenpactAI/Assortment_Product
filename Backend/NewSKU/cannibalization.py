@@ -28,7 +28,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from ..db import read_table_or_csv
+from ..database.connection import read_table_or_csv
 
 _ROOT = Path(__file__).resolve().parent.parent.parent
 _OUT  = _ROOT / "Outputs"
