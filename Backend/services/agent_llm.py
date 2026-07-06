@@ -8,24 +8,12 @@ Existing llm_service.py is UNCHANGED — this is a separate module.
 """
 import json
 import os
-from pathlib import Path
 from typing import AsyncGenerator
 
+from ..config.settings import load_env
 from ..tools.guardrails import is_injection, REFUSAL
 
-
-def _load_env() -> None:
-    env_path = Path(__file__).parent.parent.parent / ".env"
-    if env_path.exists():
-        with open(env_path) as f:
-            for line in f:
-                line = line.strip()
-                if "=" in line and not line.startswith("#"):
-                    k, _, v = line.partition("=")
-                    os.environ.setdefault(k.strip(), v.strip().strip("'\""))
-
-
-_load_env()
+load_env()
 
 OPENAI_API_KEY  = os.getenv("OPENAI_API_KEY", "")
 LLM_MODEL       = os.getenv("LLM_MODEL", "o3-mini")

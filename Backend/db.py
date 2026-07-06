@@ -12,30 +12,11 @@ from pathlib import Path
 
 import pandas as pd
 
+from .config.settings import load_env
+
 log = logging.getLogger(__name__)
 
-# Project root = Assortment/  (two levels up from Backend/db.py)
-_ROOT = Path(__file__).resolve().parent.parent
-
-
-def _load_env() -> None:
-    """Load .env into os.environ; only sets keys not already present."""
-    env_path = _ROOT / ".env"
-    if not env_path.exists():
-        return
-    with open(env_path) as fh:
-        for line in fh:
-            line = line.strip()
-            if not line or line.startswith("#") or "=" not in line:
-                continue
-            key, _, val = line.partition("=")
-            key = key.strip()
-            val = val.strip().strip("'\"")
-            if key not in os.environ:
-                os.environ[key] = val
-
-
-_load_env()
+load_env()
 
 _PG_HOST = os.getenv("PGHOST",     "localhost")
 _PG_PORT = os.getenv("PGPORT",     "5432")
