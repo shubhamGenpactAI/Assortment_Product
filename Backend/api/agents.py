@@ -29,7 +29,7 @@ from ..agents.brief_agent import (
     build_polish_context,
 )
 from ..services.agent_llm import stream_agent_response
-from ..services.agent_prompts import WATCHDOG_PROMPT, BRIEF_POLISH_PROMPT
+from ..prompts.agent_prompts import WATCHDOG_PROMPT, BRIEF_POLISH_PROMPT
 
 router = APIRouter()
 
