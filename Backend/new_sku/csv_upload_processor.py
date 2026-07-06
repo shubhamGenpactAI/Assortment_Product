@@ -76,7 +76,7 @@ TOP_N_ANALOG = 5
 
 
 # ---------------------------------------------------------------------------
-# SKU master loader (searches both Raw_Input/ and Basket&ABC_Analysis/)
+# SKU master loader (searches both Raw_Input/ and pipelines/basket_abc_analysis/)
 # ---------------------------------------------------------------------------
 _MASTER_CACHE: dict[str, pd.DataFrame] = {}
 
