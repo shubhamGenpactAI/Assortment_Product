@@ -10,13 +10,13 @@ from typing import Any, Optional
 import pandas as pd
 
 from ..database.connection import read_table_or_csv
-from ..NewSKU.sku_intelligence import run_new_sku_intelligence
-from ..NewSKU.hierarchical_forecast import build_hierarchical_forecast
-from ..NewSKU.cannibalization        import estimate_cannibalization
-from ..NewSKU.store_recommender      import recommend_stores
-from ..NewSKU.scenario_simulator     import run_scenario
-from ..NewSKU.whitespace_detector    import detect_whitespace
-from ..NewSKU.explainer              import explain_similarity, explain_differences, attribute_contributions
+from ..new_sku.sku_intelligence import run_new_sku_intelligence
+from ..new_sku.hierarchical_forecast import build_hierarchical_forecast
+from ..new_sku.cannibalization        import estimate_cannibalization
+from ..new_sku.store_recommender      import recommend_stores
+from ..new_sku.scenario_simulator     import run_scenario
+from ..new_sku.whitespace_detector    import detect_whitespace
+from ..new_sku.explainer              import explain_similarity, explain_differences, attribute_contributions
 
 _ROOT = Path(__file__).resolve().parent.parent.parent
 _OUT  = _ROOT / "Outputs"
@@ -91,19 +91,19 @@ def get_whitespace(sub_category: Optional[str] = None, top_n: int = 15) -> dict[
 
 
 def upload_csv(file_bytes: bytes, filename: str) -> dict[str, Any]:
-    from ..NewSKU.csv_upload_processor import process_uploaded_csv
+    from ..new_sku.csv_upload_processor import process_uploaded_csv
     return process_uploaded_csv(file_bytes, filename)
 
 
 def clear_upload_cache() -> dict[str, Any]:
-    from ..NewSKU.csv_upload_processor import clear_cache, list_uploaded_skus
+    from ..new_sku.csv_upload_processor import clear_cache, list_uploaded_skus
     skus_before = list_uploaded_skus()
     clear_cache()
     return {"cleared": len(skus_before), "message": f"Removed {len(skus_before)} uploaded SKU(s) from cache."}
 
 
 def get_new_sku_list() -> dict[str, Any]:
-    from ..NewSKU.csv_upload_processor import list_uploaded_skus
+    from ..new_sku.csv_upload_processor import list_uploaded_skus
     df = _sim_df()
     csv_skus: list[str] = []
     if not df.empty:

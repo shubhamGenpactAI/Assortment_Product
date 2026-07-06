@@ -162,6 +162,6 @@ def clear_cache_endpoint():
 @router.get("/uploaded")
 def uploaded_skus_endpoint():
     """Return list of SKU IDs currently in the upload cache."""
-    from ..NewSKU.csv_upload_processor import list_uploaded_skus
+    from ..new_sku.csv_upload_processor import list_uploaded_skus
     skus = list_uploaded_skus()
     return {"uploaded_skus": skus, "count": len(skus)}
