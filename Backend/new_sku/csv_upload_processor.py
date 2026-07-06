@@ -41,10 +41,10 @@ import numpy as np
 import pandas as pd
 
 # ---------------------------------------------------------------------------
-# Path setup — import similarity functions from Backend/Basket&ABC_Analysis/
+# Path setup — import similarity functions from Backend/pipelines/basket_abc_analysis/
 # ---------------------------------------------------------------------------
 _ROOT     = Path(__file__).resolve().parent.parent.parent          # Assortment/
-_SIM_DIR  = _ROOT / "Backend" / "Basket&ABC_Analysis"
+_SIM_DIR  = _ROOT / "Backend" / "pipelines" / "basket_abc_analysis"
 _RAW      = _ROOT / "Raw_Input"
 _OUT      = _ROOT / "Outputs"
 

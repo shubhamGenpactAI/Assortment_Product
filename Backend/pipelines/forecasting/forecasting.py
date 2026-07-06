@@ -28,7 +28,7 @@ warnings.filterwarnings("ignore")
 # ---------------------------------------------------------------------------
 # DB import (try; fall back gracefully if not available)
 # ---------------------------------------------------------------------------
-_BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if _BACKEND_DIR not in sys.path:
     sys.path.insert(0, _BACKEND_DIR)
 try:
@@ -41,7 +41,7 @@ except ImportError:
 # Configuration
 # ---------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.dirname(os.path.dirname(BASE_DIR))
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(BASE_DIR)))
 INPUT_XLSX        = os.path.join(PROJECT_DIR, "Outputs", "weekly_demand_output.xlsx")
 INPUT_CSV         = os.path.join(PROJECT_DIR, "Outputs", "weekly_demand_output.csv")
 VALIDATION_OUTPUT = os.path.join(PROJECT_DIR, "Outputs", "Forecast_Validation.csv")
