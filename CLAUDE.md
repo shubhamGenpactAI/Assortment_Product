@@ -21,10 +21,10 @@ streamlit run Frontend/app.py
 Each backend script writes its outputs to `Outputs/` and can be run standalone:
 
 ```powershell
-python Backend/Forecasting/forecasting.py           # → Forecast_Output.csv, Forecast_Validation.csv, weekly_demand_output.csv
-python Backend/Basket&ABC_Analysis/basket_analysis.py  # → association_rules.csv, sku_basket_insights.csv, demand_transfer_matrix.csv, delisting_recommendations.csv
-python Backend/Basket&ABC_Analysis/similarity.py    # → new_sku_similarity_scores.csv, new_sku_analog_demand_forecast.csv
-python Backend/StoreClustering/cluster.py           # → store_clusters.csv, store_clusters_summary.json
+python Backend/pipelines/forecasting/forecasting.py               # → Forecast_Output.csv, Forecast_Validation.csv, weekly_demand_output.csv
+python Backend/pipelines/basket_abc_analysis/basket_analysis.py   # → association_rules.csv, sku_basket_insights.csv, demand_transfer_matrix.csv, delisting_recommendations.csv
+python Backend/pipelines/basket_abc_analysis/similarity.py        # → new_sku_similarity_scores.csv, new_sku_analog_demand_forecast.csv
+python Backend/pipelines/store_clustering/cluster.py               # → store_clusters.csv, store_clusters_summary.json
 ```
 
 Run order matters: forecasting and clustering should complete before basket analysis if you need fresh weekly demand data.
@@ -46,10 +46,10 @@ Raw_Input/ CSVs
 
 | Module | File | Algorithm |
 |--------|------|-----------|
-| Demand Forecasting | `Backend/Forecasting/forecasting.py` | Dual-model per SKU×Store timeseries: LightGBM (n_estimators=500, lr=0.05) + Nixtla AutoETS. Holds out 6-week validation window; picks best by MAE. Nixtla is optional — skipped gracefully if not installed. |
-| New SKU Similarity | `Backend/Basket&ABC_Analysis/similarity.py` | 4-group cosine/Jaccard similarity (Hierarchy 35%, Functional 25%, Ingredient 20%, Commercial 20%). Top-N analog matches drive cold-start demand forecasts per store cluster. |
-| Basket & Delisting | `Backend/Basket&ABC_Analysis/basket_analysis.py` | Association rules (MIN_SUPPORT=0.5%), demand transfer matrix within sub-categories. 8-component composite delist score (ABC 15%, Revenue 20%, Margin 20%, Support 15%, Lift 10%, Dependency 10%, Substitution 10%). Generates NL explanations. |
-| Store Clustering | `Backend/StoreClustering/cluster.py` | Ward linkage hierarchical clustering (≤500 stores); BIRCH + PCA for >500. Auto-detects cluster count (cap: 6). Current output: 3 clusters (Digital-First Urban, Affluent Suburban, Rural Remote). |
+| Demand Forecasting | `Backend/pipelines/forecasting/forecasting.py` | Dual-model per SKU×Store timeseries: LightGBM (n_estimators=500, lr=0.05) + Nixtla AutoETS. Holds out 6-week validation window; picks best by MAE. Nixtla is optional — skipped gracefully if not installed. |
+| New SKU Similarity | `Backend/pipelines/basket_abc_analysis/similarity.py` | 4-group cosine/Jaccard similarity (Hierarchy 35%, Functional 25%, Ingredient 20%, Commercial 20%). Top-N analog matches drive cold-start demand forecasts per store cluster. |
+| Basket & Delisting | `Backend/pipelines/basket_abc_analysis/basket_analysis.py` | Association rules (MIN_SUPPORT=0.5%), demand transfer matrix within sub-categories. 8-component composite delist score (ABC 15%, Revenue 20%, Margin 20%, Support 15%, Lift 10%, Dependency 10%, Substitution 10%). Generates NL explanations. |
+| Store Clustering | `Backend/pipelines/store_clustering/cluster.py` | Ward linkage hierarchical clustering (≤500 stores); BIRCH + PCA for >500. Auto-detects cluster count (cap: 6). Current output: 3 clusters (Digital-First Urban, Affluent Suburban, Rural Remote). |
 
 ### Frontend (`Frontend/app.py`)
 
@@ -91,7 +91,6 @@ Single-file Streamlit app. Default landing page is a unified 3-column dashboard.
 
 - `Backend/category_health/` — empty, reserved for future category health scoring
 - `Backend/genai/` — empty, reserved for GenAI NL features
-- `Backend/NewSKU/` — empty; new SKU logic lives in `similarity.py`
 - Step 4.7 MILP optimization (OR-Tools) — described in `ProcessFlow.md` but not yet coded; must run last in pipeline
 
 ## Column Naming Conventions
