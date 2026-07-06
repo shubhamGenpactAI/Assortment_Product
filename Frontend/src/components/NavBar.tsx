@@ -4,6 +4,7 @@ const NAV = [
   { to: '/workspace',    label: '🧠 Category Intelligence' },
   { to: '/decision-hub', label: '⚡ Decision Hub'          },
   { to: '/new-sku',      label: '✨ New SKU Intelligence'  },
+  { to: '/agent-hub',    label: '🕵️ Agent Hub'            },
 ]
 
 export default function NavBar() {

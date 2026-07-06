@@ -74,6 +74,28 @@ def _try_table(table: str):
     return None
 
 
+def _reconcile_columns(pg_df: pd.DataFrame, csv_path: Path) -> pd.DataFrame:
+    """
+    When PG returns lowercase column names but downstream code expects the
+    original CSV column capitalisation, rename PG columns to match the CSV header.
+    Only renames when a case-insensitive match exists; leaves unmatched columns as-is.
+    """
+    csv_path = Path(csv_path)
+    if not csv_path.exists():
+        return pg_df
+    try:
+        csv_header = pd.read_csv(csv_path, nrows=0).columns.tolist()
+    except Exception:
+        return pg_df
+
+    csv_lower_map = {c.lower(): c for c in csv_header}
+    rename = {c: csv_lower_map[c.lower()] for c in pg_df.columns if c.lower() in csv_lower_map and c != csv_lower_map[c.lower()]}
+    if rename:
+        log.debug("Renaming PG columns to match CSV header: %s", rename)
+        pg_df = pg_df.rename(columns=rename)
+    return pg_df
+
+
 def read_table_or_csv(table: str, csv_path: Path) -> pd.DataFrame:
     """
     Try PostgreSQL first; fall back to the CSV/XLSX flat file when the table
@@ -86,7 +108,7 @@ def read_table_or_csv(table: str, csv_path: Path) -> pd.DataFrame:
     """
     df = _try_table(table)
     if df is not None:
-        return df
+        return _reconcile_columns(df, csv_path)
 
     csv_path = Path(csv_path)
     if csv_path.exists():

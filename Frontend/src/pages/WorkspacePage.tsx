@@ -7,8 +7,7 @@ import { SmartFilterBar }  from '../components/workspace/SmartFilterBar'
 import { InsightFeed }     from '../components/workspace/InsightFeed'
 import { SKUTable }        from '../components/workspace/SKUTable'
 import { SKUDrawer }       from '../components/workspace/SKUDrawer'
-
-const DEFAULT_FILTERS: WorkspaceFilters = { granularity_level: 'Global' }
+import { useFilters }      from '../context/FilterContext'
 
 function matchesFilters(
   row:             SKURecommendation,
@@ -50,8 +49,52 @@ export default function WorkspacePage() {
   const [data,     setData]     = useState<AssortmentData | null>(null)
   const [error,    setError]    = useState<string | null>(null)
   const [loading,  setLoading]  = useState(true)
-  const [filters,  setFilters]  = useState<WorkspaceFilters>(DEFAULT_FILTERS)
   const [selected, setSelected] = useState<SKURecommendation | null>(null)
+
+  const { filters: gf, patchFilters } = useFilters()
+
+  // Translate global filter state → WorkspaceFilters shape expected by SmartFilterBar / matchesFilters
+  const filters = useMemo<WorkspaceFilters>(() => ({
+    granularity_level: gf.granularity_level || 'Global',
+    Brand:             gf.brand       || undefined,
+    Category:          gf.category    || undefined,
+    Sub_Category:      gf.sub_cat     || undefined,
+    ABC_Class:         gf.abc_class   || undefined,
+    Decision:          gf.decision    || undefined,
+    Health_Band:       gf.health_band || undefined,
+    Delist_Band:       gf.delist_band || undefined,
+    GMROI_Band:        gf.gmroi_band  || undefined,
+    Basket_Role:       gf.basket_role || undefined,
+    Store_Name:        gf.store_id    || undefined,
+    Cluster_Name:      gf.cluster     || undefined,
+    Region_Name:       gf.region_name || undefined,
+    searchTerm:        gf.search_term || undefined,
+  }), [
+    gf.granularity_level, gf.brand, gf.category, gf.sub_cat,
+    gf.abc_class, gf.decision, gf.health_band, gf.delist_band,
+    gf.gmroi_band, gf.basket_role, gf.store_id, gf.cluster,
+    gf.region_name, gf.search_term,
+  ])
+
+  // Translate WorkspaceFilters → global filter state on every SmartFilterBar change
+  const handleFilterChange = useCallback((wf: WorkspaceFilters) => {
+    patchFilters({
+      granularity_level: wf.granularity_level ?? 'Global',
+      brand:             wf.Brand             ?? '',
+      category:          wf.Category          ?? '',
+      sub_cat:           wf.Sub_Category      ?? '',
+      abc_class:         wf.ABC_Class         ?? '',
+      decision:          wf.Decision          ?? '',
+      health_band:       wf.Health_Band       ?? '',
+      delist_band:       wf.Delist_Band       ?? '',
+      gmroi_band:        wf.GMROI_Band        ?? '',
+      basket_role:       wf.Basket_Role       ?? '',
+      store_id:          wf.Store_Name        ?? '',
+      cluster:           wf.Cluster_Name      ?? '',
+      region_name:       wf.Region_Name       ?? '',
+      search_term:       wf.searchTerm        ?? '',
+    })
+  }, [patchFilters])
 
   useEffect(() => {
     loadAssortmentData()
@@ -134,7 +177,7 @@ export default function WorkspacePage() {
         skuMaster={data.skuMaster}
         storeClusters={data.storeClusters}
         filters={filters}
-        onChange={setFilters}
+        onChange={handleFilterChange}
       />
 
       {/* Main scrollable area */}

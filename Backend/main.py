@@ -10,6 +10,7 @@ from .routers.forecast      import router as forecast_router
 from .routers.general       import router as general_router
 from .routers.new_sku       import router as new_sku_router
 from .routers.decision_hub  import router as decision_hub_router
+from .routers.agents        import router as agents_router
 
 app = FastAPI(
     title="Category Growth API",
@@ -29,6 +30,7 @@ app.include_router(forecast_router,      prefix="/api/forecast",      tags=["For
 app.include_router(general_router,       prefix="/api",               tags=["General"])
 app.include_router(new_sku_router,       prefix="/api/new-sku",       tags=["New SKU Intelligence"])
 app.include_router(decision_hub_router,  prefix="/api/decision-hub",  tags=["Decision Hub"])
+app.include_router(agents_router,        prefix="/api/agents",         tags=["Agents"])
 
 
 @app.get("/health")

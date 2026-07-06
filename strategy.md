@@ -2,7 +2,8 @@
 
 ## What We Are Building
 
-A new page — **Category Decision Hub** at route `/decision-hub` — that answers the 4 business questions from `prompt.md` in under 30 seconds. It implements all 17 features across 3 phases, with real LLM integration for the AI Copilot and driver explanations.
+A new page — **Category Decision Hub** at route `/decision-hub` — that answers the 4 business questions from `prompt.md` in under 30 seconds. 
+It implements all 17 features across 3 phases, with real LLM integration for the AI Copilot and driver explanations.
 
 **Zero changes to existing pages.** All existing routes, components, and backend endpoints remain untouched.
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Loader2 } from 'lucide-react'
 import {
   fetchHubKpis, fetchRiskMatrix, fetchLostSales,
@@ -13,6 +13,8 @@ import LostSalesChart   from '../components/decision_hub/LostSalesChart'
 import InventoryScatter from '../components/decision_hub/InventoryScatter'
 import DelistHub        from '../components/decision_hub/DelistHub'
 import AICopilot        from '../components/decision_hub/AICopilot'
+import WatchdogBanner   from '../components/agents/WatchdogBanner'
+import { useFilters }   from '../context/FilterContext'
 
 type Filters = { store_id?: string; sub_cat?: string; cluster?: string }
 
@@ -36,7 +38,8 @@ function Skeleton({ h = 48 }: { h?: number }) {
 }
 
 export default function DecisionHubPage() {
-  const [filters,    setFilters]    = useState<Filters>({})
+  const { filters: gf, setFilter, patchFilters } = useFilters()
+
   const [stores,     setStores]     = useState<string[]>([])
   const [kpis,       setKpis]       = useState<any>(null)
   const [matrix,     setMatrix]     = useState<any[]>([])
@@ -46,6 +49,13 @@ export default function DecisionHubPage() {
   const [alerts,     setAlerts]     = useState<any[]>([])
   const [health,     setHealth]     = useState<any[]>([])
   const [loading,    setLoading]    = useState(true)
+
+  // Derive the API filter shape from shared context (only DH-relevant fields)
+  const filters = useMemo<Filters>(() => ({
+    store_id: gf.store_id || undefined,
+    sub_cat:  gf.sub_cat  || undefined,
+    cluster:  gf.cluster  || undefined,
+  }), [gf.store_id, gf.sub_cat, gf.cluster])
 
   useEffect(() => {
     fetchStores().then(setStores).catch(() => {})
@@ -69,16 +79,19 @@ export default function DecisionHubPage() {
   useEffect(() => { reload(filters) }, [filters, reload])
 
   const set = (key: keyof Filters, val: string) =>
-    setFilters(prev => ({ ...prev, [key]: val || undefined }))
+    setFilter(key as 'store_id' | 'sub_cat' | 'cluster', val)
 
   return (
     <div className="max-w-[1600px] mx-auto px-5 pb-10">
+      {/* ── Watchdog Banner ────────────────────────────────────── */}
+      <WatchdogBanner />
+
       {/* ── Filter Bar ─────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-3 py-4">
         <h1 className="text-[18px] font-extrabold text-[#1A1D2E] mr-2">⚡ Category Decision Hub</h1>
 
         <select
-          value={filters.store_id ?? ''}
+          value={gf.store_id}
           onChange={e => set('store_id', e.target.value)}
           className="border border-gray-200 rounded-lg px-3 py-1.5 text-[12px] bg-white focus:outline-none focus:border-[#4F46E5]"
         >
@@ -87,7 +100,7 @@ export default function DecisionHubPage() {
         </select>
 
         <select
-          value={filters.sub_cat ?? ''}
+          value={gf.sub_cat}
           onChange={e => set('sub_cat', e.target.value)}
           className="border border-gray-200 rounded-lg px-3 py-1.5 text-[12px] bg-white focus:outline-none focus:border-[#4F46E5]"
         >
@@ -96,7 +109,7 @@ export default function DecisionHubPage() {
         </select>
 
         <select
-          value={filters.cluster ?? ''}
+          value={gf.cluster}
           onChange={e => set('cluster', e.target.value)}
           className="border border-gray-200 rounded-lg px-3 py-1.5 text-[12px] bg-white focus:outline-none focus:border-[#4F46E5]"
         >
@@ -105,7 +118,7 @@ export default function DecisionHubPage() {
         </select>
 
         <button
-          onClick={() => setFilters({})}
+          onClick={() => patchFilters({ store_id: '', sub_cat: '', cluster: '' })}
           className="text-[11px] text-gray-400 hover:text-gray-700 border border-gray-200 rounded-lg px-3 py-1.5 bg-white"
         >
           ✕ Clear

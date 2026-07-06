@@ -2,10 +2,12 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import NavBar from './components/NavBar'
+import { FilterProvider } from './context/FilterContext'
 
 const WorkspacePage   = lazy(() => import('./pages/WorkspacePage'))
 const NewSkuPage      = lazy(() => import('./pages/NewSkuPage'))
 const DecisionHubPage = lazy(() => import('./pages/DecisionHubPage'))
+const AgentHubPage    = lazy(() => import('./pages/AgentHubPage'))
 
 function PageLoader() {
   return (
@@ -17,6 +19,7 @@ function PageLoader() {
 
 export default function App() {
   return (
+    <FilterProvider>
     <BrowserRouter>
       {/* Workspace page takes full viewport height without the standard footer */}
       <Routes>
@@ -44,6 +47,7 @@ export default function App() {
                     <Route path="/"              element={<Navigate to="/workspace" replace />} />
                     <Route path="/decision-hub"  element={<DecisionHubPage />} />
                     <Route path="/new-sku"        element={<NewSkuPage />}     />
+                    <Route path="/agent-hub"      element={<AgentHubPage />}   />
                   </Routes>
                 </Suspense>
               </main>
@@ -55,5 +59,6 @@ export default function App() {
         />
       </Routes>
     </BrowserRouter>
+    </FilterProvider>
   )
 }
