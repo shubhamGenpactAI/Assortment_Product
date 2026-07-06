@@ -8,8 +8,8 @@ All routes are prefixed with /api/decision-hub.
 from typing import Optional
 from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
 
+from ..schemas.decision_hub import CopilotRequest
 from ..services.decision_hub_service import (
     get_hub_kpis,
     get_risk_matrix,
@@ -137,13 +137,6 @@ def hub_copilot_context(
 # ---------------------------------------------------------------------------
 # AI Copilot — Streaming (SSE)
 # ---------------------------------------------------------------------------
-class CopilotRequest(BaseModel):
-    store_id: Optional[str] = None
-    sub_cat:  Optional[str] = None
-    cluster:  Optional[str] = None
-    question: Optional[str] = ""
-
-
 @router.post("/copilot/stream")
 async def hub_copilot_stream(req: CopilotRequest):
     context = build_copilot_context(req.store_id, req.sub_cat, req.cluster)

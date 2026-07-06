@@ -11,8 +11,8 @@ from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
 
+from ..schemas.agents import WatchdogNarrativeRequest, OverrideRequest, BriefRequest
 from ..agents.watchdog_agent import (
     build_digest,
     build_narrative_context,
@@ -58,13 +58,6 @@ def watchdog_digest(
     return build_digest(store_id, sub_cat, cluster, top_n)
 
 
-class WatchdogNarrativeRequest(BaseModel):
-    store_id: Optional[str] = None
-    sub_cat:  Optional[str] = None
-    cluster:  Optional[str] = None
-    top_n:    int = 10
-
-
 @router.post("/watchdog/narrative")
 async def watchdog_narrative(req: WatchdogNarrativeRequest):
     _check(_WATCHDOG_ENABLED, "Watchdog")
@@ -90,14 +83,6 @@ def localization_divergence(
     return find_divergent_skus(sub_cat, min_divergence)
 
 
-class OverrideRequest(BaseModel):
-    sku_id:      str
-    cluster_id:  str
-    decision:    str           # "approved" | "rejected"
-    note:        Optional[str] = ""
-    decided_by:  Optional[str] = "Category Manager"
-
-
 @router.post("/localization/override")
 def localization_override(req: OverrideRequest):
     _check(_LOCALIZATION_ENABLED, "Localization")
@@ -118,14 +103,6 @@ def localization_overrides(
 # ============================================================
 # STAKEHOLDER BRIEF AGENT
 # ============================================================
-
-class BriefRequest(BaseModel):
-    brief_type:   str
-    brand:        Optional[str]      = None
-    sub_cat:      Optional[str]      = None
-    sku_ids:      Optional[list]     = None
-    generated_by: Optional[str]      = "Category Manager"
-
 
 @router.post("/brief/generate")
 def brief_generate(req: BriefRequest):
