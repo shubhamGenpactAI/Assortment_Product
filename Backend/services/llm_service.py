@@ -8,7 +8,6 @@ Auth  : OPENAI_API_KEY in .env at the project root
 
 import json
 import os
-import re
 from pathlib import Path
 
 
@@ -74,23 +73,7 @@ Rules:
 # ---------------------------------------------------------------------------
 # Layer-1 guardrail — blocks prompt-injection patterns before the API call
 # ---------------------------------------------------------------------------
-_INJECTION_RE = re.compile(
-    r"ignore\s+(previous|above|all)\s+instructions?"
-    r"|you\s+are\s+now"
-    r"|forget\s+(everything|your\s+instructions?|prior|all)"
-    r"|act\s+as(\s+if)?"
-    r"|pretend\s+(you\s+are|to\s+be)"
-    r"|new\s+(instructions?|prompt|role|persona|system)"
-    r"|disregard\s+(your|all|previous)"
-    r"|jailbreak|bypass\s+(guardrail|restriction|filter)"
-    r"|override\s+(guardrail|instructions?|rules?)",
-    re.IGNORECASE,
-)
-
-_REFUSAL = (
-    "I can only answer questions based on the insights "
-    "and data available in this application."
-)
+from ..tools.guardrails import is_injection, REFUSAL as _REFUSAL
 
 
 # ---------------------------------------------------------------------------
@@ -110,7 +93,7 @@ async def stream_copilot(context: dict, question: str = ""):
         return
 
     # ── Layer-1: reject obvious prompt-injection attempts immediately ─────────
-    if question and _INJECTION_RE.search(question):
+    if question and is_injection(question):
         yield f"data: {_REFUSAL}\n\n"
         yield "data: [DONE]\n\n"
         return
