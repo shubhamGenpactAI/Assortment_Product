@@ -6,11 +6,11 @@ Run from the backend/ directory:
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers.forecast      import router as forecast_router
-from .routers.general       import router as general_router
-from .routers.new_sku       import router as new_sku_router
-from .routers.decision_hub  import router as decision_hub_router
-from .routers.agents        import router as agents_router
+from .api.forecast      import router as forecast_router
+from .api.general       import router as general_router
+from .api.new_sku       import router as new_sku_router
+from .api.decision_hub  import router as decision_hub_router
+from .api.agents        import router as agents_router
 
 app = FastAPI(
     title="Category Growth API",
