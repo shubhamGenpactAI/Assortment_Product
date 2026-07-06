@@ -10,7 +10,7 @@ from typing import Any, Optional
 import pandas as pd
 
 from ..database.connection import read_table_or_csv
-from ..new_sku.sku_intelligence import run_new_sku_intelligence
+from ..workflows.new_sku_intelligence import run_new_sku_intelligence
 from ..new_sku.hierarchical_forecast import build_hierarchical_forecast
 from ..new_sku.cannibalization        import estimate_cannibalization
 from ..new_sku.store_recommender      import recommend_stores

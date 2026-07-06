@@ -1,5 +1,5 @@
 """
-sku_intelligence.py
+new_sku_intelligence.py
 Orchestrator — single entry-point for all New SKU Intelligence capabilities.
 
 Calls all sub-engines and assembles a unified intelligence payload:
@@ -13,7 +13,7 @@ Calls all sub-engines and assembles a unified intelligence payload:
   8. AI Merchant Copilot Summary
 
 Usage:
-  from Backend.NewSKU.sku_intelligence import run_new_sku_intelligence
+  from Backend.workflows.new_sku_intelligence import run_new_sku_intelligence
   result = run_new_sku_intelligence(new_sku_id="SKU999", new_sku_attrs={...})
 """
 
@@ -25,16 +25,16 @@ from typing import Any
 import pandas as pd
 
 from ..database.connection import read_table_or_csv
-from .hierarchical_forecast import build_hierarchical_forecast
-from .cannibalization         import estimate_cannibalization
-from .store_recommender       import recommend_stores
-from .scenario_simulator      import run_scenario, compare_scenarios
-from .explainer               import (
+from ..new_sku.hierarchical_forecast import build_hierarchical_forecast
+from ..new_sku.cannibalization         import estimate_cannibalization
+from ..new_sku.store_recommender       import recommend_stores
+from ..new_sku.scenario_simulator      import run_scenario, compare_scenarios
+from ..new_sku.explainer               import (
     explain_similarity, explain_differences, explain_forecast,
     explain_risks, attribute_contributions
 )
-from .whitespace_detector     import detect_whitespace
-from .copilot                 import generate_copilot_summary
+from ..new_sku.whitespace_detector     import detect_whitespace
+from ..new_sku.copilot                 import generate_copilot_summary
 
 _ROOT = Path(__file__).resolve().parent.parent.parent
 _OUT  = _ROOT / "Outputs"
@@ -61,7 +61,7 @@ def _get_new_sku_attrs(new_sku_id: str, provided_attrs: dict) -> dict:
 
     # Check upload cache first (uploaded SKUs may not be in SKU_Master)
     try:
-        from .csv_upload_processor import get_cached_attrs
+        from ..new_sku.csv_upload_processor import get_cached_attrs
         cached_attrs = get_cached_attrs(new_sku_id)
         if cached_attrs:
             for k, v in cached_attrs.items():
@@ -86,7 +86,7 @@ def _get_new_sku_attrs(new_sku_id: str, provided_attrs: dict) -> dict:
 def _load_similarity_rows(new_sku_id: str, top_n: int = 5) -> list[dict]:
     # Check in-memory upload cache first
     try:
-        from .csv_upload_processor import get_cached_sim_scores
+        from ..new_sku.csv_upload_processor import get_cached_sim_scores
         cached = get_cached_sim_scores(new_sku_id)
         if cached is not None and not cached.empty:
             col_new = "New_SKU_ID" if "New_SKU_ID" in cached.columns else cached.columns[0]
