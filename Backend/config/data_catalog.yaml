@@ -1,0 +1,213 @@
+# data_catalog.yaml
+# Hand-curated business metadata for the Data-Access Copilot (Backend/agents/data_copilot/).
+#
+# Each entry maps a logical source name -> {table (PG name), csv (fallback path,
+# relative to project root), kind, description, join_keys, business_notes,
+# sample_questions}. Column names/types and sample rows are NOT duplicated here —
+# catalog.py fetches those live via the existing read_table_or_csv(), so this file
+# never drifts from the real schema.
+#
+# csv paths are relative to the project root (Assortment/), matching the
+# `_RAW = _ROOT / "Raw_Input"` / `_OUT = _ROOT / "Outputs"` convention used
+# throughout Backend/services and Backend/new_sku.
+
+sources:
+  sales_tx:
+    table: sales_tx
+    csv: Raw_Input/Sales_Tx.csv
+    kind: fact
+    description: Transaction-line grain sales history (~200K rows). The source of truth for actual historical revenue, units, and margin.
+    join_keys: [sku_id, store_id]
+    business_notes: >
+      Grain is one row per transaction line. net_sales_usd and gross_margin_usd
+      are already computed. abc_class is the Pareto classification (A/B/C).
+      For "top selling SKUs" / "top revenue" questions, aggregate this table
+      (GROUP BY sku_id) rather than assuming a pre-computed ranking exists.
+    sample_questions:
+      - "Which SKUs generated the most revenue last quarter?"
+      - "What is the average basket size by store?"
+
+  sku_master:
+    table: sku_master
+    csv: Raw_Input/SKU_Master.csv
+    kind: dimension
+    description: One row per SKU (60 SKUs) — the master product dimension (brand, category, price, ingredients, claims).
+    join_keys: [sku_id]
+    business_notes: "Join to this table to resolve a SKU_ID into a human-readable product name/brand/sub-category."
+    sample_questions:
+      - "What brand does SKU0007 belong to?"
+      - "List all sulphate-free SKUs."
+
+  store_master:
+    table: store_master
+    csv: Raw_Input/Store_Master.csv
+    kind: dimension
+    description: One row per store (10 stores) — store demographics, size, traffic, and format.
+    join_keys: [store_id]
+    business_notes: "Join to resolve a Store_ID into region/geography/format, or to segment by store characteristics (urban/rural, income, footfall)."
+    sample_questions:
+      - "Which stores have the highest foot traffic?"
+
+  store_clusters:
+    table: store_clusters
+    csv: Outputs/store_clusters.csv
+    kind: dimension
+    description: Store -> behavioral cluster assignment produced by the clustering pipeline (Digital-First Urban / Affluent Suburban / Rural Remote, etc).
+    join_keys: [store_id]
+    business_notes: "Small table (one row per store). Join on store_id to segment any other table by cluster."
+    sample_questions:
+      - "How does performance differ across store clusters?"
+
+  weekly_demand_output:
+    table: weekly_demand_output
+    csv: Outputs/weekly_demand_output.csv
+    kind: fact
+    description: Actual historical weekly demand, aggregated to Week x Store x SKU grain.
+    join_keys: [sku_id, store_id, year_wk]
+    business_notes: "year_wk is an ISO-style 'YYYY-WW' week label, sortable as text. Use this table for historical trend questions; use forecast_output for future weeks."
+    sample_questions:
+      - "What was the weekly demand trend for SKU0012 over the last 8 weeks?"
+
+  forecast_output:
+    table: forecast_output
+    csv: Outputs/Forecast_Output.csv
+    kind: fact
+    description: 6-week-ahead demand/sales/margin forecast per Store x SKU, with prediction intervals and the model that was selected per series.
+    join_keys: [sku_id, store_id, forecast_week]
+    business_notes: >
+      final_forecast is the point forecast to use by default (forecast_lower/
+      forecast_upper are the prediction interval). total_sales/total_margin
+      are the forecast converted to dollars. selected_model records which of
+      LightGBM/AutoETS won per series.
+    sample_questions:
+      - "What is the forecasted revenue for the next 6 weeks by sub-category?"
+      - "Which SKUs are forecast to grow the fastest?"
+
+  forecast_validation:
+    table: forecast_validation
+    csv: Outputs/Forecast_Validation.csv
+    kind: fact
+    description: Per-series holdout validation error (MAE) from the forecasting pipeline, and which model won.
+    join_keys: [sku_id, store_id]
+    business_notes: "Use this to answer questions about forecast accuracy/confidence, not the forecast values themselves."
+    sample_questions:
+      - "Which SKU forecasts have the highest error?"
+
+  delisting_recommendations:
+    table: delisting_recommendations
+    csv: Outputs/delisting_recommendations.csv
+    kind: fact
+    description: The core assortment-recommendation output — one row per SKU x granularity (Global/Store/Store_Cluster) with the full composite delist score, health score, GMROI, forecast trend, and the final Keep/Watch/Expand/Delist decision plus a natural-language rationale.
+    join_keys: [sku_id]
+    business_notes: >
+      granularity_level/granularity_value scope a row to Global, a specific
+      Store, or a Store_Cluster — filter to granularity_level='Global' for
+      one-row-per-SKU category-wide answers. delist_score is 0-1, higher =
+      stronger case to delist. decision is the Keep/Watch/Expand/Delist call.
+    sample_questions:
+      - "Which SKUs are top delist candidates?"
+      - "Which delist candidates also have high basket dependency?"
+
+  association_rules:
+    table: association_rules
+    csv: Outputs/association_rules.csv
+    kind: fact
+    description: Market-basket association rules (antecedent SKU -> consequent SKU) with support/confidence/lift, used for cross-sell insight.
+    join_keys: [antecedent_sku, consequent_sku]
+    business_notes: "lift > 1 means the pair is bought together more than chance; this is the table for 'what sells with X' questions."
+    sample_questions:
+      - "What products are most commonly bought together?"
+
+  sku_basket_insights:
+    table: sku_basket_insights
+    csv: Outputs/sku_basket_insights.csv
+    kind: fact
+    description: Per-SKU basket role summary — how dependent other purchases are on this SKU, its revenue/margin impact within baskets, and substitution risk.
+    join_keys: [sku_id]
+    business_notes: "basket_dependency_score and substitution_score are both 0-1."
+    sample_questions:
+      - "Which SKUs have the highest basket dependency?"
+
+  demand_transfer_matrix:
+    table: demand_transfer_matrix
+    csv: Outputs/demand_transfer_matrix.csv
+    kind: fact
+    description: Modeled demand-transfer relationships between substitutable SKUs within the same sub-category (if SKU A is delisted, how much of its demand likely transfers to SKU B).
+    join_keys: [from_sku, to_sku]
+    business_notes: "Use for 'if we delist X, what should we expect to absorb the demand' questions."
+    sample_questions:
+      - "If we delist SKU0031, which SKU would absorb most of the demand?"
+
+  new_sku_similarity_scores:
+    table: new_sku_similarity_scores
+    csv: Outputs/new_sku_similarity_scores.csv
+    kind: fact
+    description: For each new/candidate SKU, its similarity score against every existing SKU across 4 weighted attribute groups (hierarchy/functional/ingredient/commercial).
+    join_keys: [new_sku_id, existing_sku_id]
+    business_notes: "final_similarity_score is the weighted composite (0-1); similarity_rank orders matches per new SKU."
+    sample_questions:
+      - "What existing SKUs is the new product most similar to?"
+
+  new_sku_demand:
+    table: new_sku_demand
+    csv: Outputs/new_sku_analog_demand_forecast.csv
+    kind: fact
+    description: Analog-based demand forecast for a new/candidate SKU at Store x Week grain, derived from its most similar existing SKUs.
+    join_keys: [new_sku_id, store_id, year_wk]
+    business_notes: "analog_skus_used lists which existing SKUs' historical demand was blended to produce the estimate."
+    sample_questions:
+      - "What demand do we expect for the new SKU in its first 6 weeks?"
+
+  sku_similarity_for_substitution:
+    table: sku_similarity_for_substitution
+    csv: Raw_Input/SKU_Similarity_For_Substitution.csv
+    kind: dimension
+    description: Attribute snapshot of every SKU used specifically as the input basis for substitution/similarity scoring (subset of SKU_Master's attribute columns).
+    join_keys: [sku_id]
+    business_notes: "Prefer sku_master for general product lookups; use this table only when the question is specifically about substitution attribute inputs."
+    sample_questions: []
+
+  market_data:
+    table: market_data
+    csv: Raw_Input/Market_Data.csv
+    kind: fact
+    description: External market/category-level performance benchmarks per SKU (dollar/unit sales, market share, distribution, velocity) sourced from syndicated market data, independent of internal POS.
+    join_keys: [sku_id]
+    business_notes: >
+      Always use the exact column names given in this source's schema
+      (do not assume the CSV's original spaced names like "Dollar Sales" —
+      the live column names are typically snake_case, e.g. dollar_sales).
+      Use this table for external market-share/competitive questions, not
+      internal sales (use sales_tx for internal revenue).
+    sample_questions:
+      - "What is our market share trend for hair color products?"
+
+  inventory_report:
+    table: inventory_report
+    csv: Raw_Input/Inventory_Report.csv
+    kind: fact
+    description: Daily inventory position per Store x SKU — on-hand units, stockout flag, days of supply, and inventory value.
+    join_keys: [sku_id, store_id]
+    business_notes: "stockout_flag=1 means out of stock that day; use days_of_supply for replenishment-urgency questions."
+    sample_questions:
+      - "Which SKUs are currently at risk of stocking out?"
+
+  reviews_social:
+    table: reviews_social
+    csv: Raw_Input/Reviews_Social.csv
+    kind: fact
+    description: Customer review and social-listening records per SKU, with sentiment score and free-text review content.
+    join_keys: [sku_id]
+    business_notes: "sentiment_score is typically -1..1; review_text is free text (avoid selecting it in bulk, prefer aggregating rating/sentiment_score)."
+    sample_questions:
+      - "What is the average customer sentiment for SKU0045?"
+
+  assortment_decision:
+    table: assortment_decision
+    csv: "Outputs/Assortment decision.csv"
+    kind: fact
+    description: Audit log of every manual assortment decision (Keep/Expand/Watch/Delist etc) a Category Manager has made in the app, with the reasoning captured at decision time.
+    join_keys: [sku_id]
+    business_notes: "This is a decision LOG (append-only, one row per decision event), not the current live decision — a SKU may appear multiple times if revisited."
+    sample_questions:
+      - "What decisions has the category manager made on SKU0021 over time?"

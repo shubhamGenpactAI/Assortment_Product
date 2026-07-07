@@ -6,9 +6,10 @@ All routes are prefixed with /api/decision-hub.
 """
 
 from typing import Optional
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
 
+from ..agents.data_copilot import orchestrator
 from ..schemas.decision_hub import CopilotRequest
 from ..services.decision_hub_service import (
     get_hub_kpis,
@@ -22,7 +23,6 @@ from ..services.decision_hub_service import (
     get_sku_drilldown,
     build_copilot_context,
 )
-from ..services.llm_service import stream_copilot
 
 router = APIRouter()
 
@@ -135,16 +135,34 @@ def hub_copilot_context(
 
 
 # ---------------------------------------------------------------------------
-# AI Copilot — Streaming (SSE)
+# AI Copilot — Streaming (SSE), backed by the Data-Access Copilot pipeline
+# (agents/data_copilot/orchestrator.py): Intent & Routing -> Query
+# Generation -> Data Retrieval (DuckDB) -> Insight. Request/response shape
+# is unchanged from the previous single-shot implementation.
 # ---------------------------------------------------------------------------
 @router.post("/copilot/stream")
 async def hub_copilot_stream(req: CopilotRequest):
-    context = build_copilot_context(req.store_id, req.sub_cat, req.cluster)
+    trace_id = orchestrator.new_trace_id()
+    filters = {"store_id": req.store_id, "sub_cat": req.sub_cat, "cluster": req.cluster}
     return StreamingResponse(
-        stream_copilot(context, req.question or ""),
+        orchestrator.run_copilot(req.question or "", filters, trace_id=trace_id),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
             "X-Accel-Buffering": "no",
+            "X-Copilot-Trace-Id": trace_id,
         },
     )
+
+
+# ---------------------------------------------------------------------------
+# AI Copilot — Explainability: the structured trace (intent, sources, SQL,
+# row counts, retries) for a given /copilot/stream call, keyed by the
+# X-Copilot-Trace-Id header returned on that call.
+# ---------------------------------------------------------------------------
+@router.get("/copilot/explain/{trace_id}")
+def hub_copilot_explain(trace_id: str):
+    trace = orchestrator.get_trace(trace_id)
+    if trace is None:
+        raise HTTPException(status_code=404, detail=f"No trace found for '{trace_id}' (expired or invalid).")
+    return trace
