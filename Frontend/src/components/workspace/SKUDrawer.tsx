@@ -67,7 +67,7 @@ function BandPill({ value }: { value: string | null | undefined }) {
 const ACTION_LABELS: Partial<Record<DecisionType, { label: string; color: string; impact: string }>> = {
   EXPAND:      { label: 'Expand Distribution',  color: 'bg-emerald-500 hover:bg-emerald-600', impact: 'Expected +12–18% revenue uplift over 8 weeks.' },
   FUTURE_STAR: { label: 'Protect & Invest',      color: 'bg-sky-500 hover:bg-sky-600',        impact: 'Retain full distribution. Re-evaluate in 4 weeks.' },
-  KEEP:        { label: 'Maintain Assortment',   color: 'bg-indigo-500 hover:bg-indigo-600',  impact: 'No immediate action needed. Monitor inventory levels.' },
+  CONTINUE:    { label: 'Maintain Assortment',   color: 'bg-indigo-500 hover:bg-indigo-600',  impact: 'No immediate action needed. Monitor inventory levels.' },
   CASH_COW:    { label: 'Harvest Margin',        color: 'bg-violet-500 hover:bg-violet-600',  impact: 'Reduce promo spend. Optimise shelf price for margin.' },
   INVESTIGATE: { label: 'Escalate for Review',   color: 'bg-amber-500 hover:bg-amber-600',    impact: 'Conflicting signals — manual category review required.' },
   KEEP_WATCH:  { label: 'Set Performance Trigger', color: 'bg-orange-500 hover:bg-orange-600', impact: 'Flag for next review cycle. No incremental investment.' },
@@ -132,8 +132,8 @@ function ActionCenter({ decision, sku, masterInfo, productName }: ActionCenterPr
     try {
       await saveAssortmentDecision(buildPayload())
       setActionDone(true)
-    } catch {
-      setSaveError('Could not save — check server connection.')
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : 'Could not save — check server connection.')
     } finally {
       setSaving(false)
     }

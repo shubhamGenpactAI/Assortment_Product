@@ -96,4 +96,4 @@ def score_to_decision(delist_score: float) -> str:
         return "Delist"
     if delist_score >= 0.4:
         return "Watch"
-    return "Keep"
+    return "Continue"

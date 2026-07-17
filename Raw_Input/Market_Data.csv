@@ -1,61 +1,61 @@
 SKU_ID,Sub_Category,SKU_Name,Dollar Sales,Unit Sales,Volume Sales,Dollar per Unit,Dollar Sales Growth %,Unit Sales Growth %,Market Share %,Share Change vs YA,Avg. Retail Price,Gross Margin %,% ACV Distribution,% Stores Selling,Velocity,Repeat Purchase Rate,Category Growth %,Distribution Trend,Incremental Sales Index
 SKU0001,Shampoo,EarthTress Color Protection Shampoo 250ml,221079,15449,3862.2,14.31,-12.63,-15.07,6.96,-1.64,14.74,29.11,53.2,44.7,18.98,26.36,4.1,Declining,91.5
-SKU0002,Hair Color,EarthTress Sulphate Free Hair Color 100ml,855604,20372,2037.2,42,1.9,2.46,15.67,-1.38,44.19,36.38,54.4,47.1,69.72,37.32,5.67,Stable,105.9
+SKU0002,Hair Color,EarthTress Sulphate Free Hair Color 100ml,855604,20372,2037.2,42.0,1.9,2.46,15.67,-1.38,44.19,36.38,54.4,47.1,69.72,37.32,5.67,Stable,105.9
 SKU0003,Hair Color,VitalStrand Anti Hair Fall Hair Color 250ml,5976,323,80.8,18.51,-49.3,-49.69,0.11,-0.13,19.29,23.3,8.3,5.3,4.42,11.01,5.44,Declining,68.1
-SKU0004,Anti-Dandruff Treatment,PureMane Anti Hair Fall Anti-Dandruff Treatment 200ml,337635,19584,3916.8,17.24,43.86,45.4,7.43,1.25,18.6,26.42,55.8,44.3,29.38,45.26,4.45,Growing,119.8
-SKU0005,Anti-Dandruff Treatment,Lustra Botanix Herbal Anti-Dandruff Treatment 150ml,486720,50700,7605,9.6,3.95,2.48,10.71,-1.62,10.57,21.37,76.9,63.9,29.25,48.71,3.89,Stable,105.3
-SKU0006,Hair Color,GlossRoot Color Protection Hair Color 100ml,19516,460,46,42.42,-47.66,-51.14,0.36,-0.4,46.74,18.94,8.4,6,12.51,16.95,6.13,Declining,59
+SKU0004,Treatment,PureMane Anti Hair Fall Anti-Dandruff Treatment 200ml,337635,19584,3916.8,17.24,43.86,45.4,7.43,1.25,18.6,26.42,55.8,44.3,29.38,45.26,4.45,Growing,119.8
+SKU0005,Treatment,Lustra Botanix Herbal Anti-Dandruff Treatment 150ml,486720,50700,7605.0,9.6,3.95,2.48,10.71,-1.62,10.57,21.37,76.9,63.9,29.25,48.71,3.89,Stable,105.3
+SKU0006,Hair Color,GlossRoot Color Protection Hair Color 100ml,19516,460,46.0,42.42,-47.66,-51.14,0.36,-0.4,46.74,18.94,8.4,6.0,12.51,16.95,6.13,Declining,59.0
 SKU0007,Hair Color,EarthTress Color Protection Hair Color 400ml,647154,34169,13667.6,18.94,29.72,31.41,11.85,1.72,19.2,39.66,46.9,37.2,66.91,28.41,5.73,Growing,115.5
-SKU0008,Anti-Dandruff Treatment,Lustra Botanix Color Protection Anti-Dandruff Treatment 150ml,421748,24970,3745.5,16.89,35.17,33.58,9.28,1.06,17.33,41.65,64.6,55.8,29.07,40.45,3.37,Growing,124.2
-SKU0009,Hair Mask,SilkenAura Herbal Hair Mask 200ml,483309,19348,3869.6,24.98,43.59,42.04,12.99,1.42,26.3,34.8,35.5,32,58.09,44.47,7.46,Growing,105
+SKU0008,Treatment,Lustra Botanix Color Protection Anti-Dandruff Treatment 150ml,421748,24970,3745.5,16.89,35.17,33.58,9.28,1.06,17.33,41.65,64.6,55.8,29.07,40.45,3.37,Growing,124.2
+SKU0009,Hair Mask,SilkenAura Herbal Hair Mask 200ml,483309,19348,3869.6,24.98,43.59,42.04,12.99,1.42,26.3,34.8,35.5,32.0,58.09,44.47,7.46,Growing,105.0
 SKU0010,Hair Color,EarthTress Argan Oil Hair Color 200ml,41392,1096,219.2,37.76,-42.52,-42.66,0.76,-0.7,38.52,23.93,12.7,10.1,15.92,5.32,6.39,Declining,56.8
-SKU0011,Hair Oil,NourishLab Argan Oil Hair Oil 250ml,862761,49357,12339.2,17.48,41.24,39.22,11.4,2.1,19.19,33.76,56.4,45.5,72.77,45.32,5,Stable,107.2
+SKU0011,Hair Oil,NourishLab Argan Oil Hair Oil 250ml,862761,49357,12339.2,17.48,41.24,39.22,11.4,2.1,19.19,33.76,56.4,45.5,72.77,45.32,5.0,Stable,107.2
 SKU0012,Hair Serum,GlossRoot Color Protection Hair Serum 150ml,403341,20621,3093.2,19.56,20.99,22.01,10.54,1.43,20.35,42.88,24.6,21.7,71.82,25.15,9.4,Growing,124.4
 SKU0013,Hair Serum,SilkenAura Argan Oil Hair Serum 650ml,826988,26625,17306.2,31.06,-2.7,-3.03,21.61,-1.63,32.9,19.72,53.8,45.4,70.06,33.65,9.87,Stable,111.4
 SKU0014,Hair Color,VitalStrand Color Protection Hair Color 500ml,447458,22829,11414.5,19.6,39.88,40.86,8.2,1.7,20.16,24.77,46.4,36.3,47.28,36.54,6.59,Growing,117.3
 SKU0015,Hair Color,Velinea Keratin Hair Color 150ml,1000796,21132,3169.8,47.36,22.1,22.83,18.33,1.68,50.47,32.28,52.8,44.8,85.92,23.6,6.15,Growing,107.2
 SKU0016,Hair Color,NourishLab Anti Dandruff Hair Color 500ml,329538,12793,6396.5,25.76,-1.84,-3.76,6.04,-0.78,28.22,44.41,26.3,22.8,55.59,43.71,6.15,Stable,101.6
 SKU0017,Hair Color,PureMane Anti Hair Fall Hair Color 150ml,634325,30867,4630.1,20.55,22.1,20.35,11.62,1.07,21.74,33.48,60.6,47.7,51.04,23.18,5.8,Growing,115.5
-SKU0018,Hair Serum,PureMane Damage Repair Hair Serum 650ml,425630,24760,16094,17.19,-4.41,-4.2,11.12,-1.05,19,25.3,44.5,37.9,43.08,33.14,9.42,Declining,87.2
-SKU0019,Anti-Dandruff Treatment,EarthTress Argan Oil Anti-Dandruff Treatment 300ml,498083,16093,4827.9,30.95,29.34,28.42,10.96,0.82,32.87,21.3,47.8,39.2,48.87,30.79,3.72,Growing,112.3
-SKU0020,Anti-Dandruff Treatment,GlossRoot Damage Repair Anti-Dandruff Treatment 100ml,586556,33214,3321.4,17.66,7.18,7.14,12.91,-1.51,17.92,24.49,77.4,65.7,34.39,46.46,3.66,Stable,107.2
+SKU0018,Hair Serum,PureMane Damage Repair Hair Serum 650ml,425630,24760,16094.0,17.19,-4.41,-4.2,11.12,-1.05,19.0,25.3,44.5,37.9,43.08,33.14,9.42,Declining,87.2
+SKU0019,Treatment,EarthTress Argan Oil Anti-Dandruff Treatment 300ml,498083,16093,4827.9,30.95,29.34,28.42,10.96,0.82,32.87,21.3,47.8,39.2,48.87,30.79,3.72,Growing,112.3
+SKU0020,Treatment,GlossRoot Damage Repair Anti-Dandruff Treatment 100ml,586556,33214,3321.4,17.66,7.18,7.14,12.91,-1.51,17.92,24.49,77.4,65.7,34.39,46.46,3.66,Stable,107.2
 SKU0021,Hair Oil,EarthTress Color Protection Hair Oil 250ml,2097991,86479,21619.8,24.26,7.35,8.16,27.73,-2.02,24.82,42.78,65.2,56.2,143.58,65.02,5.15,Growing,132.3
-SKU0022,Anti-Dandruff Treatment,SilkenAura Anti Dandruff Anti-Dandruff Treatment 200ml,614606,21208,4241.6,28.98,31.95,31.81,13.52,1.25,31.4,30.48,53.8,46.9,50.51,40.33,4.48,Growing,114.8
-SKU0023,Anti-Dandruff Treatment,VitalStrand Biotin Anti-Dandruff Treatment 500ml,625670,34227,17113.5,18.28,6.29,6.3,13.77,-1.74,20.07,22.21,51.8,46.6,51.64,49.83,3.63,Stable,100.6
+SKU0022,Treatment,SilkenAura Anti Dandruff Anti-Dandruff Treatment 200ml,614606,21208,4241.6,28.98,31.95,31.81,13.52,1.25,31.4,30.48,53.8,46.9,50.51,40.33,4.48,Growing,114.8
+SKU0023,Treatment,VitalStrand Biotin Anti-Dandruff Treatment 500ml,625670,34227,17113.5,18.28,6.29,6.3,13.77,-1.74,20.07,22.21,51.8,46.6,51.64,49.83,3.63,Stable,100.6
 SKU0024,Hair Mask,NourishLab Argan Oil Hair Mask 400ml,1545799,46743,18697.2,33.07,31.59,33.27,41.55,1.15,36.21,34.29,56.6,47.4,125.43,31.03,8.78,Growing,119.8
 SKU0025,Conditioner,Lustra Botanix Anti Dandruff Conditioner 400ml,362787,18807,7522.8,19.29,-23.75,-24.93,11.77,-3.46,19.75,41.49,46.8,37.7,37.11,26.09,2.91,Declining,82.7
 SKU0026,Shampoo,Lustra Botanix Anti Dandruff Shampoo 100ml,1389839,62747,6274.7,22.15,18.19,20.19,43.78,3.82,24.34,32.43,76.3,62.8,85.12,24.17,4.64,Growing,104.6
-SKU0027,Hair Color,EarthTress Smoothening Hair Color 300ml,708288,22051,6615.3,32.12,-2.93,-4.78,12.97,-1.85,33.12,42.7,51.1,45.9,59.48,36.2,6.56,Stable,95
-SKU0028,Conditioner,SilkenAura Keratin Conditioner 500ml,12418,822,411,15.11,-48.25,-49.73,0.4,-0.37,15.59,28.09,19.6,11.9,3.98,15.92,2.45,Declining,69.1
+SKU0027,Hair Color,EarthTress Smoothening Hair Color 300ml,708288,22051,6615.3,32.12,-2.93,-4.78,12.97,-1.85,33.12,42.7,51.1,45.9,59.48,36.2,6.56,Stable,95.0
+SKU0028,Conditioner,SilkenAura Keratin Conditioner 500ml,12418,822,411.0,15.11,-48.25,-49.73,0.4,-0.37,15.59,28.09,19.6,11.9,3.98,15.92,2.45,Declining,69.1
 SKU0029,Hair Serum,GlossRoot Sulphate Free Hair Serum 650ml,9910,436,283.4,22.74,-50.73,-50.31,0.26,-0.29,23.59,26.57,5.6,3.4,11.21,5.28,9.49,Declining,75.5
-SKU0030,Anti-Dandruff Treatment,GlossRoot Anti Dandruff Anti-Dandruff Treatment 250ml,52618,5050,1262.5,10.42,36.01,36.81,1.16,0.14,10.88,27.91,18,16.4,12.34,13.27,4.01,Growing,88.1
+SKU0030,Treatment,GlossRoot Anti Dandruff Anti-Dandruff Treatment 250ml,52618,5050,1262.5,10.42,36.01,36.81,1.16,0.14,10.88,27.91,18.0,16.4,12.34,13.27,4.01,Growing,88.1
 SKU0031,Conditioner,NourishLab Color Protection Conditioner 650ml,147988,9541,6201.6,15.51,-11.31,-12.66,4.8,-0.54,17.01,22.22,34.1,26.5,21.56,28.94,2.71,Declining,77.7
 SKU0032,Shampoo,EarthTress Argan Oil Shampoo 100ml,46326,2171,217.1,21.34,-32.43,-34.85,1.46,-0.87,23.19,32.1,20.4,15.4,11.57,10.04,4.2,Declining,59.4
-SKU0033,Hair Serum,SilkenAura Smoothening Hair Serum 500ml,1504194,41256,20628,36.46,0.77,1.28,39.31,-1.5,37.21,17.33,63.9,56.1,103.31,31.87,10.55,Stable,95
+SKU0033,Hair Serum,SilkenAura Smoothening Hair Serum 500ml,1504194,41256,20628.0,36.46,0.77,1.28,39.31,-1.5,37.21,17.33,63.9,56.1,103.31,31.87,10.55,Stable,95.0
 SKU0034,Hair Oil,NourishLab Keratin Hair Oil 300ml,1449651,130247,39074.1,11.13,19.7,18.82,19.16,0.72,12.16,26.75,69.9,59.5,93.55,47.99,4.78,Growing,136.9
-SKU0035,Hair Oil,Lustra Botanix Smoothening Hair Oil 100ml,1568299,122428,12242.8,12.81,6.17,4.8,20.73,-1.76,13.8,26.55,80,71.7,84.01,49.15,5.54,Growing,137.7
+SKU0035,Hair Oil,Lustra Botanix Smoothening Hair Oil 100ml,1568299,122428,12242.8,12.81,6.17,4.8,20.73,-1.76,13.8,26.55,80.0,71.7,84.01,49.15,5.54,Growing,137.7
 SKU0036,Shampoo,Revynce Biotin Shampoo 650ml,515118,26029,16918.8,19.79,6.06,5.36,16.23,-0.28,20.01,18.33,58.7,50.4,39.31,34.7,4.65,Stable,94.8
 SKU0037,Shampoo,VitalStrand Damage Repair Shampoo 150ml,13799,1653,247.9,8.35,-26.69,-27.5,0.43,-0.21,8.84,37.79,20.2,12.5,4.28,14.68,3.29,Declining,59.5
 SKU0038,Hair Color,EarthTress Smoothening Hair Color 100ml,496413,12284,1228.4,40.41,26.74,27.09,9.09,1.13,41.4,32.46,17.1,16.1,119.33,57.96,6.05,Stable,90.1
-SKU0039,Hair Oil,VitalStrand Color Protection Hair Oil 250ml,1847,56,14,33.2,-24.18,-25.94,0.02,-0.02,34.7,13.82,2.4,1.5,4.44,4.1,4.64,Declining,68.3
+SKU0039,Hair Oil,VitalStrand Color Protection Hair Oil 250ml,1847,56,14.0,33.2,-24.18,-25.94,0.02,-0.02,34.7,13.82,2.4,1.5,4.44,4.1,4.64,Declining,68.3
 SKU0040,Hair Mask,Velinea Argan Oil Hair Mask 300ml,1173676,25615,7684.5,45.82,43.9,44.81,31.55,3.5,47.94,21.43,39.5,36.2,124.7,39.58,7.9,Growing,116.2
-SKU0041,Hair Color,SilkenAura Biotin Hair Color 150ml,273062,7610,1141.5,35.88,-21.52,-24.36,5,-2.07,36.29,30.87,28.7,24,43.76,37.68,5.94,Declining,95.6
+SKU0041,Hair Color,SilkenAura Biotin Hair Color 150ml,273062,7610,1141.5,35.88,-21.52,-24.36,5.0,-2.07,36.29,30.87,28.7,24.0,43.76,37.68,5.94,Declining,95.6
 SKU0042,Conditioner,PureMane Herbal Conditioner 150ml,692150,75728,11359.2,9.14,-2.56,-3.44,22.45,-0.29,10.07,29.96,69.6,65.3,40.83,47.56,3.34,Stable,107.9
-SKU0043,Anti-Dandruff Treatment,SilkenAura Rosemary Anti-Dandruff Treatment 300ml,125866,9712,2913.6,12.96,-23.91,-24.85,2.77,-1.59,13.33,28.02,23.3,18.9,25.75,24.83,4.63,Declining,89.8
+SKU0043,Treatment,SilkenAura Rosemary Anti-Dandruff Treatment 300ml,125866,9712,2913.6,12.96,-23.91,-24.85,2.77,-1.59,13.33,28.02,23.3,18.9,25.75,24.83,4.63,Declining,89.8
 SKU0044,Hair Mask,PureMane Anti Dandruff Hair Mask 200ml,420534,12951,2590.2,32.47,-18.5,-17.95,11.3,-6.44,34.86,32.69,43.8,35.3,45.95,23.52,8.35,Declining,92.3
-SKU0045,Hair Oil,Velinea Color Protection Hair Oil 250ml,29047,1347,336.8,21.57,36.78,36.35,0.38,0.06,23.03,23.64,4,3.7,29.4,12.96,4.78,Growing,81.3
-SKU0046,Hair Oil,SilkenAura Anti Hair Fall Hair Oil 150ml,989448,42104,6315.6,23.5,37.56,37.26,13.08,2.13,24.98,34.06,49.3,41.6,91.48,27.64,4.72,Growing,124
-SKU0047,Anti-Dandruff Treatment,GlossRoot Damage Repair Anti-Dandruff Treatment 300ml,51268,3418,1025.4,15,16.99,18.49,1.13,-0.02,15.74,29.34,19.7,15.6,12.64,27.42,4.45,Growing,88.8
+SKU0045,Hair Oil,Velinea Color Protection Hair Oil 250ml,29047,1347,336.8,21.57,36.78,36.35,0.38,0.06,23.03,23.64,4.0,3.7,29.4,12.96,4.78,Growing,81.3
+SKU0046,Hair Oil,SilkenAura Anti Hair Fall Hair Oil 150ml,989448,42104,6315.6,23.5,37.56,37.26,13.08,2.13,24.98,34.06,49.3,41.6,91.48,27.64,4.72,Growing,124.0
+SKU0047,Treatment,GlossRoot Damage Repair Anti-Dandruff Treatment 300ml,51268,3418,1025.4,15.0,16.99,18.49,1.13,-0.02,15.74,29.34,19.7,15.6,12.64,27.42,4.45,Growing,88.8
 SKU0048,Shampoo,Revynce Anti Dandruff Shampoo 200ml,305323,16087,3217.4,18.98,-12.76,-15.35,9.62,-2.27,19.76,36.64,59.7,50.3,23.3,27.28,3.89,Declining,77.7
-SKU0049,Conditioner,VitalStrand Sulphate Free Conditioner 200ml,717470,30596,6119.2,23.45,0.75,-1.1,23.27,0.47,25.95,25.98,57.6,50,55.19,31.57,3.32,Stable,97.7
+SKU0049,Conditioner,VitalStrand Sulphate Free Conditioner 200ml,717470,30596,6119.2,23.45,0.75,-1.1,23.27,0.47,25.95,25.98,57.6,50.0,55.19,31.57,3.32,Stable,97.7
 SKU0050,Conditioner,GlossRoot Argan Oil Conditioner 250ml,86981,6074,1518.5,14.32,12.29,12.25,2.82,0.34,15.27,42.12,12.2,11.5,28.84,66.98,3.55,Stable,93.2
 SKU0051,Conditioner,Velinea Damage Repair Conditioner 200ml,99039,5676,1135.2,17.45,12.19,12.03,3.21,0.38,18.5,28.8,22.1,17.8,21.4,11.04,2.42,Stable,98.4
-SKU0052,Anti-Dandruff Treatment,NourishLab Argan Oil Anti-Dandruff Treatment 250ml,15536,560,140,27.76,-34.29,-34.04,0.34,-0.28,30.75,23.09,8.7,5.7,10.67,12.67,3.46,Declining,70.1
-SKU0053,Anti-Dandruff Treatment,Revynce Keratin Anti-Dandruff Treatment 250ml,728666,40959,10239.8,17.79,39.39,37.98,16.03,2.26,18.1,20.68,50.1,46.5,60.4,27.19,3.86,Declining,111
-SKU0054,Conditioner,Lustra Botanix Anti Hair Fall Conditioner 250ml,486392,39257,9814.2,12.39,24.51,25.96,15.78,3.27,13.74,42.7,42.9,38,49.23,25.45,3.31,Growing,107.8
+SKU0052,Treatment,NourishLab Argan Oil Anti-Dandruff Treatment 250ml,15536,560,140.0,27.76,-34.29,-34.04,0.34,-0.28,30.75,23.09,8.7,5.7,10.67,12.67,3.46,Declining,70.1
+SKU0053,Treatment,Revynce Keratin Anti-Dandruff Treatment 250ml,728666,40959,10239.8,17.79,39.39,37.98,16.03,2.26,18.1,20.68,50.1,46.5,60.4,27.19,3.86,Declining,111.0
+SKU0054,Conditioner,Lustra Botanix Anti Hair Fall Conditioner 250ml,486392,39257,9814.2,12.39,24.51,25.96,15.78,3.27,13.74,42.7,42.9,38.0,49.23,25.45,3.31,Growing,107.8
 SKU0055,Hair Oil,PureMane Argan Oil Hair Oil 500ml,392479,21817,10908.5,17.99,7.77,8.41,5.19,-0.35,19.98,20.96,41.5,36.8,41.02,37.1,4.28,Stable,104.7
 SKU0056,Conditioner,PureMane Biotin Conditioner 300ml,478068,38554,11566.2,12.4,0.04,-0.13,15.51,0.21,12.71,44.33,52.3,43.7,41.98,47.62,3.36,Stable,104.2
 SKU0057,Hair Serum,GlossRoot Biotin Hair Serum 150ml,656843,22456,3368.4,29.25,27.24,24.71,17.16,3.05,31.19,20.35,40.8,36.7,68.65,38.38,9.44,Growing,125.2
-SKU0058,Hair Mask,Revynce Sulphate Free Hair Mask 100ml,97236,4293,429.3,22.65,49.53,49.05,2.61,0.37,23.18,32.79,15,12.4,30.16,26.08,8.45,Growing,91.4
-SKU0059,Shampoo,NourishLab Argan Oil Shampoo 400ml,683301,55689,22275.6,12.27,15.69,17.59,21.52,1.45,12.55,42.74,65.6,53.2,49.4,43.3,3.83,Growing,111
+SKU0058,Hair Mask,Revynce Sulphate Free Hair Mask 100ml,97236,4293,429.3,22.65,49.53,49.05,2.61,0.37,23.18,32.79,15.0,12.4,30.16,26.08,8.45,Growing,91.4
+SKU0059,Shampoo,NourishLab Argan Oil Shampoo 400ml,683301,55689,22275.6,12.27,15.69,17.59,21.52,1.45,12.55,42.74,65.6,53.2,49.4,43.3,3.83,Growing,111.0
 SKU0060,Hair Oil,VitalStrand Argan Oil Hair Oil 500ml,174410,8981,4490.5,19.42,-16.46,-17.88,2.31,-0.87,20.73,29.64,36.4,28.5,23.62,31.06,4.74,Declining,95.1

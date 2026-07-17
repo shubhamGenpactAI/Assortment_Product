@@ -186,13 +186,13 @@ export const SKUTable = memo(function SKUTable({ rows, skuNames, selectedId, onR
       field:      'granularity_level',
       headerName: 'Level',
       width:      100,
-      cellStyle:  { fontSize: '10px', color: '#9CA3AF' } as Record<string, string>,
+      cellStyle:  { fontSize: '10px', color: '#374151' } as Record<string, string>,
     },
     {
       field:      'granularity_value',
       headerName: 'Scope',
       width:      110,
-      cellStyle:  { fontSize: '10px', color: '#9CA3AF' } as Record<string, string>,
+      cellStyle:  { fontSize: '10px', color: '#374151' } as Record<string, string>,
     },
   ], [skuNames])
 

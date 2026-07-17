@@ -9,7 +9,7 @@ The **Category Decision Hub** (`/decision-hub`) is the primary command-and-contr
 | Filter | Values | Effect |
 |--------|--------|--------|
 | **Store** | All Stores / individual store ID | Scopes every chart and KPI to that store |
-| **Sub-Category** | Shampoo, Conditioner, Hair Color, Hair Oil, Hair Serum, Hair Mask, Anti-Dandruff Treatment | Narrows data to one product sub-category |
+| **Sub-Category** | Shampoo, Conditioner, Hair Color, Hair Oil, Hair Serum, Hair Mask, Treatment | Narrows data to one product sub-category |
 | **Cluster** | Premium Urban, Emerging Growth, Affluent Suburban, Digital-First Urban, Rural Remote | Filters by the store cluster from `store_clusters.csv` |
 | **Clear (✕)** | — | Resets all filters to show the full portfolio |
 

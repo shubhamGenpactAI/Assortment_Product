@@ -185,9 +185,6 @@ export default function WorkspacePage() {
         className="flex-1 overflow-y-auto transition-all duration-300"
         style={{ marginRight: drawerOpen ? '500px' : '0' }}
       >
-        {/* AI insight feed */}
-        <InsightFeed rows={data.recommendations} summary={data.summary} skuNames={skuNames} />
-
         {/* Table header */}
         <div className="flex items-center justify-between px-6 py-2">
           <div className="flex items-center gap-2">
@@ -201,15 +198,18 @@ export default function WorkspacePage() {
           <p className="text-[11px] text-gray-400">Click a row to open the AI insight drawer →</p>
         </div>
 
-        {/* AG Grid table */}
-        <div className="px-6 pb-6">
-          <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100" style={{ height: 'calc(100vh - 380px)', minHeight: '400px' }}>
+        {/* Table + AI insights rail */}
+        <div className="px-6 pb-6 flex flex-col lg:flex-row gap-4" style={{ height: 'calc(100vh - 300px)', minHeight: '400px' }}>
+          <div className="flex-1 min-w-0 bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 h-full">
             <SKUTable
               rows={filteredRows}
               skuNames={skuNames}
               selectedId={selected?.SKU_ID}
               onRowClick={handleRowClick}
             />
+          </div>
+          <div className="w-full lg:w-[300px] shrink-0 h-full">
+            <InsightFeed rows={data.recommendations} summary={data.summary} skuNames={skuNames} />
           </div>
         </div>
       </div>

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Hair Care Assortment Optimization MVP for retail category managers. The system generates data-driven SKU recommendations (Keep / Expand / Watch / Delist) using demand forecasting, basket analysis, new-product similarity scoring, and store clustering. All data is file-based (CSV/XLSX) — no external databases or APIs.
+Hair Care Assortment Optimization MVP for retail category managers. The system generates data-driven SKU recommendations (Continue / Expand / Watch / Delist) using demand forecasting, basket analysis, new-product similarity scoring, and store clustering. All data is file-based (CSV/XLSX) — no external databases or APIs.
 
 ## Running the Application
 
@@ -66,7 +66,7 @@ Single-file Streamlit app. Default landing page is a unified 3-column dashboard.
 - 🟦 Store Forecast Treemap — interactive squarify treemap with auto drill-down
 - 📋 SKU Performance — per-store forecast vs historical, brand share pie, demand tiers
 - ✨ New SKU Similarity — manual form or file upload, analog store-level forecast
-- 🧩 Assortment Recommendation — rule-based Keep/Expand/Watch/Delist per store
+- 🧩 Assortment Recommendation — rule-based Continue/Expand/Watch/Delist per store
 - 🚨 Delisting Risk Analysis — scatter + table from `delisting_recommendations.csv`
 - 🩺 Data Quality — file status table, row/column counts, missing-column warnings
 
@@ -98,5 +98,5 @@ Single-file Streamlit app. Default landing page is a unified 3-column dashboard.
 - Time: `Year_WK` (weekly grain)
 - Forecast: `Forecast_Week`, `Final_Forecast`, `Selected_Model`
 - Demand: `Quantity_Sold`
-- Recommendation: `delist_score` (0–1), `recommendation` (Keep/Watch/Expand/Delist), `nl_summary`
+- Recommendation: `delist_score` (0–1), `recommendation` (Continue/Watch/Expand/Delist), `nl_summary`
 - Granularity: `granularity_level` (Channel, Store, Store_Cluster, etc.), `granularity_value`

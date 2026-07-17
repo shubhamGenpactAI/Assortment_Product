@@ -87,7 +87,7 @@ Agent Hub (Brief)
 >
 > Notice item number two: *[SKU name]* is flagged with both a **Stockout Risk** and a **Delist Candidate** signal — that conflict badge in red tells me the system found a tension I need to resolve before I do anything. I can't delist something I'm also about to run out of; I need to understand which signal is dominant first.
 >
-> Let me jump to Decision Hub and filter to that store. The Category Health strip immediately tells me Anti-Dandruff Treatment is the weakest sub-category — composite score 42. The KPI bar shows $18,400 of lost revenue just from that one SKU. The Risk Matrix confirms it's a Stock-out Risk with 1.2 weeks of cover left.
+> Let me jump to Decision Hub and filter to that store. The Category Health strip immediately tells me Treatment is the weakest sub-category — composite score 42. The KPI bar shows $18,400 of lost revenue just from that one SKU. The Risk Matrix confirms it's a Stock-out Risk with 1.2 weeks of cover left.
 >
 > Now I flip over to Category Intelligence, search for the SKU, and open the drawer. The delist score is 0.83 — but the forecast shows a demand *uptick* in the next 6 weeks. That's why there's a conflict. The system flagged it for delist based on historical performance, but the forward-looking model says demand is recovering. My decision: replenish for this cycle and re-evaluate at the next reset.
 >

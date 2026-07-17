@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python similarity.py)"
+      "Bash(python similarity.py)",
+      "Bash(python -c ' *)",
+      "Bash(mkdir *)",
+      "Bash(python \"C:\\\\Users\\\\703442~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-703442296-Genpact-Retail-Category-Growth-ImportantFiles-Assortment\\\\f8474ed9-ecbb-4292-b75c-c2545768bea6\\\\scratchpad\\\\regen_inventory.py\")",
+      "Bash(python Backend/pipelines/basket_abc_analysis/basket_analysis.py)",
+      "Bash(python \"C:\\\\Users\\\\703442~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-703442296-Genpact-Retail-Category-Growth-ImportantFiles-Assortment\\\\f8474ed9-ecbb-4292-b75c-c2545768bea6\\\\scratchpad\\\\push_delisting.py\")",
+      "Bash(python generate_workspace_data.py)",
+      "Bash(npm run *)",
+      "Bash(python -m py_compile Backend/pipelines/basket_abc_analysis/basket_analysis.py Backend/services/decision_hub_service.py Backend/agents/agent_core.py Backend/agents/localization_agent.py Backend/pipelines/market/generate_market_data.py Backend/api/general.py)",
+      "Bash(python \"C:\\\\Users\\\\703442~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-703442296-Genpact-Retail-Category-Growth-ImportantFiles-Assortment\\\\0e6322bb-b57d-485c-a4b8-a327fb82fd86\\\\scratchpad\\\\sync_postgres.py\")",
+      "Bash(python -c \"import pandas, sqlalchemy; print\\('pandas', pandas.__version__\\); print\\('sqlalchemy', sqlalchemy.__version__\\)\")",
+      "Bash(git check-ignore *)"
     ]
   }
 }

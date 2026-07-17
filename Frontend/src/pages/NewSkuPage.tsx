@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { AgGridReact } from 'ag-grid-react'
 import type { ColDef } from 'ag-grid-community'
 import PlotlyChart from '../components/ui/PlotlyChart'
+import PageTabs from '../components/ui/PageTabs'
 import { fetchIntelligence, uploadNewSkuCsv, clearUploadCache, downloadCsvTemplate } from '../api/newSkuApi'
 import { fetchSimilarity } from '../api/generalApi'
 
@@ -625,7 +626,6 @@ function UploadPanel({
   uploadedCount: number
   onClearCache: () => void
 }) {
-  const [open,       setOpen]       = useState(false)
   const [dragging,   setDragging]   = useState(false)
   const [uploading,  setUploading]  = useState(false)
   const [result,     setResult]     = useState<any>(null)
@@ -664,12 +664,9 @@ function UploadPanel({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm mb-4 overflow-hidden">
-      {/* Header bar — always visible */}
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
-      >
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
+      {/* Header — always visible, no collapse (tab itself gates visibility) */}
+      <div className="flex items-center gap-3 mb-4">
         <span className="text-lg">📁</span>
         <div className="flex-1">
           <span className="font-semibold text-[13px] text-[#1A1D2E]">Upload New SKUs via CSV</span>
@@ -682,38 +679,35 @@ function UploadPanel({
             {uploadedCount} SKU{uploadedCount > 1 ? 's' : ''} loaded
           </span>
         )}
-        <span className={`text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>▾</span>
-      </button>
+      </div>
 
-      {open && (
-        <div className="px-4 pb-4 border-t border-gray-100">
-          {/* Template hint */}
-          <div className="mt-3 mb-3 p-3 bg-indigo-50 border border-indigo-100 rounded-lg text-[11.5px] text-indigo-700 flex items-start justify-between gap-3 flex-wrap">
+      <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-4">
+        {/* Left column: instructions + drop zone */}
+        <div>
+          <div className="mb-3 p-3 bg-indigo-50 border border-indigo-100 rounded-lg text-[11.5px] text-indigo-700">
             <div>
               <span className="font-bold">Required columns:</span> {REQUIRED_COLS_LABEL.join(', ')}.{' '}
               <span className="font-bold">Recommended:</span>{' '}
               Sub_Category, Brand, Price_Band, Ingredient_1–4, functional flags (Organic_Flag etc.).
               CSV or XLSX accepted. First row = headers.
             </div>
+            <details className="mt-2">
+              <summary className="text-[11px] text-indigo-500 cursor-pointer hover:text-indigo-700 select-none">
+                View all expected column names ▾
+              </summary>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {EXPECTED_COLS.map(c => (
+                  <code key={c} className="text-[10px] bg-white text-gray-600 px-1.5 py-0.5 rounded border border-indigo-100">{c}</code>
+                ))}
+              </div>
+            </details>
             <button
               onClick={downloadCsvTemplate}
-              className="shrink-0 text-[11px] font-semibold text-indigo-600 bg-white border border-indigo-200 px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors whitespace-nowrap"
+              className="mt-3 text-[11px] font-semibold text-indigo-600 bg-white border border-indigo-200 px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors"
             >
               ⬇ Download Template CSV
             </button>
           </div>
-
-          {/* Column cheatsheet */}
-          <details className="mb-3">
-            <summary className="text-[11px] text-gray-400 cursor-pointer hover:text-gray-600 select-none">
-              View all expected column names ▾
-            </summary>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {EXPECTED_COLS.map(c => (
-                <code key={c} className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{c}</code>
-              ))}
-            </div>
-          </details>
 
           {/* Drop zone */}
           <div
@@ -739,16 +733,17 @@ function UploadPanel({
             )}
           </div>
 
-          {/* Upload error */}
           {uploadErr && (
             <div className="mt-2 p-2.5 bg-red-50 border border-red-200 rounded-lg text-[12px] text-red-700">
               {uploadErr}
             </div>
           )}
+        </div>
 
-          {/* Upload result */}
-          {result && !uploadErr && (
-            <div className="mt-3 space-y-2">
+        {/* Right column: processed results */}
+        <div>
+          {result && !uploadErr ? (
+            <div className="space-y-2">
               {/* Summary bar */}
               <div className={`flex items-center gap-3 p-3 rounded-lg border text-[12px] font-medium
                 ${result.status === 'ok'      ? 'bg-green-50 border-green-200 text-green-800' :
@@ -813,19 +808,23 @@ function UploadPanel({
                 </p>
               )}
             </div>
-          )}
-
-          {/* Clear cache */}
-          {uploadedCount > 0 && (
-            <div className="mt-3 flex justify-end">
-              <button
-                onClick={onClearCache}
-                className="text-[11px] text-red-400 hover:text-red-600 underline"
-              >
-                Clear upload cache ({uploadedCount} SKU{uploadedCount > 1 ? 's' : ''})
-              </button>
+          ) : (
+            <div className="h-full flex items-center justify-center text-center text-[12px] text-gray-400 border border-dashed border-gray-200 rounded-xl py-12">
+              Upload a CSV/XLSX to see processed SKU results here.
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Clear cache */}
+      {uploadedCount > 0 && (
+        <div className="mt-3 flex justify-end">
+          <button
+            onClick={onClearCache}
+            className="text-[11px] text-red-400 hover:text-red-600 underline"
+          >
+            Clear upload cache ({uploadedCount} SKU{uploadedCount > 1 ? 's' : ''})
+          </button>
         </div>
       )}
     </div>
@@ -843,6 +842,7 @@ export default function NewSkuPage() {
   const [loadingList,  setLoadingList]  = useState(true)
   const [loading,      setLoading]      = useState(false)
   const [error,        setError]        = useState('')
+  const [tab,          setTab]          = useState<'upload' | 'summary'>('upload')
 
   // Merged SKU list: uploaded SKUs first, then CSV SKUs
   const allSkus = [...uploadedSkus, ...skuList.filter(s => !uploadedSkus.includes(s))]
@@ -920,13 +920,6 @@ export default function NewSkuPage() {
         )}
       </div>
 
-      {/* ── CSV Upload Panel ── */}
-      <UploadPanel
-        onUploaded={handleUploaded}
-        uploadedCount={uploadedSkus.length}
-        onClearCache={handleClearCache}
-      />
-
       {/* ── SKU Selector ── */}
       <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4 shadow-sm flex items-center gap-3 flex-wrap">
         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Analyse SKU</label>
@@ -976,66 +969,87 @@ export default function NewSkuPage() {
         </div>
       )}
 
-      {loading && !intel && <Spinner />}
+      {/* ── Page tabs ── */}
+      <PageTabs
+        active={tab}
+        onChange={k => setTab(k as 'upload' | 'summary')}
+        tabs={[
+          { key: 'upload',  label: 'Upload & Process', icon: '📁', sub: uploadedSkus.length ? `${uploadedSkus.length} SKUs` : undefined },
+          { key: 'summary', label: 'AI Summary',       icon: '🤖', sub: copilot?.decision_signal },
+        ]}
+      />
 
-      {intel && !loading && (
+      {tab === 'upload' && (
+        <UploadPanel
+          onUploaded={handleUploaded}
+          uploadedCount={uploadedSkus.length}
+          onClearCache={handleClearCache}
+        />
+      )}
+
+      {tab === 'summary' && (
         <>
-          {/* ── AI Copilot Summary ── */}
-          {copilot && (
-            <div className="mb-4">
-              <div className="flex items-center gap-2 mb-3">
-                <SectionHeader icon="🤖" title="AI Merchant Copilot" sub="Executive decision summary" />
-                <div className="flex-1" />
-                <span className="text-[11px] bg-gray-100 rounded-full px-3 py-1 text-gray-500 font-medium">
-                  {copilot.one_liner}
-                </span>
+          {loading && !intel && <Spinner />}
+
+          {intel && !loading && (
+            <div className="flex flex-col xl:flex-row gap-4">
+              {/* ── Main intelligence panels ── */}
+              <div className="flex-1 space-y-4 min-w-0">
+                {/* Forecast explanation */}
+                {forecastExpl && (
+                  <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+                    <p className="font-bold text-[12px] text-indigo-700 mb-1">📊 {forecastExpl.headline}</p>
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
+                      {(forecastExpl.drivers ?? []).map((d: string, i: number) => (
+                        <li key={i} className="text-[11.5px] text-indigo-600 flex items-start gap-1.5">
+                          <span className="mt-0.5">→</span> {d}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Analogs + forecast */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  <AnalogPanel similarity={similarity} explainability={explainability} />
+                  <ForecastPanel data={forecast} />
+                </div>
+
+                {/* Cannibalization + Stores */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  <CannibalizationPanel data={cannib} />
+                  <StoreRecommendationPanel data={storeRec} />
+                </div>
+
+                {/* Scenarios + Risks */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  <ScenarioPanel scenarios={scenarios} />
+                  <RiskPanel data={risks} />
+                </div>
+
+                {/* Whitespace */}
+                <WhitespacePanel data={whitespace} />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-                <CopilotCard icon="🚀" title="Launch Overview" body={copilot.launch_overview}    accent="indigo" />
-                <CopilotCard icon="💡" title="Market Opportunity" body={copilot.market_opportunity} accent="green" />
-                <CopilotCard icon="⚠️" title="Risk Assessment"   body={copilot.risk_assessment}   accent="red"   />
-                <CopilotCard icon="📋" title="Recommendation"    body={copilot.recommendation}    accent="amber" />
-              </div>
+
+              {/* ── AI Merchant Copilot right rail ── */}
+              {copilot && (
+                <div className="w-full xl:w-[340px] shrink-0">
+                  <div className="xl:sticky xl:top-[110px] bg-white border border-gray-200 rounded-xl shadow-sm p-4">
+                    <SectionHeader icon="🤖" title="AI Merchant Copilot" sub="Executive decision summary" />
+                    <span className="inline-block text-[11px] bg-gray-100 rounded-full px-3 py-1 text-gray-500 font-medium mb-3">
+                      {copilot.one_liner}
+                    </span>
+                    <div className="flex flex-col gap-3">
+                      <CopilotCard icon="🚀" title="Launch Overview"    body={copilot.launch_overview}    accent="indigo" />
+                      <CopilotCard icon="💡" title="Market Opportunity" body={copilot.market_opportunity} accent="green" />
+                      <CopilotCard icon="⚠️" title="Risk Assessment"    body={copilot.risk_assessment}    accent="red"   />
+                      <CopilotCard icon="📋" title="Recommendation"     body={copilot.recommendation}     accent="amber" />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
-
-          {/* ── Forecast explanation ── */}
-          {forecastExpl && (
-            <div className="mb-4 bg-indigo-50 border border-indigo-100 rounded-xl p-4">
-              <p className="font-bold text-[12px] text-indigo-700 mb-1">📊 {forecastExpl.headline}</p>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
-                {(forecastExpl.drivers ?? []).map((d: string, i: number) => (
-                  <li key={i} className="text-[11.5px] text-indigo-600 flex items-start gap-1.5">
-                    <span className="mt-0.5">→</span> {d}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* ── Main grid ── */}
-          <div className="space-y-4">
-            {/* Analogs + forecast */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-              <AnalogPanel similarity={similarity} explainability={explainability} />
-              <ForecastPanel data={forecast} />
-            </div>
-
-            {/* Cannibalization + Stores */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-              <CannibalizationPanel data={cannib} />
-              <StoreRecommendationPanel data={storeRec} />
-            </div>
-
-            {/* Scenarios + Risks */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-              <ScenarioPanel scenarios={scenarios} />
-              <RiskPanel data={risks} />
-            </div>
-
-            {/* Whitespace */}
-            <WhitespacePanel data={whitespace} />
-          </div>
         </>
       )}
     </div>

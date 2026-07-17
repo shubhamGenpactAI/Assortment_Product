@@ -22,6 +22,8 @@ from ..services.decision_hub_service import (
     get_forecast_fan,
     get_sku_drilldown,
     build_copilot_context,
+    get_competitive_intelligence,
+    get_competitive_drilldown,
 )
 
 router = APIRouter()
@@ -120,6 +122,19 @@ def hub_fan(sku_id: str, store_id: str):
 @router.get("/sku-drilldown/{sku_id}/{store_id}")
 def hub_drilldown(sku_id: str, store_id: str):
     return get_sku_drilldown(sku_id, store_id)
+
+
+# ---------------------------------------------------------------------------
+# Competitive Intelligence (Competitor.csv)
+# ---------------------------------------------------------------------------
+@router.get("/competitive-intelligence")
+def hub_competitive_intelligence():
+    return get_competitive_intelligence()
+
+
+@router.get("/competitive-intelligence/drilldown")
+def hub_competitive_drilldown(product_name: str, category_key: str):
+    return get_competitive_drilldown(product_name, category_key)
 
 
 # ---------------------------------------------------------------------------

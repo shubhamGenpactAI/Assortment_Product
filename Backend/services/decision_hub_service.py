@@ -19,6 +19,14 @@ _PROJ = _SVC.parent.parent
 _OUT  = _PROJ / "Outputs"
 _RAW  = _PROJ / "Raw_Input"
 
+# Competitor.csv "Category" values → short JSON keys used on the wire.
+COMPETITOR_CATEGORY_KEYS = {
+    "DirectComp":                  "DirectComp",
+    "Comp for Specific Catchment": "CompSpecificCatchment",
+    "New Retail_ To Grow":         "NewRetailToGrow",
+}
+_CATEGORY_KEY_TO_RAW = {v: k for k, v in COMPETITOR_CATEGORY_KEYS.items()}
+
 
 # ---------------------------------------------------------------------------
 # Raw loaders (cached)
@@ -66,6 +74,10 @@ def _assoc_raw():
 @lru_cache(maxsize=1)
 def _basket_raw():
     return read_table_or_csv("sku_basket_insights", _OUT / "sku_basket_insights.csv")
+
+@lru_cache(maxsize=1)
+def _competitor_raw():
+    return read_table_or_csv("competitor_data", _RAW / "Competitor.csv")
 
 
 # ---------------------------------------------------------------------------
@@ -355,7 +367,7 @@ def get_delist_rationalization(store_id=None, sub_cat=None) -> dict:
     def bucket(row):
         ds = row["delist_score"]
         gp = row["Calc_Growth_Pct"]
-        if ds <= ds_lo:             return "Keep"
+        if ds <= ds_lo:             return "Continue"
         if gp >= gp_hi and ds < ds_med: return "Grow"
         if ds >= ds_hi:             return "Delist"
         return "Watch"
@@ -371,9 +383,9 @@ def get_delist_rationalization(store_id=None, sub_cat=None) -> dict:
                  f" but consume significant shelf space and working capital.")
 
     result = {}
-    for b in ["Keep", "Grow", "Watch", "Delist"]:
+    for b in ["Continue", "Grow", "Watch", "Delist"]:
         sub = sku_df[sku_df["hub_bucket"] == b].copy()
-        sub = sub.sort_values("delist_score", ascending=(b in ["Keep","Grow"]))
+        sub = sub.sort_values("delist_score", ascending=(b in ["Continue","Grow"]))
         cols = ["SKU_ID","Product_Name","Sub_Category","Brand","delist_score",
                 "Health_Score_100","Calc_Growth_Pct","GMROI","Basket_Role",
                 "Revenue","Recommended_Action","Decision"]
@@ -591,3 +603,85 @@ def build_copilot_context(store_id=None, sub_cat=None, cluster=None) -> dict:
         "category_health":   health[:5],
         "filters_applied":   {"store_id": store_id, "sub_cat": sub_cat, "cluster": cluster},
     }
+
+
+# ---------------------------------------------------------------------------
+# 11. Competitive Intelligence (Competitor.csv)
+# ---------------------------------------------------------------------------
+def get_competitive_intelligence() -> dict:
+    """
+    One row per product (ours + competitor-only), with a Yes/No flag for
+    "Our Assortment" and one Yes/No flag per competitor category — Yes if at
+    least one competitor carries that product somewhere in that category.
+    """
+    comp     = _competitor_raw()
+    sku      = _sku()
+    our_names = set(sku["Product_Name"]) if "Product_Name" in sku.columns else set()
+
+    if comp.empty or not {"Product_Name", "Category"} <= set(comp.columns):
+        return {"metrics": {"overlap": 0, "our_exclusive": 0, "competitor_exclusive": 0}, "rows": []}
+
+    presence = pd.crosstab(comp["Product_Name"], comp["Category"]) > 0
+    all_products = sorted(our_names | set(comp["Product_Name"]))
+
+    rows = []
+    overlap = our_exclusive = competitor_exclusive = 0
+    for product_name in all_products:
+        is_ours = product_name in our_names
+        row = {"Product_Name": product_name, "Our_Assortment": "Yes" if is_ours else "No"}
+        any_competitor = False
+        for raw_cat, key in COMPETITOR_CATEGORY_KEYS.items():
+            has = bool(presence.loc[product_name, raw_cat]) if (
+                product_name in presence.index and raw_cat in presence.columns
+            ) else False
+            row[key] = "Yes" if has else "No"
+            any_competitor = any_competitor or has
+        rows.append(row)
+
+        if is_ours and any_competitor:
+            overlap += 1
+        elif is_ours and not any_competitor:
+            our_exclusive += 1
+        elif not is_ours and any_competitor:
+            competitor_exclusive += 1
+
+    return {
+        "metrics": {
+            "overlap":              overlap,
+            "our_exclusive":        our_exclusive,
+            "competitor_exclusive": competitor_exclusive,
+        },
+        "rows": rows,
+    }
+
+
+def get_competitive_drilldown(product_name: str, category_key: str) -> dict:
+    """
+    For one product × competitor category: every competitor active in that
+    category, and whether that specific competitor carries the product.
+    """
+    raw_category = _CATEGORY_KEY_TO_RAW.get(category_key)
+    if raw_category is None:
+        return {"product_name": product_name, "category_key": category_key, "retailers": []}
+
+    comp = _competitor_raw()
+    if comp.empty or not {"Product_Name", "Category", "Reatiler"} <= set(comp.columns):
+        return {"product_name": product_name, "category_key": category_key, "retailers": []}
+
+    cat_df  = comp[comp["Category"] == raw_category]
+    prod_df = cat_df[cat_df["Product_Name"] == product_name]
+    combos_by_retailer = {
+        retailer: g[["Geography", "Region"]].drop_duplicates().to_dict("records")
+        for retailer, g in prod_df.groupby("Reatiler")
+    }
+
+    retailers = [
+        {
+            "Retailer": retailer,
+            "Sold":     "Yes" if retailer in combos_by_retailer else "No",
+            "Combos":   combos_by_retailer.get(retailer, []),
+        }
+        for retailer in sorted(cat_df["Reatiler"].unique())
+    ]
+
+    return {"product_name": product_name, "category_key": category_key, "retailers": retailers}

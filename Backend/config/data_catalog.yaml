@@ -97,13 +97,13 @@ sources:
     table: delisting_recommendations
     csv: Outputs/delisting_recommendations.csv
     kind: fact
-    description: The core assortment-recommendation output — one row per SKU x granularity (Global/Store/Store_Cluster) with the full composite delist score, health score, GMROI, forecast trend, and the final Keep/Watch/Expand/Delist decision plus a natural-language rationale.
+    description: The core assortment-recommendation output — one row per SKU x granularity (Global/Store/Store_Cluster) with the full composite delist score, health score, GMROI, forecast trend, and the final Continue/Watch/Expand/Delist decision plus a natural-language rationale.
     join_keys: [sku_id]
     business_notes: >
       granularity_level/granularity_value scope a row to Global, a specific
       Store, or a Store_Cluster — filter to granularity_level='Global' for
       one-row-per-SKU category-wide answers. delist_score is 0-1, higher =
-      stronger case to delist. decision is the Keep/Watch/Expand/Delist call.
+      stronger case to delist. decision is the Continue/Watch/Expand/Delist call.
     sample_questions:
       - "Which SKUs are top delist candidates?"
       - "Which delist candidates also have high basket dependency?"
@@ -206,7 +206,7 @@ sources:
     table: assortment_decision
     csv: "Outputs/Assortment decision.csv"
     kind: fact
-    description: Audit log of every manual assortment decision (Keep/Expand/Watch/Delist etc) a Category Manager has made in the app, with the reasoning captured at decision time.
+    description: Audit log of every manual assortment decision (Continue/Expand/Watch/Delist etc) a Category Manager has made in the app, with the reasoning captured at decision time.
     join_keys: [sku_id]
     business_notes: "This is a decision LOG (append-only, one row per decision event), not the current live decision — a SKU may appear multiple times if revisited."
     sample_questions:

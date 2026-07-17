@@ -33,7 +33,7 @@ import pandas as pd
 _BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if _BACKEND_DIR not in sys.path:
     sys.path.insert(0, _BACKEND_DIR)
-from database.connection import get_engine
+from database.connection import get_engine, _reconcile_columns
 from sqlalchemy import text
 
 
@@ -44,7 +44,20 @@ from sqlalchemy import text
 BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(BASE_DIR)))
 OUTPUTS_DIR  = os.path.join(PROJECT_ROOT, "Outputs")
+RAW_INPUT_DIR = os.path.join(PROJECT_ROOT, "Raw_Input")
 os.makedirs(OUTPUTS_DIR, exist_ok=True)
+
+# Maps a PostgreSQL table name to the CSV whose header carries the canonical
+# column casing (PostgreSQL lower-cases unquoted identifiers on this table set).
+_TABLE_CSV_MAP = {
+    "sales_tx":           os.path.join(RAW_INPUT_DIR, "Sales_Tx.csv"),
+    "sku_master":         os.path.join(RAW_INPUT_DIR, "SKU_Master.csv"),
+    "store_master":       os.path.join(RAW_INPUT_DIR, "Store_Master.csv"),
+    "inventory_report":   os.path.join(RAW_INPUT_DIR, "Inventory_Report.csv"),
+    "reviews_social":     os.path.join(RAW_INPUT_DIR, "Reviews_Social.csv"),
+    "market_data":        os.path.join(RAW_INPUT_DIR, "Market_Data.csv"),
+    "forecast_output":    os.path.join(OUTPUTS_DIR,   "Forecast_Output.csv"),
+}
 
 # --- Output file paths ---
 RULES_OUT    = os.path.join(OUTPUTS_DIR, "association_rules.csv")
@@ -85,7 +98,7 @@ assert abs(sum(DELIST_WEIGHTS.values()) - 1.0) < 1e-9, "DELIST_WEIGHTS must sum 
 
 # --- Delist recommendation thresholds ---
 DELIST_THRESHOLD = 0.65   # score >= this → "Recommend Delist"
-WATCH_THRESHOLD  = 0.45   # score >= this → "Watch", else "Keep"
+WATCH_THRESHOLD  = 0.45   # score >= this → "Watch", else "Continue"
 
 # --- ABC class → delist signal mapping ---
 ABC_SIGNAL_MAP: Dict[str, float] = {"A": 0.0, "B": 0.5, "C": 1.0}
@@ -125,10 +138,19 @@ def _check_required_columns(df: pd.DataFrame, required: List[str], file_label: s
 
 
 def _read_table(table: str) -> pd.DataFrame:
-    """Read an entire PostgreSQL table into a DataFrame."""
+    """
+    Read an entire PostgreSQL table into a DataFrame, then restore the
+    canonical CSV column casing (e.g. 'sku_id' -> 'SKU_ID') so downstream
+    code — written against the original CSV headers — finds the columns
+    it expects.
+    """
     with get_engine().connect() as conn:
         result = conn.execute(text(f'SELECT * FROM "{table}"'))
-        return pd.DataFrame(result.fetchall(), columns=list(result.keys()))
+        df = pd.DataFrame(result.fetchall(), columns=list(result.keys()))
+    csv_path = _TABLE_CSV_MAP.get(table)
+    if csv_path:
+        df = _reconcile_columns(df, csv_path)
+    return df
 
 
 def load_and_validate() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -716,7 +738,7 @@ def _make_delist_rows(
         elif delist_score >= WATCH_THRESHOLD:
             recommendation = "Watch"
         else:
-            recommendation = "Keep"
+            recommendation = "Continue"
 
         rows_out.append({
             "SKU_ID":                  sku_id,
@@ -862,7 +884,7 @@ def generate_nl_summary(
             "Mixed performance signals - further monitoring is advised before "
             "making a final delisting call."
         ),
-        "Keep": (
+        "Continue": (
             "Strong revenue, margin, or basket integration argues for retaining "
             "this SKU in the current assortment."
         ),
@@ -1619,10 +1641,10 @@ HEALTH_HIGH_THRESHOLD  = 0.70   # Health_Score >= this → HIGH_HEALTH
 HEALTH_MID_THRESHOLD   = 0.45   # Health_Score >= this → MID_HEALTH (else LOW)
 DELIST_HIGH_THRESHOLD  = 0.70   # delist_score >= this → HIGH_DELIST
 DELIST_MID_THRESHOLD   = 0.40   # delist_score >= this → MID_DELIST (else LOW)
-FORECAST_STRONG_GROWTH = 15.0   # Forecast_Growth_Pct >= this → STRONG_GROWTH
-FORECAST_GROWTH_MIN    =  5.0   # >= this (< STRONG_GROWTH) → GROWTH
-FORECAST_DECLINE_MAX   = -5.0   # <= this → DECLINE
-FORECAST_SHARP_DECLINE = -15.0  # <= this → SHARP_DECLINE
+FORECAST_STRONG_GROWTH = 8.0    # Forecast_Growth_Pct >= this → STRONG_GROWTH
+FORECAST_GROWTH_MIN    =  3.0   # >= this (< STRONG_GROWTH) → GROWTH
+FORECAST_DECLINE_MAX   = -3.0   # <= this → DECLINE
+FORECAST_SHARP_DECLINE = -8.0   # <= this → SHARP_DECLINE
 # GMROI bands are percentile-based (see classify_metric_bands)
 GMROI_HIGH_PCTILE      = 66     # above this percentile → HIGH_GMROI
 GMROI_LOW_PCTILE       = 33     # below this percentile → LOW_GMROI
@@ -1766,7 +1788,7 @@ def _apply_single_decision(row: pd.Series) -> str:
     Returns the first matching Decision label.
 
     Priority (highest → lowest):
-        1 EXPAND  2 FUTURE_STAR  3 KEEP  4 CASH_COW
+        1 EXPAND  2 FUTURE_STAR  3 CONTINUE  4 CASH_COW
         5 INVESTIGATE  6 KEEP_WATCH  7 PHASE_OUT  8 REPLACE  9 DELIST
     """
     h = str(row.get("Health_Band",  "MID_HEALTH"))
@@ -1811,10 +1833,10 @@ def _apply_single_decision(row: pd.Series) -> str:
     if h_mi and f_sg and (d_lo or d_mi):
         return "FUTURE_STAR"
 
-    # ── 3. KEEP ───────────────────────────────────────────────────────────────
+    # ── 3. CONTINUE ───────────────────────────────────────────────────────────
     # Profitable, stable-to-positive; EXPAND already claimed h_hi+f_gr cases
     if h_hi and g_hi and d_lo and f_nd:
-        return "KEEP"
+        return "CONTINUE"
 
     # ── 4. CASH_COW ───────────────────────────────────────────────────────────
     # Profitable but explicitly declining; harvest strategy
@@ -1855,7 +1877,7 @@ def _apply_single_decision(row: pd.Series) -> str:
         return "PHASE_OUT"
     if h_lo:
         return "KEEP_WATCH"
-    return "KEEP"
+    return "CONTINUE"
 
 
 # ── Narrative builders ────────────────────────────────────────────────────────
@@ -1874,7 +1896,7 @@ def _build_decision_reason(row: pd.Series) -> str:
     Concise 1–2 sentence summary of the primary drivers behind the Decision.
     References band labels and rounded KPI values for audit traceability.
     """
-    dec    = str(row.get("Decision",    "KEEP"))
+    dec    = str(row.get("Decision",    "CONTINUE"))
     h_band = str(row.get("Health_Band", "MID_HEALTH"))
     d_band = str(row.get("Delist_Band", "MID_DELIST"))
     g_band = str(row.get("GMROI_Band",  "MID_GMROI"))
@@ -1898,7 +1920,7 @@ def _build_decision_reason(row: pd.Series) -> str:
             f"Moderate health ({hs_s}) offset by strong forecast momentum ({fg_s}). "
             f"Delist risk ({d_band}) is manageable, supporting retention over rationalization."
         ),
-        "KEEP":        (
+        "CONTINUE":    (
             f"Solid commercial health ({hs_s}), {g_band} GMROI, and {fb_t} ({fg_s}) "
             f"confirm core assortment status. Delist risk is low."
         ),
@@ -1932,7 +1954,7 @@ def _build_decision_reason(row: pd.Series) -> str:
 
 def _build_recommended_action(row: pd.Series) -> str:
     """Concise, operational action statement for planners and buyers."""
-    dec  = str(row.get("Decision",    "KEEP"))
+    dec  = str(row.get("Decision",    "CONTINUE"))
     role = str(row.get("Basket_Role", "Solo"))
 
     actions: Dict[str, str] = {
@@ -1944,7 +1966,7 @@ def _build_recommended_action(row: pd.Series) -> str:
             "Retain in full distribution. Selectively increase visibility (endcap, digital "
             "spotlight). Re-evaluate commercial KPIs at the next review cycle."
         ),
-        "KEEP":        (
+        "CONTINUE":    (
             "Maintain current planogram allocation and supply continuity. "
             "Protect from unnecessary rationalization pressure."
         ),
@@ -1991,7 +2013,7 @@ def _build_recommendation_narrative(
     managers.  Each narrative is tailored to the specific Decision type,
     references actual KPI values, and avoids generic or robotic phrasing.
     """
-    dec    = str(row.get("Decision",     "KEEP"))
+    dec    = str(row.get("Decision",     "CONTINUE"))
     sku    = str(row.get("SKU_ID",       ""))
     name   = sku_names.get(sku, sku)
     subcat = str(row.get("Sub_Category", "the sub-category"))
@@ -2054,8 +2076,8 @@ def _build_recommendation_narrative(
             f"growth trajectory before broader rollout."
         )
 
-    # ── KEEP ──────────────────────────────────────────────────────────────────
-    if dec == "KEEP":
+    # ── CONTINUE ──────────────────────────────────────────────────────────────
+    if dec == "CONTINUE":
         return (
             f"{name} is a solid {abc_s}contributor to the {subcat} assortment{scope}. "
             f"Health score of {hs_s}, GMROI of {gmroi_s}, and a {fb_text} ({fg_s}) "

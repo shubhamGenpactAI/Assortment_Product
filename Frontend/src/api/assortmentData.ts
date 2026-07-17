@@ -36,11 +36,46 @@ export interface AssortmentDecisionPayload {
   recommended_action?: string | null
 }
 
-export async function saveAssortmentDecision(payload: AssortmentDecisionPayload): Promise<void> {
+export interface AssortmentDecisionResult {
+  status: string
+}
+
+export async function saveAssortmentDecision(payload: AssortmentDecisionPayload): Promise<AssortmentDecisionResult> {
   const res = await fetch('/api/assortment-decisions', {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify(payload),
   })
-  if (!res.ok) throw new Error(`Failed to save decision: ${res.status}`)
+  if (!res.ok) {
+    const body = await res.json().catch(() => null)
+    throw new Error(body?.detail ?? `Failed to save decision: ${res.status}`)
+  }
+  return res.json()
+}
+
+// ── Assortment Decision Log (live CSV read) ────────────────────────────────
+
+export interface AssortmentDecisionRow {
+  Timestamp?:         string
+  Decision?:          string
+  Decision_Type?:     string
+  Comment?:           string
+  SKU_ID?:            string
+  Product_Name?:      string
+  Brand?:             string
+  Category?:          string
+  Sub_Category?:      string
+  View_Label?:        string
+  Scope?:             string
+  Granularity_Value?: string
+  Scope_Detail?:      string
+  ABC_Class?:         string
+  Basket_Role?:       string
+  [key: string]:      string | undefined
+}
+
+export async function fetchAssortmentDecisions(): Promise<AssortmentDecisionRow[]> {
+  const res = await fetch('/api/assortment-decisions', { cache: 'no-store' })
+  if (!res.ok) throw new Error(`Failed to load assortment decisions: ${res.status}`)
+  return res.json()
 }

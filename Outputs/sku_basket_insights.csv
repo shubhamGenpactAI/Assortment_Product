@@ -1,61 +1,61 @@
 SKU_ID,Sub_Category,n_baskets_present,support,basket_revenue_impact,basket_margin_impact,basket_dependency_score,substitution_score,demand_transfer_candidates,promo_halo_impact,cross_category_relationships
-SKU0001,Shampoo,813,0.012398,-179.6158,-36.7955,7,0.0,None,-11.8531,Hair Mask:471; Conditioner:209; Hair Serum:184; Anti-Dandruff Treatment:158; Hair Color:130; Hair Oil:105
-SKU0002,Hair Color,8893,0.135618,296.1595,125.9788,12,0.0,None,-5.9648,Hair Mask:3318; Hair Serum:3169; Conditioner:2555; Hair Oil:353; Shampoo:276; Anti-Dandruff Treatment:218
-SKU0003,Hair Color,225,0.003431,23.3156,13.7053,0,0.0,None,-4.4523,Hair Mask:87; Hair Serum:79; Conditioner:71; Hair Oil:11; Shampoo:7; Anti-Dandruff Treatment:6
-SKU0004,Anti-Dandruff Treatment,242,0.00369,-229.229,-63.9401,0,0.0,None,3.7365,Shampoo:104; Conditioner:81; Hair Color:64; Hair Mask:47; Hair Serum:38; Hair Oil:8
-SKU0005,Anti-Dandruff Treatment,264,0.004026,-269.9581,-83.2793,0,0.0,None,-99.452,Shampoo:109; Conditioner:90; Hair Color:66; Hair Mask:37; Hair Serum:27; Hair Oil:9
-SKU0006,Hair Color,8742,0.133315,289.736,54.6991,12,0.0,None,-6.6303,Hair Mask:3314; Hair Serum:3048; Conditioner:2466; Hair Oil:337; Shampoo:293; Anti-Dandruff Treatment:240
-SKU0007,Hair Color,1148,0.017507,47.8244,42.4901,12,0.3333,SKU0041; SKU0016; SKU0017,-11.2058,Hair Mask:443; Hair Serum:396; Conditioner:312; Hair Oil:51; Shampoo:40; Anti-Dandruff Treatment:25
-SKU0008,Anti-Dandruff Treatment,267,0.004072,-275.0729,-43.5805,0,0.0,None,30.2227,Shampoo:105; Conditioner:102; Hair Color:62; Hair Mask:38; Hair Serum:29; Hair Oil:11
-SKU0009,Hair Mask,2087,0.031827,118.1809,47.3192,6,0.0,None,-5.8908,Hair Color:853; Hair Serum:772; Conditioner:513; Shampoo:380; Hair Oil:150; Anti-Dandruff Treatment:51
-SKU0010,Hair Color,8872,0.135298,224.152,58.7432,12,0.0,None,9.7864,Hair Mask:3322; Hair Serum:3081; Conditioner:2556; Hair Oil:316; Shampoo:303; Anti-Dandruff Treatment:238
-SKU0011,Hair Oil,367,0.005597,-18.7471,-20.5819,10,0.0,None,-124.4091,Hair Serum:209; Hair Mask:124; Hair Color:98; Shampoo:59; Conditioner:38; Anti-Dandruff Treatment:9
-SKU0012,Hair Serum,569,0.008677,85.6084,23.6238,5,0.0,None,-94.8527,Hair Mask:233; Hair Color:222; Conditioner:137; Hair Oil:97; Shampoo:31; Anti-Dandruff Treatment:13
-SKU0013,Hair Serum,15700,0.239424,159.89,4.1897,9,0.0,None,4.4238,Hair Color:7662; Hair Mask:6886; Conditioner:4355; Hair Oil:2676; Shampoo:1074; Anti-Dandruff Treatment:349
-SKU0014,Hair Color,244,0.003721,62.5224,4.2944,0,0.0,None,97.9208,Hair Mask:86; Hair Serum:83; Conditioner:69; Hair Oil:9; Shampoo:9; Anti-Dandruff Treatment:6
-SKU0015,Hair Color,8908,0.135847,354.0783,111.014,12,0.0,None,33.9543,Hair Mask:3355; Hair Serum:3080; Conditioner:2529; Hair Oil:331; Shampoo:312; Anti-Dandruff Treatment:231
-SKU0016,Hair Color,1205,0.018376,135.7249,93.007,13,0.1111,SKU0007,38.9378,Hair Mask:447; Hair Serum:375; Conditioner:340; Hair Oil:49; Shampoo:37; Anti-Dandruff Treatment:25
-SKU0017,Hair Color,1160,0.01769,133.0264,47.974,13,0.1111,SKU0007,38.0491,Hair Mask:422; Hair Serum:375; Conditioner:319; Hair Oil:41; Shampoo:38; Anti-Dandruff Treatment:30
-SKU0018,Hair Serum,614,0.009363,104.3609,-5.9533,6,0.0,None,-39.4853,Hair Mask:260; Hair Color:256; Conditioner:158; Hair Oil:86; Shampoo:35; Anti-Dandruff Treatment:12
-SKU0019,Anti-Dandruff Treatment,1153,0.017583,-104.4478,-48.0236,5,0.0,None,-27.4572,Shampoo:443; Conditioner:401; Hair Color:286; Hair Mask:200; Hair Serum:163; Hair Oil:44
-SKU0020,Anti-Dandruff Treatment,274,0.004178,-181.8543,-52.8659,0,0.0,None,150.8615,Shampoo:106; Conditioner:98; Hair Color:78; Hair Mask:48; Hair Serum:32; Hair Oil:11
-SKU0021,Hair Oil,1705,0.026001,-17.7145,2.6306,9,0.0,None,21.8168,Hair Serum:995; Hair Mask:589; Hair Color:407; Shampoo:310; Conditioner:230; Anti-Dandruff Treatment:31
-SKU0022,Anti-Dandruff Treatment,1226,0.018696,-105.2604,-22.9404,5,0.0,None,-10.2997,Shampoo:489; Conditioner:450; Hair Color:320; Hair Mask:234; Hair Serum:150; Hair Oil:36
-SKU0023,Anti-Dandruff Treatment,268,0.004087,-247.5803,-77.6431,0,0.0,None,-154.7753,Shampoo:101; Conditioner:83; Hair Color:60; Hair Mask:49; Hair Serum:29; Hair Oil:5
-SKU0024,Hair Mask,13539,0.206469,202.6622,64.7946,5,0.0,None,16.0363,Hair Color:6016; Hair Serum:5009; Conditioner:3777; Shampoo:2556; Hair Oil:995; Anti-Dandruff Treatment:334
-SKU0025,Conditioner,1889,0.028807,78.169,52.8905,13,0.75,SKU0051; SKU0054; SKU0056,-21.269,Hair Color:1051; Hair Mask:851; Hair Serum:714; Shampoo:240; Anti-Dandruff Treatment:138; Hair Oil:116
-SKU0026,Shampoo,3570,0.054442,-29.1711,3.3805,7,0.0,None,-26.1032,Hair Mask:2151; Conditioner:972; Hair Serum:801; Anti-Dandruff Treatment:718; Hair Color:717; Hair Oil:442
-SKU0027,Hair Color,8776,0.133834,174.9965,95.6499,12,0.0,None,-20.4507,Hair Mask:3259; Hair Serum:2992; Conditioner:2535; Hair Oil:304; Shampoo:303; Anti-Dandruff Treatment:198
-SKU0028,Conditioner,1918,0.029249,-8.2066,0.3156,13,0.125,SKU0054,-21.3545,Hair Color:1085; Hair Mask:810; Hair Serum:754; Shampoo:234; Anti-Dandruff Treatment:155; Hair Oil:101
-SKU0029,Hair Serum,2710,0.041327,71.4122,0.4401,6,0.0,None,11.0976,Hair Color:1129; Hair Mask:1057; Conditioner:707; Hair Oil:469; Shampoo:140; Anti-Dandruff Treatment:51
-SKU0030,Anti-Dandruff Treatment,241,0.003675,-325.6103,-84.9218,0,0.0,None,-11.5967,Shampoo:96; Conditioner:94; Hair Color:60; Hair Mask:39; Hair Serum:34; Hair Oil:6
-SKU0031,Conditioner,1905,0.029051,23.6172,1.2616,13,0.375,SKU0051; SKU0025; SKU0050,39.873,Hair Color:1100; Hair Mask:836; Hair Serum:715; Shampoo:241; Anti-Dandruff Treatment:147; Hair Oil:98
-SKU0032,Shampoo,3597,0.054854,-32.8623,8.7609,7,0.0,None,36.1802,Hair Mask:2175; Conditioner:1004; Hair Serum:804; Hair Color:753; Anti-Dandruff Treatment:669; Hair Oil:443
-SKU0033,Hair Serum,15704,0.239485,177.2937,0.6513,8,0.0,None,15.0258,Hair Color:7698; Hair Mask:6856; Conditioner:4368; Hair Oil:2611; Shampoo:1066; Anti-Dandruff Treatment:358
-SKU0034,Hair Oil,356,0.005429,-262.4711,-90.4997,9,0.0,None,-25.2936,Hair Serum:195; Hair Mask:122; Hair Color:75; Shampoo:51; Conditioner:44; Anti-Dandruff Treatment:7
-SKU0035,Hair Oil,385,0.005871,-123.8595,-55.1852,10,0.0,None,207.988,Hair Serum:225; Hair Mask:126; Hair Color:85; Shampoo:82; Conditioner:52; Anti-Dandruff Treatment:4
-SKU0036,Shampoo,815,0.012429,-20.5799,-19.815,7,0.0,None,-20.0751,Hair Mask:506; Conditioner:229; Hair Serum:166; Hair Color:161; Anti-Dandruff Treatment:159; Hair Oil:99
-SKU0037,Shampoo,807,0.012307,-206.5548,-37.4733,7,0.0,None,45.8711,Hair Mask:456; Conditioner:212; Hair Serum:163; Anti-Dandruff Treatment:156; Hair Color:148; Hair Oil:105
-SKU0038,Hair Color,8792,0.134078,269.2259,60.6082,12,0.0,None,31.8362,Hair Mask:3214; Hair Serum:3081; Conditioner:2529; Hair Oil:330; Shampoo:329; Anti-Dandruff Treatment:232
-SKU0039,Hair Oil,1766,0.026931,54.0709,-43.7692,9,0.0,None,-20.0652,Hair Serum:981; Hair Mask:606; Hair Color:411; Shampoo:318; Conditioner:248; Anti-Dandruff Treatment:38
-SKU0040,Hair Mask,13542,0.206515,266.19,34.0195,5,0.0,None,-27.3322,Hair Color:6053; Hair Serum:5247; Conditioner:3691; Shampoo:2507; Hair Oil:1026; Anti-Dandruff Treatment:331
-SKU0041,Hair Color,8782,0.133925,196.6689,64.9325,12,0.1111,SKU0007,-8.8627,Hair Mask:3218; Hair Serum:3080; Conditioner:2484; Hair Oil:354; Shampoo:296; Anti-Dandruff Treatment:228
-SKU0042,Conditioner,1885,0.028746,-70.1687,-8.5817,13,0.125,SKU0025,22.4931,Hair Color:1093; Hair Mask:834; Hair Serum:716; Shampoo:226; Anti-Dandruff Treatment:122; Hair Oil:97
-SKU0043,Anti-Dandruff Treatment,263,0.004011,-269.7547,-64.5838,0,0.0,None,-62.7462,Shampoo:114; Conditioner:90; Hair Color:72; Hair Mask:62; Hair Serum:49; Hair Oil:11
-SKU0044,Hair Mask,13716,0.209168,167.7262,69.173,5,0.0,None,-35.0326,Hair Color:6265; Hair Serum:5122; Conditioner:3781; Shampoo:2517; Hair Oil:946; Anti-Dandruff Treatment:373
-SKU0045,Hair Oil,1704,0.025986,-50.7087,-47.421,9,0.0,None,4.1323,Hair Serum:971; Hair Mask:600; Hair Color:401; Shampoo:294; Conditioner:217; Anti-Dandruff Treatment:34
-SKU0046,Hair Oil,1654,0.025223,-34.0309,-16.4324,9,0.0,None,3.7642,Hair Serum:951; Hair Mask:572; Hair Color:376; Shampoo:271; Conditioner:238; Anti-Dandruff Treatment:30
-SKU0047,Anti-Dandruff Treatment,276,0.004209,-294.3885,-70.58,0,0.0,None,92.1998,Shampoo:98; Conditioner:98; Hair Color:60; Hair Mask:48; Hair Serum:31; Hair Oil:12
-SKU0048,Shampoo,861,0.01313,-39.1827,9.2607,7,0.0,None,-99.4532,Hair Mask:533; Conditioner:234; Hair Serum:175; Anti-Dandruff Treatment:163; Hair Color:158; Hair Oil:89
-SKU0049,Conditioner,8705,0.132751,131.9095,31.8375,12,0.0,None,-15.3105,Hair Color:5013; Hair Mask:3912; Hair Serum:3366; Shampoo:1102; Anti-Dandruff Treatment:634; Hair Oil:497
-SKU0050,Conditioner,1736,0.026474,-12.3539,11.0021,13,0.375,SKU0054; SKU0031; SKU0025,-41.5255,Hair Color:953; Hair Mask:771; Hair Serum:687; Shampoo:233; Anti-Dandruff Treatment:133; Hair Oil:112
-SKU0051,Conditioner,2013,0.030698,47.0781,13.7998,13,0.25,SKU0031; SKU0025,34.546,Hair Color:1089; Hair Mask:899; Hair Serum:785; Shampoo:266; Anti-Dandruff Treatment:161; Hair Oil:120
-SKU0052,Anti-Dandruff Treatment,1217,0.018559,-105.871,-25.1231,5,0.0,None,-2.1995,Shampoo:466; Conditioner:447; Hair Color:309; Hair Mask:222; Hair Serum:170; Hair Oil:29
-SKU0053,Anti-Dandruff Treatment,279,0.004255,-267.0109,-84.6049,0,0.0,None,140.3184,Conditioner:105; Shampoo:95; Hair Color:70; Hair Serum:41; Hair Mask:38; Hair Oil:13
-SKU0054,Conditioner,1915,0.029204,16.2904,29.2786,13,0.375,SKU0028; SKU0025; SKU0050,-15.109,Hair Color:1095; Hair Mask:841; Hair Serum:727; Shampoo:270; Anti-Dandruff Treatment:132; Hair Oil:89
-SKU0055,Hair Oil,356,0.005429,-70.3085,-55.7779,10,0.0,None,1.5774,Hair Serum:198; Hair Mask:125; Hair Color:87; Shampoo:61; Conditioner:49; Anti-Dandruff Treatment:10
-SKU0056,Conditioner,1911,0.029143,-19.1583,19.8179,13,0.125,SKU0025,28.072,Hair Color:1086; Hair Mask:845; Hair Serum:723; Shampoo:258; Anti-Dandruff Treatment:152; Hair Oil:103
-SKU0057,Hair Serum,2694,0.041083,163.6678,-15.4142,6,0.0,None,-79.731,Hair Color:1082; Hair Mask:1058; Conditioner:738; Hair Oil:477; Shampoo:150; Anti-Dandruff Treatment:37
-SKU0058,Hair Mask,2117,0.032284,93.3413,35.3363,6,0.0,None,-34.2714,Hair Color:828; Hair Serum:751; Conditioner:580; Shampoo:384; Hair Oil:139; Anti-Dandruff Treatment:35
-SKU0059,Shampoo,818,0.012474,-152.0713,-19.8879,6,0.0,None,-46.4534,Hair Mask:507; Conditioner:230; Hair Serum:171; Anti-Dandruff Treatment:162; Hair Color:140; Hair Oil:102
-SKU0060,Hair Oil,1660,0.025315,-52.1979,-17.8273,9,0.0,None,-29.3044,Hair Serum:919; Hair Mask:586; Hair Color:400; Shampoo:293; Conditioner:209; Anti-Dandruff Treatment:37
+SKU0001,Shampoo,813,0.012398,-179.6158,-36.7955,7,0.0,None,-11.8531,Hair Mask:471; Conditioner:209; Hair Serum:184; Treatment:158; Hair Color:130; Hair Oil:105
+SKU0002,Hair Color,8893,0.135618,296.1595,125.9788,12,0.0,None,-5.9648,Hair Mask:3318; Hair Serum:3169; Conditioner:2555; Hair Oil:353; Shampoo:276; Treatment:218
+SKU0003,Hair Color,225,0.003431,23.3156,13.7053,0,0.0,None,-4.4523,Hair Mask:87; Hair Serum:79; Conditioner:71; Hair Oil:11; Shampoo:7; Treatment:6
+SKU0004,Treatment,242,0.00369,-229.229,-63.9401,0,0.0,None,3.7365,Shampoo:104; Conditioner:81; Hair Color:64; Hair Mask:47; Hair Serum:38; Hair Oil:8
+SKU0005,Treatment,264,0.004026,-269.9581,-83.2793,0,0.0,None,-99.452,Shampoo:109; Conditioner:90; Hair Color:66; Hair Mask:37; Hair Serum:27; Hair Oil:9
+SKU0006,Hair Color,8742,0.133315,289.736,54.6991,12,0.0,None,-6.6303,Hair Mask:3314; Hair Serum:3048; Conditioner:2466; Hair Oil:337; Shampoo:293; Treatment:240
+SKU0007,Hair Color,1148,0.017507,47.8244,42.4901,12,0.3333,SKU0041; SKU0016; SKU0017,-11.2058,Hair Mask:443; Hair Serum:396; Conditioner:312; Hair Oil:51; Shampoo:40; Treatment:25
+SKU0008,Treatment,267,0.004072,-275.0729,-43.5805,0,0.0,None,30.2227,Shampoo:105; Conditioner:102; Hair Color:62; Hair Mask:38; Hair Serum:29; Hair Oil:11
+SKU0009,Hair Mask,2087,0.031827,118.1809,47.3192,6,0.0,None,-5.8908,Hair Color:853; Hair Serum:772; Conditioner:513; Shampoo:380; Hair Oil:150; Treatment:51
+SKU0010,Hair Color,8872,0.135298,224.152,58.7432,12,0.0,None,9.7864,Hair Mask:3322; Hair Serum:3081; Conditioner:2556; Hair Oil:316; Shampoo:303; Treatment:238
+SKU0011,Hair Oil,367,0.005597,-18.7471,-20.5819,10,0.0,None,-124.4091,Hair Serum:209; Hair Mask:124; Hair Color:98; Shampoo:59; Conditioner:38; Treatment:9
+SKU0012,Hair Serum,569,0.008677,85.6084,23.6238,5,0.0,None,-94.8527,Hair Mask:233; Hair Color:222; Conditioner:137; Hair Oil:97; Shampoo:31; Treatment:13
+SKU0013,Hair Serum,15700,0.239424,159.89,4.1897,9,0.0,None,4.4238,Hair Color:7662; Hair Mask:6886; Conditioner:4355; Hair Oil:2676; Shampoo:1074; Treatment:349
+SKU0014,Hair Color,244,0.003721,62.5224,4.2944,0,0.0,None,97.9208,Hair Mask:86; Hair Serum:83; Conditioner:69; Hair Oil:9; Shampoo:9; Treatment:6
+SKU0015,Hair Color,8908,0.135847,354.0783,111.014,12,0.0,None,33.9543,Hair Mask:3355; Hair Serum:3080; Conditioner:2529; Hair Oil:331; Shampoo:312; Treatment:231
+SKU0016,Hair Color,1205,0.018376,135.7249,93.007,13,0.1111,SKU0007,38.9378,Hair Mask:447; Hair Serum:375; Conditioner:340; Hair Oil:49; Shampoo:37; Treatment:25
+SKU0017,Hair Color,1160,0.01769,133.0264,47.974,13,0.1111,SKU0007,38.0491,Hair Mask:422; Hair Serum:375; Conditioner:319; Hair Oil:41; Shampoo:38; Treatment:30
+SKU0018,Hair Serum,614,0.009363,104.3609,-5.9533,6,0.0,None,-39.4853,Hair Mask:260; Hair Color:256; Conditioner:158; Hair Oil:86; Shampoo:35; Treatment:12
+SKU0019,Treatment,1153,0.017583,-104.4478,-48.0236,5,0.0,None,-27.4572,Shampoo:443; Conditioner:401; Hair Color:286; Hair Mask:200; Hair Serum:163; Hair Oil:44
+SKU0020,Treatment,274,0.004178,-181.8543,-52.8659,0,0.0,None,150.8615,Shampoo:106; Conditioner:98; Hair Color:78; Hair Mask:48; Hair Serum:32; Hair Oil:11
+SKU0021,Hair Oil,1705,0.026001,-17.7145,2.6306,9,0.0,None,21.8168,Hair Serum:995; Hair Mask:589; Hair Color:407; Shampoo:310; Conditioner:230; Treatment:31
+SKU0022,Treatment,1226,0.018696,-105.2604,-22.9404,5,0.0,None,-10.2997,Shampoo:489; Conditioner:450; Hair Color:320; Hair Mask:234; Hair Serum:150; Hair Oil:36
+SKU0023,Treatment,268,0.004087,-247.5803,-77.6431,0,0.0,None,-154.7753,Shampoo:101; Conditioner:83; Hair Color:60; Hair Mask:49; Hair Serum:29; Hair Oil:5
+SKU0024,Hair Mask,13539,0.206469,202.6622,64.7946,5,0.0,None,16.0363,Hair Color:6016; Hair Serum:5009; Conditioner:3777; Shampoo:2556; Hair Oil:995; Treatment:334
+SKU0025,Conditioner,1889,0.028807,78.169,52.8905,13,0.75,SKU0051; SKU0054; SKU0056,-21.269,Hair Color:1051; Hair Mask:851; Hair Serum:714; Shampoo:240; Treatment:138; Hair Oil:116
+SKU0026,Shampoo,3570,0.054442,-29.1711,3.3805,7,0.0,None,-26.1032,Hair Mask:2151; Conditioner:972; Hair Serum:801; Treatment:718; Hair Color:717; Hair Oil:442
+SKU0027,Hair Color,8776,0.133834,174.9965,95.6499,12,0.0,None,-20.4507,Hair Mask:3259; Hair Serum:2992; Conditioner:2535; Hair Oil:304; Shampoo:303; Treatment:198
+SKU0028,Conditioner,1918,0.029249,-8.2066,0.3156,13,0.125,SKU0054,-21.3545,Hair Color:1085; Hair Mask:810; Hair Serum:754; Shampoo:234; Treatment:155; Hair Oil:101
+SKU0029,Hair Serum,2710,0.041327,71.4122,0.4401,6,0.0,None,11.0976,Hair Color:1129; Hair Mask:1057; Conditioner:707; Hair Oil:469; Shampoo:140; Treatment:51
+SKU0030,Treatment,241,0.003675,-325.6103,-84.9218,0,0.0,None,-11.5967,Shampoo:96; Conditioner:94; Hair Color:60; Hair Mask:39; Hair Serum:34; Hair Oil:6
+SKU0031,Conditioner,1905,0.029051,23.6172,1.2616,13,0.375,SKU0051; SKU0025; SKU0050,39.873,Hair Color:1100; Hair Mask:836; Hair Serum:715; Shampoo:241; Treatment:147; Hair Oil:98
+SKU0032,Shampoo,3597,0.054854,-32.8623,8.7609,7,0.0,None,36.1802,Hair Mask:2175; Conditioner:1004; Hair Serum:804; Hair Color:753; Treatment:669; Hair Oil:443
+SKU0033,Hair Serum,15704,0.239485,177.2937,0.6513,8,0.0,None,15.0258,Hair Color:7698; Hair Mask:6856; Conditioner:4368; Hair Oil:2611; Shampoo:1066; Treatment:358
+SKU0034,Hair Oil,356,0.005429,-262.4711,-90.4997,9,0.0,None,-25.2936,Hair Serum:195; Hair Mask:122; Hair Color:75; Shampoo:51; Conditioner:44; Treatment:7
+SKU0035,Hair Oil,385,0.005871,-123.8595,-55.1852,10,0.0,None,207.988,Hair Serum:225; Hair Mask:126; Hair Color:85; Shampoo:82; Conditioner:52; Treatment:4
+SKU0036,Shampoo,815,0.012429,-20.5799,-19.815,7,0.0,None,-20.0751,Hair Mask:506; Conditioner:229; Hair Serum:166; Hair Color:161; Treatment:159; Hair Oil:99
+SKU0037,Shampoo,807,0.012307,-206.5548,-37.4733,7,0.0,None,45.8711,Hair Mask:456; Conditioner:212; Hair Serum:163; Treatment:156; Hair Color:148; Hair Oil:105
+SKU0038,Hair Color,8792,0.134078,269.2259,60.6082,12,0.0,None,31.8362,Hair Mask:3214; Hair Serum:3081; Conditioner:2529; Hair Oil:330; Shampoo:329; Treatment:232
+SKU0039,Hair Oil,1766,0.026931,54.0709,-43.7692,9,0.0,None,-20.0652,Hair Serum:981; Hair Mask:606; Hair Color:411; Shampoo:318; Conditioner:248; Treatment:38
+SKU0040,Hair Mask,13542,0.206515,266.19,34.0195,5,0.0,None,-27.3322,Hair Color:6053; Hair Serum:5247; Conditioner:3691; Shampoo:2507; Hair Oil:1026; Treatment:331
+SKU0041,Hair Color,8782,0.133925,196.6689,64.9325,12,0.1111,SKU0007,-8.8627,Hair Mask:3218; Hair Serum:3080; Conditioner:2484; Hair Oil:354; Shampoo:296; Treatment:228
+SKU0042,Conditioner,1885,0.028746,-70.1687,-8.5817,13,0.125,SKU0025,22.4931,Hair Color:1093; Hair Mask:834; Hair Serum:716; Shampoo:226; Treatment:122; Hair Oil:97
+SKU0043,Treatment,263,0.004011,-269.7547,-64.5838,0,0.0,None,-62.7462,Shampoo:114; Conditioner:90; Hair Color:72; Hair Mask:62; Hair Serum:49; Hair Oil:11
+SKU0044,Hair Mask,13716,0.209168,167.7262,69.173,5,0.0,None,-35.0326,Hair Color:6265; Hair Serum:5122; Conditioner:3781; Shampoo:2517; Hair Oil:946; Treatment:373
+SKU0045,Hair Oil,1704,0.025986,-50.7087,-47.421,9,0.0,None,4.1323,Hair Serum:971; Hair Mask:600; Hair Color:401; Shampoo:294; Conditioner:217; Treatment:34
+SKU0046,Hair Oil,1654,0.025223,-34.0309,-16.4324,9,0.0,None,3.7642,Hair Serum:951; Hair Mask:572; Hair Color:376; Shampoo:271; Conditioner:238; Treatment:30
+SKU0047,Treatment,276,0.004209,-294.3885,-70.58,0,0.0,None,92.1998,Shampoo:98; Conditioner:98; Hair Color:60; Hair Mask:48; Hair Serum:31; Hair Oil:12
+SKU0048,Shampoo,861,0.01313,-39.1827,9.2607,7,0.0,None,-99.4532,Hair Mask:533; Conditioner:234; Hair Serum:175; Treatment:163; Hair Color:158; Hair Oil:89
+SKU0049,Conditioner,8705,0.132751,131.9095,31.8375,12,0.0,None,-15.3105,Hair Color:5013; Hair Mask:3912; Hair Serum:3366; Shampoo:1102; Treatment:634; Hair Oil:497
+SKU0050,Conditioner,1736,0.026474,-12.3539,11.0021,13,0.375,SKU0054; SKU0031; SKU0025,-41.5255,Hair Color:953; Hair Mask:771; Hair Serum:687; Shampoo:233; Treatment:133; Hair Oil:112
+SKU0051,Conditioner,2013,0.030698,47.0781,13.7998,13,0.25,SKU0031; SKU0025,34.546,Hair Color:1089; Hair Mask:899; Hair Serum:785; Shampoo:266; Treatment:161; Hair Oil:120
+SKU0052,Treatment,1217,0.018559,-105.871,-25.1231,5,0.0,None,-2.1995,Shampoo:466; Conditioner:447; Hair Color:309; Hair Mask:222; Hair Serum:170; Hair Oil:29
+SKU0053,Treatment,279,0.004255,-267.0109,-84.6049,0,0.0,None,140.3184,Conditioner:105; Shampoo:95; Hair Color:70; Hair Serum:41; Hair Mask:38; Hair Oil:13
+SKU0054,Conditioner,1915,0.029204,16.2904,29.2786,13,0.375,SKU0028; SKU0025; SKU0050,-15.109,Hair Color:1095; Hair Mask:841; Hair Serum:727; Shampoo:270; Treatment:132; Hair Oil:89
+SKU0055,Hair Oil,356,0.005429,-70.3085,-55.7779,10,0.0,None,1.5774,Hair Serum:198; Hair Mask:125; Hair Color:87; Shampoo:61; Conditioner:49; Treatment:10
+SKU0056,Conditioner,1911,0.029143,-19.1583,19.8179,13,0.125,SKU0025,28.072,Hair Color:1086; Hair Mask:845; Hair Serum:723; Shampoo:258; Treatment:152; Hair Oil:103
+SKU0057,Hair Serum,2694,0.041083,163.6678,-15.4142,6,0.0,None,-79.731,Hair Color:1082; Hair Mask:1058; Conditioner:738; Hair Oil:477; Shampoo:150; Treatment:37
+SKU0058,Hair Mask,2117,0.032284,93.3413,35.3363,6,0.0,None,-34.2714,Hair Color:828; Hair Serum:751; Conditioner:580; Shampoo:384; Hair Oil:139; Treatment:35
+SKU0059,Shampoo,818,0.012474,-152.0713,-19.8879,6,0.0,None,-46.4534,Hair Mask:507; Conditioner:230; Hair Serum:171; Treatment:162; Hair Color:140; Hair Oil:102
+SKU0060,Hair Oil,1660,0.025315,-52.1979,-17.8273,9,0.0,None,-29.3044,Hair Serum:919; Hair Mask:586; Hair Color:400; Shampoo:293; Conditioner:209; Treatment:37

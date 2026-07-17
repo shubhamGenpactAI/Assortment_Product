@@ -21,6 +21,9 @@ export const fetchForecastFan         = (skuId: string, storeId: string) =>
 export const fetchSkuDrilldown        = (skuId: string, storeId: string) =>
   axios.get(`${B}/sku-drilldown/${skuId}/${storeId}`).then(r => r.data)
 export const fetchCopilotContext      = (f: Filters = {}) => axios.get(`${B}/copilot/context`,         qs(f)).then(r => r.data)
+export const fetchCompetitiveIntelligence = () => axios.get(`${B}/competitive-intelligence`).then(r => r.data)
+export const fetchCompetitiveDrilldown = (productName: string, categoryKey: string) =>
+  axios.get(`${B}/competitive-intelligence/drilldown`, { params: { product_name: productName, category_key: categoryKey } }).then(r => r.data)
 
 export async function streamCopilot(
   filters: Filters,

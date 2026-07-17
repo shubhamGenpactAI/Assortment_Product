@@ -8,14 +8,14 @@ import {
 
 const SUB_CATS = [
   '', 'Shampoo', 'Conditioner', 'Hair Color', 'Hair Oil',
-  'Hair Serum', 'Hair Mask', 'Anti-Dandruff Treatment',
+  'Hair Serum', 'Hair Mask', 'Treatment',
 ]
 
 function ClusterRow({ c }: { c: ClusterBreakdown }) {
   const decColor =
-    c.cluster_decision === 'Keep'  ? 'text-green-700 bg-green-100' :
-    c.cluster_decision === 'Watch' ? 'text-orange-700 bg-orange-100' :
-                                     'text-red-700 bg-red-100'
+    c.cluster_decision === 'Continue' ? 'text-green-700 bg-green-100' :
+    c.cluster_decision === 'Watch'    ? 'text-orange-700 bg-orange-100' :
+                                        'text-red-700 bg-red-100'
   return (
     <tr className="border-t border-gray-100 text-[12px]">
       <td className="py-2 px-3 font-medium">{c.cluster_label}</td>
@@ -39,7 +39,7 @@ function SKURow({ sku, onOverride }: { sku: DivergentSKU; onOverride: () => void
   const [confirmed,  setConfirmed]  = useState<string | null>(null)
 
   const globalDecColor =
-    sku.global_decision === 'Keep'          ? 'text-green-700 bg-green-100' :
+    sku.global_decision === 'Continue'      ? 'text-green-700 bg-green-100' :
     sku.global_decision === 'DELIST' || sku.global_decision === 'Delist'
                                             ? 'text-red-700 bg-red-100' :
                                               'text-orange-700 bg-orange-100'

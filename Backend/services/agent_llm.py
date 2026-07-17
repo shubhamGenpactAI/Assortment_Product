@@ -45,8 +45,9 @@ async def stream_agent_response(
         yield "data: [ERROR: openai package not installed — run: pip install openai]\n\n"
         return
 
-    corp_cert   = os.environ.get("CORP_CERT_PATH")
-    http_client = httpx.AsyncClient(verify=corp_cert) if corp_cert else None
+    from ..integrations.openai_client import _resolve_ca_bundle
+
+    http_client = httpx.AsyncClient(verify=_resolve_ca_bundle())
 
     client = AsyncOpenAI(
         api_key=OPENAI_API_KEY,

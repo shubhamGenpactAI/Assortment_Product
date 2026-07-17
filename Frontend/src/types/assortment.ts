@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 
 export type DecisionType =
-  | 'EXPAND' | 'FUTURE_STAR' | 'KEEP' | 'CASH_COW'
+  | 'EXPAND' | 'FUTURE_STAR' | 'CONTINUE' | 'CASH_COW'
   | 'INVESTIGATE' | 'KEEP_WATCH' | 'PHASE_OUT' | 'REPLACE' | 'DELIST'
 
 export type HealthBand  = 'HIGH_HEALTH'  | 'MID_HEALTH'  | 'LOW_HEALTH'

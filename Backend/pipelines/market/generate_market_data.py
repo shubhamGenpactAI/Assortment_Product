@@ -43,7 +43,7 @@ CATEGORY_GROWTH: dict[str, float] = {
     "Hair Mask": 0.080,
     "Hair Serum": 0.100,
     "Hair Oil": 0.050,
-    "Anti-Dandruff Treatment": 0.040,
+    "Treatment": 0.040,
 }
 
 # Retailer shelf price = list_price × markup (accounts for typical trade margin)
@@ -65,7 +65,7 @@ BASE_VELOCITY: dict[str, float] = {
 SUBCATEGORY_ACV_OFFSET: dict[str, float] = {
     "Shampoo": 12.0,
     "Conditioner": 8.0,
-    "Anti-Dandruff Treatment": 5.0,
+    "Treatment": 5.0,
     "Hair Color": 0.0,
     "Hair Oil": -4.0,
     "Hair Mask": -8.0,

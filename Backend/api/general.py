@@ -4,11 +4,12 @@ general.py — routes for stores, delisting risk, new-SKU similarity,
 """
 
 import csv
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 
 from ..schemas.general import AssortmentDecisionIn
 from ..services.general_service import (
@@ -17,6 +18,7 @@ from ..services.general_service import (
     get_similarity_data, get_analog_forecast,
 )
 
+log = logging.getLogger(__name__)
 router = APIRouter()
 
 # Project root (Backend/routers/ → Backend/ → Assortment/)
@@ -26,7 +28,7 @@ _DECISIONS_CSV = _PROJ / "Outputs" / "Assortment decision.csv"
 _DECISION_HEADERS = [
     "Timestamp", "Decision", "Decision_Type", "Comment",
     "SKU_ID", "Product_Name", "Brand", "Category", "Sub_Category",
-    "View_Label", "Scope", "Granularity_Value",
+    "View_Label", "Scope", "Granularity_Value", "Scope_Detail",
     "ABC_Class", "Health_Score", "Delist_Score", "GMROI",
     "Forecast_Growth_Pct", "Health_Band", "Delist_Band",
     "Basket_Role", "Total_Revenue", "Total_Margin",
@@ -59,6 +61,10 @@ def analog_forecast(new_sku_id: str = Query(...)): return get_analog_forecast(ne
 # ── Assortment Decisions ───────────────────────────────────────────────────
 @router.post("/assortment-decisions")
 def save_assortment_decision(payload: AssortmentDecisionIn):
+    # Scope_Detail: the concrete store number when scope is Store, or the
+    # geography name when scope is Geography — blank for Global/other scopes.
+    scope_detail = payload.granularity_value if payload.scope in ("Store", "Geography") else ""
+
     row = {
         "Timestamp":           datetime.now().isoformat(timespec="seconds"),
         "Decision":            payload.decision_label,
@@ -72,29 +78,49 @@ def save_assortment_decision(payload: AssortmentDecisionIn):
         "View_Label":          payload.view_label or "",
         "Scope":               payload.scope or "",
         "Granularity_Value":   payload.granularity_value or "",
+        "Scope_Detail":        scope_detail or "",
         "ABC_Class":           payload.abc_class or "",
-        "Health_Score":        "" if payload.health_score        is None else payload.health_score,
-        "Delist_Score":        "" if payload.delist_score        is None else payload.delist_score,
-        "GMROI":               "" if payload.gmroi               is None else payload.gmroi,
-        "Forecast_Growth_Pct": "" if payload.forecast_growth_pct is None else payload.forecast_growth_pct,
+        "Health_Score":        payload.health_score,
+        "Delist_Score":        payload.delist_score,
+        "GMROI":               payload.gmroi,
+        "Forecast_Growth_Pct": payload.forecast_growth_pct,
         "Health_Band":         payload.health_band or "",
         "Delist_Band":         payload.delist_band or "",
         "Basket_Role":         payload.basket_role or "",
-        "Total_Revenue":       "" if payload.total_revenue  is None else payload.total_revenue,
-        "Total_Margin":        "" if payload.total_margin   is None else payload.total_margin,
+        "Total_Revenue":       payload.total_revenue,
+        "Total_Margin":        payload.total_margin,
         "Price_Band":          payload.price_band or "",
-        "List_Price_USD":      "" if payload.list_price_usd is None else payload.list_price_usd,
+        "List_Price_USD":      payload.list_price_usd,
         "Decision_Reason":     payload.decision_reason or "",
         "Recommended_Action":  payload.recommended_action or "",
     }
 
-    _DECISIONS_CSV.parent.mkdir(parents=True, exist_ok=True)
-    write_header = not _DECISIONS_CSV.exists()
-
-    with _DECISIONS_CSV.open("a", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=_DECISION_HEADERS)
-        if write_header:
-            writer.writeheader()
-        writer.writerow(row)
+    try:
+        _DECISIONS_CSV.parent.mkdir(parents=True, exist_ok=True)
+        write_header = not _DECISIONS_CSV.exists()
+        with _DECISIONS_CSV.open("a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=_DECISION_HEADERS)
+            if write_header:
+                writer.writeheader()
+            writer.writerow(row)
+    except Exception as e:
+        log.warning("Assortment decision CSV write failed: %s", e)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Could not save decision to CSV ({e}). Is 'Assortment decision.csv' currently open in Excel?",
+        )
 
     return {"status": "saved"}
+
+
+@router.get("/assortment-decisions")
+def list_assortment_decisions():
+    """Live read of the decisions CSV — always the current on-disk rows, no caching."""
+    if not _DECISIONS_CSV.exists():
+        return []
+    try:
+        with _DECISIONS_CSV.open("r", newline="", encoding="utf-8") as f:
+            return list(csv.DictReader(f))
+    except Exception as e:
+        log.warning("Assortment decision CSV read failed: %s", e)
+        raise HTTPException(status_code=503, detail=f"Could not read decisions CSV ({e}).")

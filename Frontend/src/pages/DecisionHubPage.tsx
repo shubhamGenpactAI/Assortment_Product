@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react'
 import {
   fetchHubKpis, fetchRiskMatrix, fetchLostSales,
   fetchInventoryProductivity, fetchDelistRationalization,
-  fetchExceptionAlerts, fetchCategoryHealth,
+  fetchExceptionAlerts, fetchCategoryHealth, fetchCompetitiveIntelligence,
 } from '../api/decisionHubApi'
 import { fetchStores } from '../api/generalApi'
 import KpiHeader        from '../components/decision_hub/KpiHeader'
@@ -13,15 +13,18 @@ import LostSalesChart   from '../components/decision_hub/LostSalesChart'
 import InventoryScatter from '../components/decision_hub/InventoryScatter'
 import DelistHub        from '../components/decision_hub/DelistHub'
 import AICopilot        from '../components/decision_hub/AICopilot'
+import CompetitiveIntelligence, { type CompetitiveIntelligenceData } from '../components/decision_hub/CompetitiveIntelligence'
 import WatchdogBanner   from '../components/agents/WatchdogBanner'
+import PageTabs         from '../components/ui/PageTabs'
 import { useFilters }   from '../context/FilterContext'
 
 type Filters = { store_id?: string; sub_cat?: string; cluster?: string }
+type HubTab = 'overview' | 'forecast' | 'analytics' | 'delist' | 'competitive'
 
 const CLUSTERS = ['Premium Urban', 'Emerging Growth', 'Affluent Suburban', 'Digital-First Urban', 'Rural Remote']
 const SUB_CATS = [
   'Shampoo','Conditioner','Hair Color','Hair Oil','Hair Serum',
-  'Hair Mask','Anti-Dandruff Treatment',
+  'Hair Mask','Treatment',
 ]
 
 function SectionCard({ title, children, className = '' }: { title: string; children: React.ReactNode; className?: string }) {
@@ -48,7 +51,9 @@ export default function DecisionHubPage() {
   const [delist,     setDelist]     = useState<any>(null)
   const [alerts,     setAlerts]     = useState<any[]>([])
   const [health,     setHealth]     = useState<any[]>([])
+  const [compIntel,  setCompIntel]  = useState<CompetitiveIntelligenceData | null>(null)
   const [loading,    setLoading]    = useState(true)
+  const [tab,        setTab]        = useState<HubTab>('overview')
 
   // Derive the API filter shape from shared context (only DH-relevant fields)
   const filters = useMemo<Filters>(() => ({
@@ -60,6 +65,7 @@ export default function DecisionHubPage() {
   useEffect(() => {
     fetchStores().then(setStores).catch(() => {})
     fetchCategoryHealth().then(setHealth).catch(() => {})
+    fetchCompetitiveIntelligence().then(setCompIntel).catch(() => {})
   }, [])
 
   const reload = useCallback((f: Filters) => {
@@ -147,40 +153,63 @@ export default function DecisionHubPage() {
         </div>
       )}
 
-      {/* ── Row 1: KPI Header ─────────────────────────────────── */}
+      {/* ── KPI Header ─────────────────────────────────────────── */}
       <div className="mb-4">
         {loading ? <Skeleton h={80} /> : <KpiHeader data={kpis} />}
       </div>
 
-      {/* ── Row 2: AI Copilot + Exception Alerts ─────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        <SectionCard title="🤖 AI Copilot Recommendations">
-          <AICopilot filters={filters} />
-        </SectionCard>
-        <SectionCard title="🚨 Exception Alerts">
-          {loading ? <Skeleton h={380} /> : <ExceptionAlerts alerts={alerts} />}
-        </SectionCard>
-      </div>
+      {/* ── Page tabs ──────────────────────────────────────────── */}
+      <PageTabs
+        active={tab}
+        onChange={k => setTab(k as HubTab)}
+        tabs={[
+          { key: 'overview',  label: 'Overview',       icon: '📊', sub: 'Live' },
+          { key: 'forecast',  label: 'Forecast Matrix', icon: '📈', sub: `${matrix.length} items` },
+          { key: 'analytics', label: 'Analytics',      icon: '🔬', sub: `${invProd.length} SKUs` },
+          { key: 'delist',    label: 'Delist Hub',     icon: '🧩', sub: '4 buckets' },
+          { key: 'competitive', label: 'Competitive Intelligence', icon: '🏪', sub: `${compIntel?.rows.length ?? 0} SKUs` },
+        ]}
+      />
 
-      {/* ── Row 3: Risk Matrix ────────────────────────────────── */}
-      <SectionCard title="📊 Forecast Opportunity & Risk Matrix" className="mb-4">
-        {loading ? <Skeleton h={220} /> : <RiskMatrix rows={matrix} />}
-      </SectionCard>
+      {tab === 'overview' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+          <SectionCard title="🤖 AI Copilot Recommendations">
+            <AICopilot filters={filters} />
+          </SectionCard>
+          <SectionCard title="🚨 Exception Alerts">
+            {loading ? <Skeleton h={380} /> : <ExceptionAlerts alerts={alerts} />}
+          </SectionCard>
+        </div>
+      )}
 
-      {/* ── Row 4: Lost Sales + Inventory Scatter ────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        <SectionCard title="💸 Lost Sales & Revenue at Risk (Top 20 SKUs)">
-          {loading ? <Skeleton h={280} /> : <LostSalesChart rows={lostSales} />}
+      {tab === 'forecast' && (
+        <SectionCard title="📊 Forecast Opportunity & Risk Matrix" className="mb-4">
+          {loading ? <Skeleton h={220} /> : <RiskMatrix rows={matrix} />}
         </SectionCard>
-        <SectionCard title="🔬 Inventory Productivity (GMROI vs Weeks of Cover)">
-          {loading ? <Skeleton h={280} /> : <InventoryScatter rows={invProd} />}
-        </SectionCard>
-      </div>
+      )}
 
-      {/* ── Row 5: Delist Hub ─────────────────────────────────── */}
-      <SectionCard title="🧩 Delist & Rationalization Hub">
-        {loading ? <Skeleton h={320} /> : <DelistHub data={delist} />}
-      </SectionCard>
+      {tab === 'analytics' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+          <SectionCard title="💸 Lost Sales & Revenue at Risk (Top 20 SKUs)">
+            {loading ? <Skeleton h={280} /> : <LostSalesChart rows={lostSales} />}
+          </SectionCard>
+          <SectionCard title="🔬 Inventory Productivity (GMROI vs Weeks of Cover)">
+            {loading ? <Skeleton h={280} /> : <InventoryScatter rows={invProd} />}
+          </SectionCard>
+        </div>
+      )}
+
+      {tab === 'delist' && (
+        <SectionCard title="🧩 Delist & Rationalization Hub">
+          {loading ? <Skeleton h={320} /> : <DelistHub data={delist} />}
+        </SectionCard>
+      )}
+
+      {tab === 'competitive' && (
+        <SectionCard title="🏪 Competitive Intelligence">
+          {compIntel === null ? <Skeleton h={320} /> : <CompetitiveIntelligence data={compIntel} />}
+        </SectionCard>
+      )}
     </div>
   )
 }

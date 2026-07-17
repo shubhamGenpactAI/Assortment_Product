@@ -3,7 +3,7 @@ import type { DecisionType } from '../../types/assortment'
 const CONFIG: Record<DecisionType, { label: string; bg: string; text: string; dot: string }> = {
   EXPAND:      { label: 'Expand',      bg: 'bg-emerald-50',  text: 'text-emerald-700', dot: 'bg-emerald-500' },
   FUTURE_STAR: { label: 'Future Star', bg: 'bg-sky-50',      text: 'text-sky-700',     dot: 'bg-sky-500'     },
-  KEEP:        { label: 'Keep',        bg: 'bg-indigo-50',   text: 'text-indigo-700',  dot: 'bg-indigo-500'  },
+  CONTINUE:    { label: 'Continue',    bg: 'bg-indigo-50',   text: 'text-indigo-700',  dot: 'bg-indigo-500'  },
   CASH_COW:    { label: 'Cash Cow',    bg: 'bg-violet-50',   text: 'text-violet-700',  dot: 'bg-violet-500'  },
   INVESTIGATE: { label: 'Investigate', bg: 'bg-amber-50',    text: 'text-amber-700',   dot: 'bg-amber-500'   },
   KEEP_WATCH:  { label: 'Watch',       bg: 'bg-orange-50',   text: 'text-orange-700',  dot: 'bg-orange-500'  },
@@ -40,7 +40,7 @@ export function DecisionBadge({ decision, size = 'sm' }: Props) {
 export function decisionColor(decision: DecisionType | null | undefined): string {
   if (!decision || !(decision in CONFIG)) return '#6B7280'
   const map: Record<DecisionType, string> = {
-    EXPAND: '#10B981', FUTURE_STAR: '#0EA5E9', KEEP: '#4F46E5', CASH_COW: '#7C3AED',
+    EXPAND: '#10B981', FUTURE_STAR: '#0EA5E9', CONTINUE: '#4F46E5', CASH_COW: '#7C3AED',
     INVESTIGATE: '#F59E0B', KEEP_WATCH: '#F97316', PHASE_OUT: '#F43F5E',
     REPLACE: '#EC4899', DELIST: '#EF4444',
   }

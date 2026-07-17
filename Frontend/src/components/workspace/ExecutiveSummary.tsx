@@ -49,7 +49,7 @@ interface KPIChipProps {
 
 function KPIChip({ icon, label, value, sub, accent = 'text-[#1A1D2E]', trend }: KPIChipProps) {
   return (
-    <div className="flex items-center gap-3 bg-white/70 backdrop-blur border border-white/80 rounded-2xl px-4 py-3 shadow-sm hover:shadow-md transition-shadow min-w-0">
+    <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 shadow-sm hover:shadow-md transition-shadow min-w-0">
       <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-[#1A1D2E]/10 to-[#4F46E5]/10 flex items-center justify-center">
         {icon}
       </div>
@@ -73,7 +73,7 @@ export function ExecutiveSummary({ summary: s }: Props) {
   const delistCount = (s.decisions['DELIST'] || 0) + (s.decisions['PHASE_OUT'] || 0)
   const expandCount = (s.decisions['EXPAND'] || 0) + (s.decisions['FUTURE_STAR'] || 0)
   const watchCount  = s.decisions['KEEP_WATCH'] || 0
-  const keepCount   = s.decisions['KEEP'] || 0
+  const keepCount   = s.decisions['CONTINUE'] || 0
   const growth      = s.avgForecastGrowth
 
   return (
@@ -85,13 +85,13 @@ export function ExecutiveSummary({ summary: s }: Props) {
           label="Active SKUs"
           value={fmt(s.totalSKUs)}
           sub="Global assortment"
-          accent="text-white"
+          accent="text-[#1A1D2E]"
         />
         <KPIChip
           icon={<CheckCircle size={16} className="text-emerald-400" />}
           label="Expand / Star"
           value={fmt(expandCount)}
-          sub="High-growth opportunities"
+          sub="Expand distribution to grow"
           accent="text-emerald-400"
           trend="up"
         />
@@ -112,7 +112,7 @@ export function ExecutiveSummary({ summary: s }: Props) {
         />
         <KPIChip
           icon={<CheckCircle size={16} className="text-indigo-400" />}
-          label="Core Keep"
+          label="Core Continue"
           value={fmt(keepCount)}
           sub="Stable assortment"
           accent="text-indigo-400"
@@ -121,13 +121,12 @@ export function ExecutiveSummary({ summary: s }: Props) {
           icon={<TrendingUp size={16} className="text-sky-400" />}
           label="Forecast Trend"
           value={fmtPct(growth)}
-          sub="Avg. SKU growth"
           accent={growth != null && growth >= 0 ? 'text-emerald-400' : 'text-red-400'}
           trend={growth != null ? (growth >= 0 ? 'up' : 'down') : 'flat'}
         />
         <KPIChip
           icon={<DollarSign size={16} className="text-amber-400" />}
-          label="Total Revenue"
+          label="Revenue"
           value={fmtM(s.totalRevenue)}
           sub="Category total"
           accent="text-amber-400"

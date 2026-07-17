@@ -13,7 +13,7 @@ interface SkuCard {
 }
 
 interface DelistData {
-  Keep:    SkuCard[]
+  Continue: SkuCard[]
   Grow:    SkuCard[]
   Watch:   SkuCard[]
   Delist:  SkuCard[]
@@ -23,7 +23,7 @@ interface DelistData {
 interface Props { data: DelistData | null }
 
 const BUCKET_CONFIG = {
-  Keep:   { bg: 'bg-emerald-50', border: 'border-emerald-200', badge: 'bg-emerald-500', icon: '✅' },
+  Continue: { bg: 'bg-emerald-50', border: 'border-emerald-200', badge: 'bg-emerald-500', icon: '✅' },
   Grow:   { bg: 'bg-blue-50',    border: 'border-blue-200',    badge: 'bg-blue-500',    icon: '📈' },
   Watch:  { bg: 'bg-amber-50',   border: 'border-amber-200',   badge: 'bg-amber-500',   icon: '👀' },
   Delist: { bg: 'bg-red-50',     border: 'border-red-200',     badge: 'bg-red-500',     icon: '🗑' },
@@ -70,7 +70,7 @@ function SkuPill({ card, bucket }: { card: SkuCard; bucket: string }) {
 export default function DelistHub({ data }: Props) {
   if (!data) return null
 
-  const buckets: Array<keyof typeof BUCKET_CONFIG> = ['Keep', 'Grow', 'Watch', 'Delist']
+  const buckets: Array<keyof typeof BUCKET_CONFIG> = ['Continue', 'Grow', 'Watch', 'Delist']
 
   return (
     <div>

@@ -89,17 +89,18 @@ export function InsightFeed({ rows, summary, skuNames }: Props) {
   if (insights.length === 0) return null
 
   return (
-    <div className="px-6 py-3">
-      <div className="flex items-center gap-2 mb-2">
+    <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-4 h-full flex flex-col">
+      <div className="flex items-center gap-2 mb-3">
         <Zap size={12} className="text-[#F2A93B]" />
-        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">AI Insight Feed</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex-1">AI Insights</span>
+        <span className="text-[10px] font-semibold text-gray-400">Live &middot; {insights.length} signals</span>
       </div>
-      <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+      <div className="flex flex-col gap-2 overflow-y-auto">
         {insights.map((ins, i) => (
           <div
             key={i}
-            className="flex items-start gap-2 bg-white border border-gray-100 rounded-xl px-3 py-2.5 shadow-sm
-                       hover:shadow-md hover:border-gray-200 transition-all cursor-default flex-1 min-w-0"
+            className={`flex items-start gap-2 bg-white border border-gray-100 border-l-[3px] rounded-xl px-3 py-2.5 shadow-sm
+                       hover:shadow-md hover:border-gray-200 transition-all cursor-default ${ins.color.replace('text-', 'border-l-')}`}
           >
             <span className={`flex-shrink-0 mt-0.5 ${ins.color}`}>{ins.icon}</span>
             <p className="text-[11px] text-gray-600 leading-relaxed">{ins.text}</p>

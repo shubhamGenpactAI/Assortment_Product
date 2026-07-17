@@ -13,7 +13,7 @@ const BRIEF_TYPES = [
 ]
 const SUB_CATS = [
   '', 'Shampoo', 'Conditioner', 'Hair Color', 'Hair Oil',
-  'Hair Serum', 'Hair Mask', 'Anti-Dandruff Treatment',
+  'Hair Serum', 'Hair Mask', 'Treatment',
 ]
 const BRANDS = [
   '', 'EarthTress', 'AquaSilk', 'NimbusPure', 'VelvetRoot',

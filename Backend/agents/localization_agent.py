@@ -1,7 +1,7 @@
 """
 localization_agent.py
 =====================
-Detects where a global Keep/Delist recommendation conflicts with a store
+Detects where a global Continue/Delist recommendation conflicts with a store
 cluster's actual performance.  Entirely rule-based — no LLM calls.
 """
 from __future__ import annotations
@@ -168,15 +168,15 @@ def find_divergent_skus(
 
 
 def _recommend_override(global_score: float, breakdown: list[dict]) -> str:
-    keeps  = [c["cluster_label"] for c in breakdown if c["cluster_decision"] == "Keep"]
+    keeps  = [c["cluster_label"] for c in breakdown if c["cluster_decision"] == "Continue"]
     delists = [c["cluster_label"] for c in breakdown if c["cluster_decision"] == "Delist"]
 
     if global_score >= 0.6 and keeps:
-        return f"Keep in {', '.join(keeps)}; proceed with Delist elsewhere"
+        return f"Continue in {', '.join(keeps)}; proceed with Delist elsewhere"
     if global_score < 0.4 and delists:
-        return f"Consider Delist in {', '.join(delists)}; Keep elsewhere"
+        return f"Consider Delist in {', '.join(delists)}; Continue elsewhere"
     if keeps and delists:
-        return f"Differentiate: Keep in {', '.join(keeps)}, Delist in {', '.join(delists)}"
+        return f"Differentiate: Continue in {', '.join(keeps)}, Delist in {', '.join(delists)}"
     return "Review cluster-level decisions individually"
 
 

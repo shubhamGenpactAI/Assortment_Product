@@ -8,6 +8,8 @@ const WorkspacePage   = lazy(() => import('./pages/WorkspacePage'))
 const NewSkuPage      = lazy(() => import('./pages/NewSkuPage'))
 const DecisionHubPage = lazy(() => import('./pages/DecisionHubPage'))
 const AgentHubPage    = lazy(() => import('./pages/AgentHubPage'))
+const LoginPage       = lazy(() => import('./pages/LoginPage'))
+const AssortmentDecisionPage = lazy(() => import('./pages/AssortmentDecisionPage'))
 
 function PageLoader() {
   return (
@@ -23,6 +25,15 @@ export default function App() {
     <BrowserRouter>
       {/* Workspace page takes full viewport height without the standard footer */}
       <Routes>
+        {/* Illustrative sign-in screen — no NavBar/footer, no real auth */}
+        <Route
+          path="/login"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <LoginPage />
+            </Suspense>
+          }
+        />
         <Route
           path="/workspace"
           element={
@@ -44,10 +55,11 @@ export default function App() {
               <main className="pt-[96px]">
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
-                    <Route path="/"              element={<Navigate to="/workspace" replace />} />
+                    <Route path="/"              element={<Navigate to="/login" replace />} />
                     <Route path="/decision-hub"  element={<DecisionHubPage />} />
                     <Route path="/new-sku"        element={<NewSkuPage />}     />
                     <Route path="/agent-hub"      element={<AgentHubPage />}   />
+                    <Route path="/assortment-decisions" element={<AssortmentDecisionPage />} />
                   </Routes>
                 </Suspense>
               </main>

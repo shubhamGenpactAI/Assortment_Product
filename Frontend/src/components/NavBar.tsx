@@ -1,13 +1,18 @@
-import { NavLink } from 'react-router-dom'
+import { useState } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 const NAV = [
   { to: '/workspace',    label: '🧠 Category Intelligence' },
   { to: '/decision-hub', label: '⚡ Decision Hub'          },
   { to: '/new-sku',      label: '✨ New SKU Intelligence'  },
   { to: '/agent-hub',    label: '🕵️ Agent Hub'            },
+  { to: '/assortment-decisions', label: '📋 Assortment Decision' },
 ]
 
 export default function NavBar() {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const navigate = useNavigate()
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#1A1D2E] border-b-4 border-[#F2A93B] shadow-lg">
       {/* Top row: logo + brand + meta */}
@@ -22,7 +27,35 @@ export default function NavBar() {
           Hair Care · Category Growth
         </span>
         <div className="flex-1 hidden md:block" />
-        <span className="text-[#F2A93B] text-sm font-bold">👤 Category Manager</span>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setMenuOpen(o => !o)}
+            className="flex items-center gap-1.5 text-[#F2A93B] text-sm font-bold hover:text-[#ffc35f] transition-colors"
+          >
+            👤 Category Manager
+            <span className={`text-[10px] transition-transform duration-150 ${menuOpen ? 'rotate-180' : ''}`}>▾</span>
+          </button>
+
+          {menuOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+              <div className="absolute right-0 top-8 z-50 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <p className="text-[13px] font-bold text-[#1A1D2E]">Category Manager</p>
+                  <p className="text-[11px] text-gray-400">Hair Care · Category Growth</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setMenuOpen(false); navigate('/login') }}
+                  className="w-full text-left px-4 py-2.5 text-[12.5px] text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  🚪 Sign out
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Bottom row: nav pills */}

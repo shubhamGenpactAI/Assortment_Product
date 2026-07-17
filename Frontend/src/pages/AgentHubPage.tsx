@@ -18,7 +18,7 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode; desc: string }[] = 
     id:    'localization',
     label: '🗺️ Localization',
     icon:  <MapPin size={16} />,
-    desc:  'Cluster-aware divergence from global Keep/Delist decisions',
+    desc:  'Cluster-aware divergence from global Continue/Delist decisions',
   },
   {
     id:    'brief',
@@ -30,7 +30,7 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode; desc: string }[] = 
 
 const SUB_CATS = [
   '', 'Shampoo', 'Conditioner', 'Hair Color', 'Hair Oil',
-  'Hair Serum', 'Hair Mask', 'Anti-Dandruff Treatment',
+  'Hair Serum', 'Hair Mask', 'Treatment',
 ]
 const CLUSTERS = ['', 'Premium Urban', 'Emerging Growth', 'Affluent Suburban', 'Digital-First Urban', 'Rural Remote']
 
