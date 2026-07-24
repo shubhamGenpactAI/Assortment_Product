@@ -9,6 +9,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Optional
 
+import pandas as pd
+
 from ..services.decision_hub_service import (
     get_exception_alerts,
     get_risk_matrix,
@@ -16,6 +18,7 @@ from ..services.decision_hub_service import (
     get_category_health_scores,
 )
 from .agent_core import priority_score, dedupe_by_key, trim
+from .rca import compute_root_causes
 
 _CONFLICT_PAIRS = [
     {"Stock-out Risk", "Delist Candidate"},
@@ -89,7 +92,11 @@ def _narrative(item: dict) -> str:
     if sig == "Stock-out Risk":
         woc = src.get("WoC") or src.get("woc")
         woc_str = f" — {woc:.1f} weeks cover remaining" if woc else ""
-        return f"{name} (Store {store}) is at Stockout Risk{woc_str}. Lost revenue exposure: ${fin:,.0f}."
+        base = f"{name} (Store {store}) is at Stockout Risk{woc_str}. Lost revenue exposure: ${fin:,.0f}."
+        rc = item.get("root_cause")
+        if rc:
+            base += f"\nRoot Cause: {rc['root_cause']} — {rc['root_cause_detail']}"
+        return base
     if sig == "Delist Candidate":
         ds = src.get("delist_score")
         ds_str = f" (delist score {ds:.2f})" if ds else ""
@@ -171,9 +178,22 @@ def build_digest(
                 "delist_score": r.get("delist_score"),
             })
 
-    # ── Score and rank ────────────────────────────────────────────────────
+    # ── Root Cause Analysis (Stock-out Risk items only) ───────────────────
     all_items = list(idx.values())
-    max_fin   = max((i["financial_impact_usd"] for i in all_items), default=1) or 1
+    stockout_items = [i for i in all_items if "Stock-out Risk" in i["signal_types"]]
+    if stockout_items:
+        candidates = pd.DataFrame(
+            [{"Store_ID": i["store_id"], "SKU_ID": i["sku_id"]} for i in stockout_items]
+        )
+        root_causes = compute_root_causes(candidates)
+        for item in stockout_items:
+            rc = root_causes.get((item["store_id"], item["sku_id"]))
+            if rc:
+                item["root_cause"] = rc
+                item["source_signals"]["root_cause"] = rc["root_cause"]
+
+    # ── Score and rank ────────────────────────────────────────────────────
+    max_fin = max((i["financial_impact_usd"] for i in all_items), default=1) or 1
 
     for item in all_items:
         item["conflict"] = _is_conflict(item["signal_types"])

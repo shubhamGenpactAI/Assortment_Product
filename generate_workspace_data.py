@@ -68,6 +68,7 @@ def main() -> None:
     forecast   = load(OUTPUTS   / "Forecast_Output.csv")
     clusters   = load(OUTPUTS   / "store_clusters.csv")
     sku_master = load(RAW_INPUT / "SKU_Master.csv")
+    sales      = load(RAW_INPUT / "Sales_Tx.csv")
 
     # ── SKU master index ──────────────────────────────────────────────────────
     sku_info: dict = {}
@@ -75,15 +76,47 @@ def main() -> None:
         for _, row in sku_master.iterrows():
             sku_info[str(row["SKU_ID"])] = {k: jval(v) for k, v in row.items()}
 
-    # ── Weekly demand → by SKU (global aggregate) ─────────────────────────────
+    # ── Historical demand → by SKU, aggregated to CALENDAR MONTH ──────────────
+    # The Category Intelligence trend chart shows history at MONTHLY grain across
+    # the full 12-month window (Jun'2025 .. May'2026), even though the underlying
+    # pipeline is weekly. Aggregating straight from Sales_Tx by calendar month
+    # gives 12 clean, evenly-spaced buckets (a week→month mapping would smear
+    # ISO weeks that straddle a month boundary). Labels are non-date-like
+    # ("Jun'25") so the chart never mis-parses them as dates.
+    # Key stays `weeklyDemand` and point shape {w, q} for frontend compatibility.
+    HIST_START = pd.Timestamp("2025-06-01")
+    HIST_END   = pd.Timestamp("2026-05-31")
     weekly_by_sku: dict = {}
-    if not weekly.empty and {"SKU_ID", "Year_WK", "Quantity_Sold"} <= set(weekly.columns):
-        grp = weekly.groupby(["SKU_ID", "Year_WK"])["Quantity_Sold"].sum().reset_index()
-        for sku_id, g in grp.groupby("SKU_ID"):
+    if not sales.empty and {"SKU_ID", "Date", "Units_Sold"} <= set(sales.columns):
+        s = sales.copy()
+        s["Date"] = pd.to_datetime(s["Date"], errors="coerce")
+        s = s[(s["Date"] >= HIST_START) & (s["Date"] <= HIST_END)].dropna(subset=["Date"])
+        s["Units_Sold"] = pd.to_numeric(s["Units_Sold"], errors="coerce").fillna(0)
+        s["_month"] = s["Date"].dt.to_period("M")
+
+        # Canonical ordered month index (12 months) so every SKU's series is
+        # calendar-continuous — missing months are zero-filled, not dropped.
+        month_index = pd.period_range(HIST_START, HIST_END, freq="M")
+        month_label = {m: f"{m.strftime('%b')}'{m.strftime('%y')}" for m in month_index}
+
+        grp = s.groupby(["SKU_ID", "_month"])["Units_Sold"].sum()
+        for sku_id, g in grp.groupby(level=0):
+            by_month = g.droplevel(0).reindex(month_index, fill_value=0)
             weekly_by_sku[str(sku_id)] = [
-                {"w": str(r["Year_WK"]), "q": jval(r["Quantity_Sold"])}
-                for _, r in g.sort_values("Year_WK").iterrows()
+                {"w": month_label[m], "q": jval(by_month.loc[m])}
+                for m in month_index
             ]
+
+    # ── Forecast → by SKU: WEEKLY, next 6 weeks (from ~Jun'2026) ─────────────
+    FORECAST_WEEKS = 6
+
+    def _wk_label(year_wk: str) -> str:
+        """'2026-23' -> \"W23'26\" (non-date-like, categorical-safe)."""
+        txt = str(year_wk)
+        if "-" in txt:
+            yr, wk = txt.split("-", 1)
+            return f"W{int(wk)}'{yr[-2:]}"
+        return txt
 
     # ── Forecast → by SKU (global aggregate across stores) ───────────────────
     forecast_by_sku: dict = {}
@@ -94,16 +127,18 @@ def main() -> None:
         if fc_value_cols:
             grp = forecast.groupby(["SKU_ID", "Forecast_Week"])[fc_value_cols].sum().reset_index()
             for sku_id, g in grp.groupby("SKU_ID"):
+                # First 5 forecast weeks only (chronological).
+                g = g.sort_values("Forecast_Week").head(FORECAST_WEEKS)
                 forecast_by_sku[str(sku_id)] = [
                     {
-                        "w":    str(r["Forecast_Week"]),
+                        "w":    _wk_label(r["Forecast_Week"]),
                         "fc":   jval(r.get("Final_Forecast")),
                         "lo":   jval(r.get("Forecast_Lower")),
                         "hi":   jval(r.get("Forecast_Upper")),
                         "sales":  jval(r.get("Total_Sales")),
                         "margin": jval(r.get("Total_Margin")),
                     }
-                    for _, r in g.sort_values("Forecast_Week").iterrows()
+                    for _, r in g.iterrows()
                 ]
 
     # ── Basket insights index ─────────────────────────────────────────────────

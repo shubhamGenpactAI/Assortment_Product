@@ -1097,9 +1097,10 @@ def compute_granular_inventory_metrics(
         tx[col] = pd.to_numeric(tx[col], errors="coerce").fillna(0)
 
     # Build SKU → unit cost lookup from SKU_Master for GMROI cost base.
-    # Inventory_Value in this dataset equals Inventory_On_Hand (synthetic data
-    # artefact where unit monetary value was not modelled separately).
-    # Using Unit_Cost_USD × avg_inventory_units gives a defensible cost base.
+    # (In the enriched data Inventory_Report.Inventory_Value = Inventory_On_Hand ×
+    # Unit_Cost_USD, so it is already a cost basis; we still derive the cost base
+    # here from Unit_Cost_USD × avg_inventory_units to stay robust to that field
+    # and consistent with how GMROI has always been computed.)
     sku_unit_cost: Dict[str, float] = {}
     if sku_master is not None and not sku_master.empty:
         if "SKU_ID" in sku_master.columns and "Unit_Cost_USD" in sku_master.columns:

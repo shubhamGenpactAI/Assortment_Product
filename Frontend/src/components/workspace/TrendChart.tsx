@@ -58,9 +58,15 @@ export function TrendChart({ weekly, forecast, height = 240 }: Props) {
       plot_bgcolor: '#FFFFFF', paper_bgcolor: '#FFFFFF',
       legend: { orientation: 'h', y: -0.25, x: 0, font: { size: 10, color: '#6B7280' } },
       xaxis: {
+        // Force categorical: the labels are period strings ("Jun'25", "W23'26"),
+        // NOT dates. Without this, Plotly auto-parses "YYYY-WW"/"YYYY-MM"-looking
+        // values as calendar dates and mislabels the axis.
+        type: 'category',
         showgrid: true, gridcolor: '#F3F4F6', tickangle: -30,
         tickfont: { size: 10, color: '#9CA3AF' }, linecolor: '#E5E7EB',
-        nticks: 8,
+        // Show every category label (≤12 points per tab) so the last bucket
+        // — e.g. May'26 — is always labelled, not thinned away.
+        tickmode: 'array', tickvals: (actX.length ? actX : fcX), automargin: true,
       },
       yaxis: {
         showgrid: true, gridcolor: '#F3F4F6',

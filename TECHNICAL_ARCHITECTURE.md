@@ -27,13 +27,12 @@ flowchart TB
         T4[(reviews_social)]
         T5[(sku_master)]
         T6[(store_master)]
-        T7[(sku_similarity_for_substitution)]
     end
 
-    subgraph ETL["⚙️ ETL Layer — Backend/db.py"]
-        E1["read_table_or_csv()\nPG first → CSV/XLSX fallback"]
+    subgraph ETL["⚙️ ETL Layer"]
+        E1["Backend/database/connection.py\nread_table_or_csv() — PG first → CSV/XLSX fallback"]
         E2["_reconcile_columns()\nlowercase PG cols → CSV-case schema"]
-        E3["Weekly aggregation\n(Year_WK grain)"]
+        E3["Backend/pipelines/etl/build_weekly_demand.py\nWeekly aggregation (Year_WK grain)"]
     end
 
     subgraph ALGO["🧠 Python Algorithms (Backend/)"]
@@ -100,7 +99,7 @@ flowchart TB
 ## 3. Data Layer — PostgreSQL
 
 All source data is centralized in the **`Assortment`** PostgreSQL database. Every Backend module
-reads through a single function, `read_table_or_csv()` in `Backend/db.py`, which:
+reads through a single function, `read_table_or_csv()` in `Backend/database/connection.py`, which:
 
 1. Tries the PostgreSQL table (exact name, then lowercase) via a cached SQLAlchemy engine.
 2. Reconciles PG's lowercase column names back to the original CSV title-case schema
@@ -113,13 +112,13 @@ Connection parameters are read from a project-root `.env` (`PGHOST`, `PGPORT`, `
 
 | Table (Postgres) | Grain | Source file (fallback) |
 |---|---|---|
-| `sales_tx` | Transaction line (~200K rows) | `Raw_Input/Sales_Tx.csv` |
-| `inventory_report` | Store × SKU × Day | `Raw_Input/Inventory_Report.csv` |
+| `sales_tx` | Transaction line (~382K rows, full year 2025-06→2026-05; carries `Cost_Price`) | `Raw_Input/Sales_Tx.csv` |
+| `inventory_report` | Store × SKU × Day (~215K rows, full-year daily) | `Raw_Input/Inventory_Report.csv` |
 | `market_data` | Category/market level | `Raw_Input/Market_Data.csv` |
 | `reviews_social` | SKU-level review/social sentiment | `Raw_Input/Reviews_Social.csv` |
 | `sku_master` | SKU (60 rows) | `Raw_Input/SKU_Master.csv` |
-| `store_master` | Store (10 rows) | `Raw_Input/Store_Master.csv` |
-| `sku_similarity_for_substitution` | SKU pair | `Raw_Input/SKU_Similarity_For_Substitution.csv` |
+| `store_master` | Store (15 rows) | `Raw_Input/Store_Master.csv` |
+| `weekly_demand_output` | Week × Store × SKU (900 pairs × 53 weeks) | `Outputs/weekly_demand_output.csv` |
 
 `New_SKUs.csv` (candidate launch SKUs) also lives in `Raw_Input/` and feeds the New SKU
 Intelligence pipeline.
@@ -128,11 +127,15 @@ Intelligence pipeline.
 
 ## 4. ETL — Raw Transactions → Weekly Star Schema
 
-`sales_tx` (transaction grain) and `inventory_report` (daily grain) are aggregated to a common
-**weekly** grain (`Year_WK`) with quality gates for referential integrity, nulls, and calendar
-continuity, producing `weekly_demand_output.csv` (Week × Store × SKU). This weekly table is the
-shared input to forecasting, clustering, and basket analysis — run order matters: forecasting and
-clustering should complete before basket analysis so it works off fresh weekly data.
+`Backend/pipelines/etl/build_weekly_demand.py` aggregates `sales_tx` (transaction grain) and
+`inventory_report` (daily grain) to a common **weekly** grain (`Year_WK`): `Quantity_Sold` =
+SUM of `Units_Sold` per ISO week, `Quantity_Available` = **end-of-week** `Inventory_On_Hand`
+(a stock level, not a sum). It emits the full 900-pair × 53-week grid with calendar-continuity
+zero-fill (so zero-sales weeks are explicit and demand is not left-censored), producing
+`weekly_demand_output.csv` (Week × Store × SKU). This weekly table is the shared input to
+forecasting, safety-stock, RCA, and the decision-hub/forecast services — run it (and
+`cluster.py`) before those so they work off fresh weekly data. `basket_analysis.py` reads the
+raw `sales_tx`/`inventory_report` directly.
 
 ---
 
@@ -140,7 +143,8 @@ clustering should complete before basket analysis so it works off fresh weekly d
 
 | Module | File | Algorithm | Output |
 |---|---|---|---|
-| Demand Forecasting | `Forecasting/forecasting.py` | Dual-model per SKU×Store timeseries: LightGBM (n_estimators=500, lr=0.05) + Nixtla AutoETS; 6-week holdout, best model picked by MAE | `Forecast_Output.csv`, `Forecast_Validation.csv`, `weekly_demand_output.csv` |
+| Weekly Demand ETL | `pipelines/etl/build_weekly_demand.py` | Week×Store×SKU aggregation from Sales_Tx (SUM units) + Inventory_Report (end-of-week on-hand), calendar-continuity zero-fill | `weekly_demand_output.csv` |
+| Demand Forecasting | `pipelines/forecasting/forecasting.py` | LightGBM per SKU×Store timeseries (point + Q10/Q90 quantile bounds); 6-week holdout MAE | `Forecast_Output.csv`, `Forecast_Validation.csv` |
 | Store Clustering | `StoreClustering/cluster.py` | Ward-linkage hierarchical clustering (≤500 stores) or BIRCH+PCA (>500); auto-detects cluster count (cap 6) | `store_clusters.csv`, `store_clusters_summary.json` |
 | New-SKU Similarity | `Basket&ABC_Analysis/similarity.py` | 4-group cosine/Jaccard similarity (Hierarchy 35%, Functional 25%, Ingredient 20%, Commercial 20%) | `new_sku_similarity_scores.csv`, `new_sku_analog_demand_forecast.csv` |
 | Basket & Delisting | `Basket&ABC_Analysis/basket_analysis.py` | Association rule mining (min support 0.5%) + demand transfer matrix; 8-factor composite delist score (ABC 15%, Revenue 20%, Margin 20%, Support 15%, Lift 10%, Dependency 10%, Substitution 10%) with NL explanations | `association_rules.csv`, `sku_basket_insights.csv`, `demand_transfer_matrix.csv`, `delisting_recommendations.csv` |

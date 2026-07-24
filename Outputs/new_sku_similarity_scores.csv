@@ -1,21 +1,61 @@
 New_SKU_ID,Existing_SKU_ID,Existing_Product_Name,Existing_Brand,Existing_Sub_Category,Existing_Segment,Existing_Attribute_Claim,Hierarchy_Similarity,Functional_Similarity,Ingredient_Similarity,Commercial_Similarity,Final_Similarity_Score,Similarity_Rank
-NEW_SKU_001,SKU0003,VitalStrand Anti Hair Fall Hair Color 250ml,VitalStrand,Hair Color,Mainstream,Anti Hair Fall,0.3333,1.0,0.4,0.083,0.4633,1
-NEW_SKU_001,SKU0010,EarthTress Argan Oil Hair Color 200ml,EarthTress,Hair Color,Premium,Argan Oil,0.3333,0.6667,0.4,0.2298,0.4093,2
-NEW_SKU_001,SKU0002,EarthTress Sulphate Free Hair Color 100ml,EarthTress,Hair Color,Premium,Sulphate Free,0.1667,0.5774,0.75,0.2621,0.4051,3
-NEW_SKU_001,SKU0005,Lustra Botanix Herbal Treatment 150ml,Lustra Botanix,Treatment,Economy,Herbal,0.3333,0.6667,0.4,0.0059,0.3645,4
-NEW_SKU_001,SKU0015,Velinea Keratin Hair Color 150ml,Velinea,Hair Color,Premium,Keratin,0.1667,0.6667,0.4,0.2259,0.3502,5
-NEW_SKU_001,SKU0008,Lustra Botanix Color Protection Treatment 150ml,Lustra Botanix,Treatment,Economy,Color Protection,0.3333,0.6667,0.1667,0.152,0.3471,6
-NEW_SKU_001,SKU0012,GlossRoot Color Protection Hair Serum 150ml,GlossRoot,Hair Serum,Mainstream,Color Protection,0.3333,0.6667,0.1667,0.1448,0.3456,7
-NEW_SKU_001,SKU0001,EarthTress Color Protection Shampoo 250ml,EarthTress,Shampoo,Economy,Color Protection,0.3333,0.4082,0.4,0.085,0.3157,8
-NEW_SKU_001,SKU0006,GlossRoot Color Protection Hair Color 100ml,GlossRoot,Hair Color,Premium,Color Protection,0.3333,0.3333,0.4,0.1739,0.3148,9
-NEW_SKU_001,SKU0004,PureMane Anti Hair Fall Treatment 200ml,PureMane,Treatment,Economy,Anti Hair Fall,0.1667,0.8165,0.1667,0.0793,0.3117,10
-NEW_SKU_001,SKU0017,PureMane Anti Hair Fall Hair Color 150ml,PureMane,Hair Color,Mainstream,Anti Hair Fall,0.1667,0.5774,0.4,0.1076,0.3042,11
-NEW_SKU_001,SKU0009,SilkenAura Herbal Hair Mask 200ml,SilkenAura,Hair Mask,Mainstream,Herbal,0.1667,0.4082,0.4,0.1056,0.2615,12
-NEW_SKU_001,SKU0018,PureMane Damage Repair Hair Serum 650ml,PureMane,Hair Serum,Mainstream,Damage Repair,0.1667,0.4082,0.4,0.1048,0.2614,13
-NEW_SKU_001,SKU0011,NourishLab Argan Oil Hair Oil 250ml,NourishLab,Hair Oil,Mainstream,Argan Oil,0.1667,0.4082,0.4,0.1028,0.2609,14
-NEW_SKU_001,SKU0007,EarthTress Color Protection Hair Color 400ml,EarthTress,Hair Color,Mainstream,Color Protection,0.1667,0.3333,0.1667,0.1282,0.2006,15
-NEW_SKU_001,SKU0019,EarthTress Argan Oil Treatment 300ml,EarthTress,Treatment,Mainstream,Argan Oil,0.3333,0.0,0.1667,0.0511,0.1602,16
-NEW_SKU_001,SKU0016,NourishLab Anti Dandruff Hair Color 500ml,NourishLab,Hair Color,Mainstream,Anti Dandruff,0.3333,0.0,0.0,0.1944,0.1556,17
-NEW_SKU_001,SKU0020,GlossRoot Damage Repair Treatment 100ml,GlossRoot,Treatment,Economy,Damage Repair,0.1667,0.0,0.4,0.0735,0.153,18
-NEW_SKU_001,SKU0014,VitalStrand Color Protection Hair Color 500ml,VitalStrand,Hair Color,Mainstream,Color Protection,0.1667,0.0,0.1667,0.103,0.1123,19
-NEW_SKU_001,SKU0013,SilkenAura Argan Oil Hair Serum 650ml,SilkenAura,Hair Serum,Mainstream,Argan Oil,0.1667,0.0,0.1667,0.0783,0.1073,20
+NEW_SKU_001,SKU0047,GlossRoot Damage Repair Treatment 300ml,GlossRoot,Treatment,Economy,Damage Repair,0.3333,0.8165,0.4,0.1308,0.4269,1
+NEW_SKU_001,SKU0033,SilkenAura Smoothening Hair Serum 500ml,SilkenAura,Hair Serum,Premium,Smoothening,0.3333,0.6667,0.4,0.2377,0.4109,2
+NEW_SKU_001,SKU0017,PureMane Anti Hair Fall Hair Color 150ml,PureMane,Hair Color,Mainstream,Anti Hair Fall,0.1667,1.0,0.4,0.1124,0.4108,3
+NEW_SKU_001,SKU0010,EarthTress Argan Oil Hair Color 200ml,EarthTress,Hair Color,Premium,Argan Oil,0.1667,0.8165,0.4,0.2381,0.3901,4
+NEW_SKU_001,SKU0046,SilkenAura Anti Hair Fall Hair Oil 150ml,SilkenAura,Hair Oil,Mainstream,Anti Hair Fall,0.3333,0.6667,0.4,0.0786,0.3791,5
+NEW_SKU_001,SKU0054,Lustra Botanix Anti Hair Fall Conditioner 250ml,Lustra Botanix,Conditioner,Economy,Anti Hair Fall,0.1667,1.0,0.1667,0.1664,0.375,6
+NEW_SKU_001,SKU0050,GlossRoot Argan Oil Conditioner 250ml,GlossRoot,Conditioner,Economy,Argan Oil,0.1667,0.8165,0.4,0.1603,0.3745,7
+NEW_SKU_001,SKU0029,GlossRoot Sulphate Free Hair Serum 650ml,GlossRoot,Hair Serum,Mainstream,Sulphate Free,0.1667,0.8165,0.4,0.1157,0.3656,8
+NEW_SKU_001,SKU0049,VitalStrand Sulphate Free Conditioner 200ml,VitalStrand,Conditioner,Mainstream,Sulphate Free,0.1667,0.8165,0.4,0.094,0.3613,9
+NEW_SKU_001,SKU0002,EarthTress Sulphate Free Hair Color 100ml,EarthTress,Hair Color,Premium,Sulphate Free,0.1667,0.6667,0.4,0.2695,0.3589,10
+NEW_SKU_001,SKU0001,EarthTress Color Protection Shampoo 250ml,EarthTress,Shampoo,Economy,Color Protection,0.3333,0.5774,0.4,0.0891,0.3588,11
+NEW_SKU_001,SKU0006,GlossRoot Color Protection Hair Color 100ml,GlossRoot,Hair Color,Premium,Color Protection,0.1667,0.6667,0.4,0.1842,0.3418,12
+NEW_SKU_001,SKU0003,VitalStrand Anti Hair Fall Hair Color 250ml,VitalStrand,Hair Color,Mainstream,Anti Hair Fall,0.3333,0.6667,0.1667,0.0883,0.3343,13
+NEW_SKU_001,SKU0015,Velinea Keratin Hair Color 150ml,Velinea,Hair Color,Premium,Keratin,0.1667,0.5774,0.4,0.2357,0.3298,14
+NEW_SKU_001,SKU0038,EarthTress Smoothening Hair Color 100ml,EarthTress,Hair Color,Premium,Smoothening,0.1667,0.5774,0.4,0.2331,0.3293,15
+NEW_SKU_001,SKU0014,VitalStrand Color Protection Hair Color 500ml,VitalStrand,Hair Color,Mainstream,Color Protection,0.1667,0.6667,0.4,0.1086,0.3267,16
+NEW_SKU_001,SKU0004,PureMane Anti Hair Fall Treatment 200ml,PureMane,Treatment,Economy,Anti Hair Fall,0.1667,0.866,0.1667,0.0848,0.3251,17
+NEW_SKU_001,SKU0042,PureMane Herbal Conditioner 150ml,PureMane,Conditioner,Economy,Herbal,0.3333,0.4082,0.4,0.1114,0.321,18
+NEW_SKU_001,SKU0027,EarthTress Smoothening Hair Color 300ml,EarthTress,Hair Color,Premium,Smoothening,0.1667,0.6667,0.1667,0.3098,0.3203,19
+NEW_SKU_001,SKU0005,Lustra Botanix Herbal Treatment 150ml,Lustra Botanix,Treatment,Economy,Herbal,0.3333,0.6667,0.1667,0.0117,0.319,20
+NEW_SKU_001,SKU0055,PureMane Argan Oil Hair Oil 500ml,PureMane,Hair Oil,Mainstream,Argan Oil,0.1667,0.6667,0.4,0.0564,0.3163,21
+NEW_SKU_001,SKU0052,NourishLab Argan Oil Treatment 250ml,NourishLab,Treatment,Mainstream,Argan Oil,0.3333,0.5774,0.1667,0.0698,0.3083,22
+NEW_SKU_001,SKU0035,Lustra Botanix Smoothening Hair Oil 100ml,Lustra Botanix,Hair Oil,Economy,Smoothening,0.3333,0.4082,0.4,0.0317,0.3051,23
+NEW_SKU_001,SKU0023,VitalStrand Biotin Treatment 500ml,VitalStrand,Treatment,Mainstream,Biotin,0.1667,0.5774,0.4,0.0792,0.2985,24
+NEW_SKU_001,SKU0040,Velinea Argan Oil Hair Mask 300ml,Velinea,Hair Mask,Premium,Argan Oil,0.1667,0.6667,0.1667,0.1886,0.296,25
+NEW_SKU_001,SKU0016,NourishLab Anti Dandruff Hair Color 500ml,NourishLab,Hair Color,Mainstream,Anti Dandruff,0.3333,0.4082,0.1667,0.198,0.2917,26
+NEW_SKU_001,SKU0056,PureMane Biotin Conditioner 300ml,PureMane,Conditioner,Economy,Biotin,0.3333,0.4082,0.1667,0.1884,0.2897,27
+NEW_SKU_001,SKU0041,SilkenAura Biotin Hair Color 150ml,SilkenAura,Hair Color,Premium,Biotin,0.1667,0.5774,0.1667,0.2537,0.2867,28
+NEW_SKU_001,SKU0025,Lustra Botanix Anti Dandruff Conditioner 400ml,Lustra Botanix,Conditioner,Mainstream,Anti Dandruff,0.3333,0.4082,0.1667,0.1659,0.2852,29
+NEW_SKU_001,SKU0028,SilkenAura Keratin Conditioner 500ml,SilkenAura,Conditioner,Economy,Keratin,0.3333,0.5774,0.0,0.1035,0.2817,30
+NEW_SKU_001,SKU0007,EarthTress Color Protection Hair Color 400ml,EarthTress,Hair Color,Mainstream,Color Protection,0.3333,0.4082,0.1667,0.1319,0.2784,31
+NEW_SKU_001,SKU0043,SilkenAura Rosemary Treatment 300ml,SilkenAura,Treatment,Economy,Rosemary,0.1667,0.6667,0.1667,0.0844,0.2752,32
+NEW_SKU_001,SKU0032,EarthTress Argan Oil Shampoo 100ml,EarthTress,Shampoo,Mainstream,Argan Oil,0.3333,0.4082,0.1667,0.1007,0.2722,33
+NEW_SKU_001,SKU0026,Lustra Botanix Anti Dandruff Shampoo 100ml,Lustra Botanix,Shampoo,Mainstream,Anti Dandruff,0.5,0.0,0.4,0.0631,0.2676,34
+NEW_SKU_001,SKU0008,Lustra Botanix Color Protection Treatment 150ml,Lustra Botanix,Treatment,Economy,Color Protection,0.1667,0.5774,0.1667,0.1549,0.267,35
+NEW_SKU_001,SKU0060,VitalStrand Argan Oil Hair Oil 500ml,VitalStrand,Hair Oil,Mainstream,Argan Oil,0.1667,0.5774,0.1667,0.1532,0.2667,36
+NEW_SKU_001,SKU0024,NourishLab Argan Oil Hair Mask 400ml,NourishLab,Hair Mask,Premium,Argan Oil,0.1667,0.0,0.75,0.2918,0.2667,37
+NEW_SKU_001,SKU0034,NourishLab Keratin Hair Oil 300ml,NourishLab,Hair Oil,Economy,Keratin,0.1667,0.4082,0.4,0.1034,0.2611,38
+NEW_SKU_001,SKU0048,Revynce Anti Dandruff Shampoo 200ml,Revynce,Shampoo,Mainstream,Anti Dandruff,0.3333,0.3333,0.1667,0.1358,0.2605,39
+NEW_SKU_001,SKU0022,SilkenAura Anti Dandruff Treatment 200ml,SilkenAura,Treatment,Mainstream,Anti Dandruff,0.1667,0.4082,0.4,0.0873,0.2579,40
+NEW_SKU_001,SKU0051,Velinea Damage Repair Conditioner 200ml,Velinea,Conditioner,Economy,Damage Repair,0.1667,0.5774,0.1667,0.0877,0.2535,41
+NEW_SKU_001,SKU0044,PureMane Anti Dandruff Hair Mask 200ml,PureMane,Hair Mask,Premium,Anti Dandruff,0.1667,0.4082,0.1667,0.2701,0.2477,42
+NEW_SKU_001,SKU0053,Revynce Keratin Treatment 250ml,Revynce,Treatment,Mainstream,Keratin,0.1667,0.5774,0.1667,0.0562,0.2472,43
+NEW_SKU_001,SKU0057,GlossRoot Biotin Hair Serum 150ml,GlossRoot,Hair Serum,Mainstream,Biotin,0.1667,0.4082,0.4,0.0288,0.2462,44
+NEW_SKU_001,SKU0037,VitalStrand Damage Repair Shampoo 150ml,VitalStrand,Shampoo,Economy,Damage Repair,0.3333,0.0,0.4,0.1327,0.2232,45
+NEW_SKU_001,SKU0058,Revynce Sulphate Free Hair Mask 100ml,Revynce,Hair Mask,Mainstream,Sulphate Free,0.1667,0.5774,0.0,0.0911,0.2209,46
+NEW_SKU_001,SKU0011,NourishLab Argan Oil Hair Oil 250ml,NourishLab,Hair Oil,Mainstream,Argan Oil,0.3333,0.0,0.4,0.1074,0.2182,47
+NEW_SKU_001,SKU0036,Revynce Biotin Shampoo 650ml,Revynce,Shampoo,Mainstream,Biotin,0.3333,0.0,0.4,0.0826,0.2132,48
+NEW_SKU_001,SKU0045,Velinea Color Protection Hair Oil 250ml,Velinea,Hair Oil,Mainstream,Color Protection,0.1667,0.4082,0.1667,0.0757,0.2089,49
+NEW_SKU_001,SKU0039,VitalStrand Color Protection Hair Oil 250ml,VitalStrand,Hair Oil,Mainstream,Color Protection,0.1667,0.3333,0.1667,0.0564,0.1863,50
+NEW_SKU_001,SKU0009,SilkenAura Herbal Hair Mask 200ml,SilkenAura,Hair Mask,Mainstream,Herbal,0.1667,0.4082,0.0,0.1111,0.1826,51
+NEW_SKU_001,SKU0059,NourishLab Argan Oil Shampoo 400ml,NourishLab,Shampoo,Economy,Argan Oil,0.3333,0.0,0.1667,0.1442,0.1788,52
+NEW_SKU_001,SKU0018,PureMane Damage Repair Hair Serum 650ml,PureMane,Hair Serum,Mainstream,Damage Repair,0.1667,0.0,0.4,0.1101,0.1603,53
+NEW_SKU_001,SKU0020,GlossRoot Damage Repair Treatment 100ml,GlossRoot,Treatment,Economy,Damage Repair,0.1667,0.0,0.4,0.079,0.1541,54
+NEW_SKU_001,SKU0019,EarthTress Argan Oil Treatment 300ml,EarthTress,Treatment,Mainstream,Argan Oil,0.1667,0.0,0.4,0.0593,0.1502,55
+NEW_SKU_001,SKU0021,EarthTress Color Protection Hair Oil 250ml,EarthTress,Hair Oil,Mainstream,Color Protection,0.1667,0.0,0.1667,0.1218,0.116,56
+NEW_SKU_001,SKU0030,GlossRoot Anti Dandruff Treatment 250ml,GlossRoot,Treatment,Economy,Anti Dandruff,0.1667,0.0,0.1667,0.1075,0.1132,57
+NEW_SKU_001,SKU0013,SilkenAura Argan Oil Hair Serum 650ml,SilkenAura,Hair Serum,Mainstream,Argan Oil,0.1667,0.0,0.1667,0.0862,0.1089,58
+NEW_SKU_001,SKU0012,GlossRoot Color Protection Hair Serum 150ml,GlossRoot,Hair Serum,Mainstream,Color Protection,0.1667,0.0,0.0,0.1481,0.088,59
+NEW_SKU_001,SKU0031,NourishLab Color Protection Conditioner 650ml,NourishLab,Conditioner,Economy,Color Protection,0.1667,0.0,0.0,0.1364,0.0856,60

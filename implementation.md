@@ -411,7 +411,7 @@ Each of the three agents is a **single deterministic pipeline** (pandas transfor
 
 - **No multi-agent framework** (LangChain, AutoGen, CrewAI, etc.).
 - **No autonomous tool-calling loop** — the LLM never decides which data to fetch; the Python pipeline always fetches deterministically first, then hands the LLM a fixed, pre-trimmed JSON context (same discipline as the existing `build_copilot_context`).
-- **No RAG / vector database** — the entire dataset (60 SKUs × 10 stores per `CLAUDE.md`) fits comfortably in a single JSON context window; retrieval-augmented generation would add infrastructure (embeddings, a vector store, chunking) with no benefit at this data scale. Revisit only if SKU/store counts grow by orders of magnitude (see §11.3).
+- **No RAG / vector database** — the entire dataset (60 SKUs × 15 stores per `CLAUDE.md`) fits comfortably in a single JSON context window; retrieval-augmented generation would add infrastructure (embeddings, a vector store, chunking) with no benefit at this data scale. Revisit only if SKU/store counts grow by orders of magnitude (see §11.3).
 
 This mirrors the codebase's existing precedent: `NewSKU/copilot.py` (rule-based NL) and `llm_service.py` (single-shot LLM over a trimmed context) both avoid agentic loops. The three new agents extend that same pattern rather than introducing a new paradigm.
 
@@ -501,7 +501,7 @@ Single shared module (`agent_llm.py`) wrapping `AsyncOpenAI`, parameterized by s
 ### 7.4 Caching strategy
 - Extend the existing `functools.lru_cache` pattern used throughout `decision_hub_service.py` to the new agents' raw-loader functions (e.g., a cached `_cluster_join_frame()` in `localization_agent.py`).
 - **Known existing gap to fix in Phase 1:** there is currently no cache-invalidation endpoint anywhere in the app — `lru_cache`d frames only refresh on process restart. Add a single `POST /api/admin/refresh-cache` (clears all registered `lru_cache`s across `decision_hub_service` and the new agent modules) so a CSV/pipeline re-run doesn't require redeploying the API. This benefits the existing Decision Hub as well as the new agents.
-- Watchdog digests and Localization divergence results are cheap to recompute per request at current data volume (60 SKUs × 10 stores); no separate result-caching layer (e.g., Redis) is justified yet.
+- Watchdog digests and Localization divergence results are cheap to recompute per request at current data volume (60 SKUs × 15 stores); no separate result-caching layer (e.g., Redis) is justified yet.
 
 ### 7.5 Observability and monitoring
 - Reuse the existing `logging.getLogger(__name__)` pattern already present in `decision_hub_service.py` and `db.py`; add equivalent loggers in each new agent module logging: request filters, row counts processed, LLM call duration/token usage (from the OpenAI response object), and any fallback/guardrail triggers.
@@ -565,7 +565,7 @@ Given the narrow, templated scope of these agents, a lightweight custom harness 
 - Cross-check that a Localization override, once approved, is reflected consistently if the CM re-opens the Localization tab (no phantom/duplicate entries).
 
 ### 9.5 Performance benchmarks
-- Target: `/watchdog/digest` and `/localization/divergence` respond in **under 2 seconds (p95)** at current data scale (60 SKUs × 10 stores, ~200K transaction rows per `CLAUDE.md`), consistent with the existing Decision Hub endpoints which perform similar `_base_frame()` aggregations.
+- Target: `/watchdog/digest` and `/localization/divergence` respond in **under 2 seconds (p95)** at current data scale (60 SKUs × 15 stores, ~382K transaction rows per `CLAUDE.md`), consistent with the existing Decision Hub endpoints which perform similar `_base_frame()` aggregations.
 - LLM-touched endpoints (Watchdog narrative, Brief polish): first streamed token target under 3 seconds, bounded by OpenAI API latency, not application logic — measure and log via `agent_llm.py`.
 - Re-benchmark if/when the underlying dataset scale changes materially (see §11.3).
 
@@ -613,7 +613,7 @@ Every agent is additive and isolated: rollback = flip its feature flag to `false
 - Optional PostgreSQL persistence for override/brief/audit artifacts via a new `write_table_or_csv()` in `db.py` (§4.4).
 
 ### 11.3 Scalability considerations
-- Current design assumes the dataset scale stated in `CLAUDE.md` (60 SKUs, 10 stores, ~200K transaction rows) and reuses in-memory pandas aggregation (`lru_cache`d frames), consistent with existing `decision_hub_service.py`.
+- Current design assumes the dataset scale stated in `CLAUDE.md` (60 SKUs, 15 stores, ~382K transaction rows) and reuses in-memory pandas aggregation (`lru_cache`d frames), consistent with existing `decision_hub_service.py`.
 - Store clustering already has a documented scaling path (Ward linkage ≤500 stores, BIRCH+PCA beyond) in `cluster.py` — the Localization agent automatically benefits from whichever `store_clusters.csv` that produces, no separate change needed.
 - If `Sales_Tx.csv` grows well beyond current volume, revisit the `lru_cache`-on-full-DataFrame pattern (shared by existing services and the new agents) in favor of materialized views in PostgreSQL or a columnar engine (e.g., DuckDB) — this affects the whole app, not just the agents, and is out of scope here.
 

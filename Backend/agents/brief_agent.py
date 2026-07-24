@@ -14,9 +14,16 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
+import numpy as np
 import pandas as pd
 
 from ..database.connection import read_table_or_csv
+
+# Supplier_Rating tiers, recomputed at SKU (not Store x SKU) grain here since
+# the vendor table is one row per SKU — mirrors the thresholds used in
+# Backend/pipelines/inventory_planning/safety_stock_supplier.py.
+_SUPPLIER_RATING_A_CUTOFF = 0.70
+_SUPPLIER_RATING_B_CUTOFF = 0.30
 
 log = logging.getLogger(__name__)
 
@@ -62,6 +69,54 @@ def _delist():
 @lru_cache(maxsize=1)
 def _sku_master():
     return read_table_or_csv("sku_master", _RAW / "SKU_Master.csv")
+
+
+@lru_cache(maxsize=1)
+def _safety_supplier_sku_level():
+    """
+    Rolls Backend/pipelines/inventory_planning/safety_stock_supplier.py's
+    Store_ID x SKU_ID output up to one row per SKU_ID (averaging across
+    stores), and recomputes Supplier_Rating at that grain.
+    """
+    df = read_table_or_csv("safety_stock_supplier_scores", _OUT / "safety_stock_supplier_scores.csv")
+    if df.empty:
+        return df
+    for c in ["Lead_Time_Target_Days", "SKU_Store_Fill_Rate_Pct_3M", "Sell_Through_Pct",
+              "Margin_Pct", "Supplier_Confidence_Score"]:
+        if c in df.columns:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+
+    agg = df.groupby("SKU_ID").agg(
+        EAN_ID=("EAN_ID", "first"),
+        Product_Name=("Product_Name", "first"),
+        Supplier=("Supplier", "first"),
+        Lead_Time_Target_Days=("Lead_Time_Target_Days", "mean"),
+        Fill_Rate_Pct=("SKU_Store_Fill_Rate_Pct_3M", "mean"),
+        Sell_Through_Pct=("Sell_Through_Pct", "mean"),
+        Margin_Pct=("Margin_Pct", "mean"),
+        Supplier_Confidence_Score=("Supplier_Confidence_Score", "mean"),
+    ).reset_index()
+
+    n = len(agg)
+    rank = agg["Supplier_Confidence_Score"].rank(pct=True, method="average") if n > 1 else pd.Series([1.0] * n)
+    agg["Supplier_Rating"] = np.select(
+        [rank >= _SUPPLIER_RATING_A_CUTOFF, rank >= _SUPPLIER_RATING_B_CUTOFF],
+        ["A", "B"],
+        default="C",
+    )
+    return agg
+
+
+@lru_cache(maxsize=1)
+def _sales_by_sku():
+    """Total SKU-level Sales ($) — the 'Global' granularity row of delisting_recommendations.csv."""
+    delist = _delist()
+    if delist.empty or "granularity_level" not in delist.columns:
+        return pd.DataFrame(columns=["SKU_ID", "Sales_USD"])
+    sales = (delist[delist["granularity_level"] == "Global"]
+             .drop_duplicates("SKU_ID")[["SKU_ID", "total_revenue"]]
+             .rename(columns={"total_revenue": "Sales_USD"}))
+    return sales
 
 
 # ---------------------------------------------------------------------------
@@ -183,6 +238,47 @@ def _vendor_negotiation_sections(sku_ids: list[str], brand: str, sub_cat: str) -
             sections.append({"heading": "Suggested Negotiation Asks", "body": "\n".join(asks)})
 
     return sections
+
+
+def _vendor_negotiation_table(sku_ids: list[str], brand: str, sub_cat: str) -> Optional[list[dict]]:
+    """
+    One row per SKU (Supplier, SKU ID, EAN ID, SKU Name, Lead Time Target,
+    Fill Rate, Supplier Rating, Sell Through, Margin, Sales, Confidence
+    Score), scoped to the SKUs matching the Vendor Negotiation brief's
+    Brand/Sub-Category filters. Returns None when neither filter is set, or
+    when no source data is available for the scope.
+    """
+    if not (brand or sub_cat) or not sku_ids:
+        return None
+
+    agg = _safety_supplier_sku_level()
+    if agg.empty:
+        return None
+
+    scoped = agg[agg["SKU_ID"].isin(sku_ids)].copy()
+    if scoped.empty:
+        return None
+
+    scoped = scoped.merge(_sales_by_sku(), on="SKU_ID", how="left")
+    scoped["Sales_USD"] = pd.to_numeric(scoped["Sales_USD"], errors="coerce").fillna(0)
+    scoped = scoped.sort_values("Sales_USD", ascending=False)
+
+    rows = []
+    for _, r in scoped.iterrows():
+        rows.append({
+            "supplier":              r.get("Supplier") or "",
+            "sku_id":                r["SKU_ID"],
+            "ean_id":                str(int(r["EAN_ID"])) if pd.notna(r.get("EAN_ID")) else "",
+            "sku_name":              r.get("Product_Name") or r["SKU_ID"],
+            "lead_time_target_days": round(r["Lead_Time_Target_Days"]) if pd.notna(r.get("Lead_Time_Target_Days")) else None,
+            "fill_rate_pct":         round(r["Fill_Rate_Pct"] * 100, 1) if pd.notna(r.get("Fill_Rate_Pct")) else None,
+            "supplier_rating":       r.get("Supplier_Rating") or "",
+            "sell_through_pct":      round(r["Sell_Through_Pct"] * 100, 1) if pd.notna(r.get("Sell_Through_Pct")) else None,
+            "margin_pct":            round(r["Margin_Pct"], 1) if pd.notna(r.get("Margin_Pct")) else None,
+            "sales_usd":             round(r["Sales_USD"], 2),
+            "confidence_score":      round(r["Supplier_Confidence_Score"] * 100, 1) if pd.notna(r.get("Supplier_Confidence_Score")) else None,
+        })
+    return rows
 
 
 def _cross_sell_sections(sku_ids: list[str], brand: str, sub_cat: str) -> list[dict]:
@@ -322,6 +418,11 @@ def build_brief(
     else:
         sections = _delist_rationale_sections(resolved_sku_ids, brand or "", sub_cat or "")
 
+    vendor_table = (
+        _vendor_negotiation_table(resolved_sku_ids, brand or "", sub_cat or "")
+        if brief_type == "vendor_negotiation" else None
+    )
+
     brief_id = str(uuid.uuid4())[:12]
     md  = _to_markdown(brief_type, brand, sub_cat, sections)
     txt = _to_text(sections)
@@ -331,6 +432,7 @@ def build_brief(
         "brief_type":   brief_type,
         "scope":        {"brand": brand, "sub_cat": sub_cat, "sku_ids": resolved_sku_ids[:20]},
         "sections":     sections,
+        "vendor_table": vendor_table,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "generated_by": generated_by,
         "polish_failed": False,

@@ -12,7 +12,24 @@
       "Bash(python -m py_compile Backend/pipelines/basket_abc_analysis/basket_analysis.py Backend/services/decision_hub_service.py Backend/agents/agent_core.py Backend/agents/localization_agent.py Backend/pipelines/market/generate_market_data.py Backend/api/general.py)",
       "Bash(python \"C:\\\\Users\\\\703442~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-703442296-Genpact-Retail-Category-Growth-ImportantFiles-Assortment\\\\0e6322bb-b57d-485c-a4b8-a327fb82fd86\\\\scratchpad\\\\sync_postgres.py\")",
       "Bash(python -c \"import pandas, sqlalchemy; print\\('pandas', pandas.__version__\\); print\\('sqlalchemy', sqlalchemy.__version__\\)\")",
-      "Bash(git check-ignore *)"
+      "Bash(git check-ignore *)",
+      "Bash(python -c \"import playwright; print\\('py playwright OK'\\)\")",
+      "Bash(node -e \"console.log\\(require.resolve\\('playwright'\\)\\)\")",
+      "Bash(taskkill //F //IM chrome.exe)",
+      "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match '\\\\''uvicorn Backend.main'\\\\'' -or $_.CommandLine -match '\\\\''vite --host'\\\\'' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }')",
+      "Bash(curl -s -o /dev/null -w \"backend still up? %{http_code}\\\\n\" http://localhost:8000/health)",
+      "Bash(curl -s -o /dev/null -w \"frontend still up? %{http_code}\\\\n\" http://localhost:5173/)",
+      "Bash(python Backend/pipelines/inventory_planning/add_ean_ids.py)",
+      "Bash(python Backend/pipelines/inventory_planning/safety_stock_supplier.py)",
+      "Bash(npx tsc *)",
+      "Bash(python -m uvicorn Backend.main:app --port 8000)",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(curl -s -X POST http://localhost:8000/api/agents/brief/generate -H \"Content-Type: application/json\" -d \"{\\\\\"brief_type\\\\\":\\\\\"vendor_negotiation\\\\\",\\\\\"brand\\\\\":\\\\\"EarthTress\\\\\"}\")",
+      "Bash(npx playwright *)",
+      "Bash(curl -s \"http://localhost:8000/api/agents/watchdog/digest?top_n=5\")",
+      "Bash(curl -s -X POST http://localhost:8000/api/agents/brief/generate -H \"Content-Type: application/json\" -d \"{\\\\\"brief_type\\\\\":\\\\\"vendor_negotiation\\\\\",\\\\\"sub_cat\\\\\":\\\\\"Shampoo\\\\\"}\")",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('rows:', len\\(d['vendor_table']\\) if d['vendor_table'] else None\\)\")",
+      "Bash(python Backend/pipelines/inventory_planning/enrich_inventory_daily.py)"
     ]
   }
 }

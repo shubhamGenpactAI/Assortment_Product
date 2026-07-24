@@ -3,7 +3,7 @@ import { useFilters } from '../../context/FilterContext'
 import { Loader2, Copy, Download, Sparkles, History, ChevronDown, ChevronUp } from 'lucide-react'
 import {
   generateBrief, fetchBriefs, streamBriefPolish,
-  Brief, BriefSection,
+  Brief, BriefSection, VendorNegotiationRow,
 } from '../../api/agentsApi'
 
 const BRIEF_TYPES = [
@@ -37,6 +37,60 @@ function SectionCard({ section, open, toggle }: {
           {section.body}
         </div>
       )}
+    </div>
+  )
+}
+
+const RATING_BADGE: Record<string, string> = {
+  A: 'bg-green-100 text-green-700',
+  B: 'bg-amber-100 text-amber-700',
+  C: 'bg-red-100 text-red-700',
+}
+
+function VendorNegotiationTable({ rows }: { rows: VendorNegotiationRow[] }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+        <h4 className="text-[13px] font-bold text-[#1A1D2E]">Vendor Negotiation — SKU Detail</h4>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-[11px] whitespace-nowrap">
+          <thead>
+            <tr className="bg-[#1A1D2E] text-white">
+              {[
+                'Supplier', 'SKU ID', 'EAN ID', 'SKU Name', 'Lead Time Target (Days)',
+                'Fill Rate (%)', 'Supplier Rating', 'Sell Through', 'Margin %',
+                'Sales ($)', 'Confidence Score',
+              ].map(h => (
+                <th key={h} className="px-3 py-2 text-left font-semibold">{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={r.sku_id} className={i % 2 ? 'bg-gray-50' : 'bg-white'}>
+                <td className="px-3 py-2">{r.supplier}</td>
+                <td className="px-3 py-2 font-medium text-[#1A1D2E]">{r.sku_id}</td>
+                <td className="px-3 py-2 text-gray-500">{r.ean_id}</td>
+                <td className="px-3 py-2 whitespace-normal min-w-[180px]">{r.sku_name}</td>
+                <td className="px-3 py-2 text-center">{r.lead_time_target_days ?? '—'}</td>
+                <td className="px-3 py-2 text-center">{r.fill_rate_pct != null ? `${r.fill_rate_pct}%` : '—'}</td>
+                <td className="px-3 py-2 text-center">
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${RATING_BADGE[r.supplier_rating] ?? 'bg-gray-100 text-gray-600'}`}>
+                    {r.supplier_rating || '—'}
+                  </span>
+                </td>
+                <td className="px-3 py-2 text-center">{r.sell_through_pct != null ? `${r.sell_through_pct}%` : '—'}</td>
+                <td className="px-3 py-2 text-center">{r.margin_pct != null ? `${r.margin_pct}%` : '—'}</td>
+                <td className="px-3 py-2 text-right">
+                  {r.sales_usd.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                </td>
+                <td className="px-3 py-2 text-center">{r.confidence_score ?? '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
@@ -113,6 +167,11 @@ function BriefViewer({ brief, onPolished }: { brief: Brief; onPolished?: (b: Bri
           </button>
         </div>
       </div>
+
+      {/* Vendor Negotiation SKU table — only for vendor_negotiation briefs with a non-empty result */}
+      {brief.brief_type === 'vendor_negotiation' && brief.vendor_table && brief.vendor_table.length > 0 && (
+        <VendorNegotiationTable rows={brief.vendor_table} />
+      )}
 
       {/* Polished output */}
       {(polishText || polishing) && (

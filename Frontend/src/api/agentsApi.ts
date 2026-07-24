@@ -11,6 +11,12 @@ export type WatchdogFilters = {
   top_n?:    number
 }
 
+export type RootCause = {
+  root_cause:        'Forecast Accuracy' | 'Safety Stock' | 'Heavy Sales' | 'Supplier Fill Rate'
+  root_cause_detail: string
+  scores:            Record<string, number>
+}
+
 export type WatchItem = {
   priority_rank:         number
   priority_score:        number
@@ -24,6 +30,7 @@ export type WatchItem = {
   suggested_action:      string
   narrative:             string
   source_signals:        Record<string, any>
+  root_cause?:           RootCause | null
 }
 
 export type WatchdogDigest = {
@@ -71,11 +78,26 @@ export type OverrideRequest = {
 
 export type BriefSection = { heading: string; body: string }
 
+export type VendorNegotiationRow = {
+  supplier:               string
+  sku_id:                 string
+  ean_id:                 string
+  sku_name:               string
+  lead_time_target_days:  number | null
+  fill_rate_pct:          number | null
+  supplier_rating:        string
+  sell_through_pct:       number | null
+  margin_pct:             number | null
+  sales_usd:              number
+  confidence_score:       number | null
+}
+
 export type Brief = {
   brief_id:     string
   brief_type:   string
   scope:        { brand?: string; sub_cat?: string; sku_ids?: string[] }
   sections:     BriefSection[]
+  vendor_table: VendorNegotiationRow[] | null
   generated_at: string
   generated_by: string
   polish_failed: boolean

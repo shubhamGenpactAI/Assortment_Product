@@ -41,16 +41,26 @@ from sklearn.preprocessing import MinMaxScaler
 # CONFIGURATION  (everything you might tweak lives here, at the top)
 # ===========================================================================
 PROJECT_DIR = Path(__file__).resolve().parent
+# Repository root (…/Assortment) and its standard data folders. Inputs are
+# resolved from these first so the script works against the real project layout
+# (Raw_Input/SKU_Master.csv, Outputs/weekly_demand_output.csv); the script's own
+# directory is kept as a fallback for legacy standalone use.
+REPO_ROOT   = PROJECT_DIR.parents[2]
+RAW_DIR     = REPO_ROOT / "Raw_Input"
+OUTPUTS_DIR = REPO_ROOT / "Outputs"
+# Directories searched (in order) when resolving an input file by candidate name.
+SEARCH_DIRS = [RAW_DIR, OUTPUTS_DIR, REPO_ROOT, PROJECT_DIR]
 
-# Candidate names for the SKU master (first one found wins).
-SKU_MASTER_CANDIDATES = ["Smililarity_SKU.xlsx", "Similarity_SKU.xlsx", "SKU_Master_Similarity.xlsx"]
+# Candidate names for the SKU master (first one found wins). SKU_Master.csv is
+# the canonical project master; the *_Similarity.xlsx names are legacy fallbacks.
+SKU_MASTER_CANDIDATES = ["SKU_Master.csv", "Smililarity_SKU.xlsx", "Similarity_SKU.xlsx", "SKU_Master_Similarity.xlsx"]
 # Candidate names for an optional "new SKU" input file.
 NEW_SKU_CANDIDATES = ["new_sku.csv", "new_sku.xlsx"]
 # Candidate demand files for the optional analog-demand step.
 DEMAND_CANDIDATES = ["weekly_demand_output.xlsx", "weekly_demand_output.csv", "Forecast_Output.csv"]
 
-OUTPUT_SCORES = PROJECT_DIR / "new_sku_similarity_scores.csv"
-OUTPUT_ANALOG = PROJECT_DIR / "new_sku_analog_demand_forecast.csv"
+OUTPUT_SCORES = OUTPUTS_DIR / "new_sku_similarity_scores.csv"
+OUTPUT_ANALOG = OUTPUTS_DIR / "new_sku_analog_demand_forecast.csv"
 
 # --- Weighted similarity weights (must sum to 1.0) ---
 WEIGHTS = {
@@ -116,11 +126,16 @@ SAMPLE_NEW_SKU = {
 # 1. FILE DISCOVERY
 # ===========================================================================
 def find_input_file(candidates):
-    """Return the first existing file (Path) from a list of candidate names, else None."""
+    """
+    Return the first existing file (Path) for the given candidate names, searching
+    each of SEARCH_DIRS (Raw_Input, Outputs, repo root, then the script's own
+    directory) in order. Candidate-name priority wins over directory order.
+    """
     for name in candidates:
-        p = PROJECT_DIR / name
-        if p.exists():
-            return p
+        for base in SEARCH_DIRS:
+            p = base / name
+            if p.exists():
+                return p
     return None
 
 

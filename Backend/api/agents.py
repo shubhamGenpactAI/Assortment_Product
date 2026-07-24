@@ -156,13 +156,17 @@ def refresh_cache():
         _sku, _store, _clusters, _assoc_raw, _basket_raw,
     )
     from ..agents.localization_agent import _delist, _clusters as _loc_clusters, _sku_master
-    from ..agents.brief_agent import _assoc, _basket, _delist as _brief_delist, _sku_master as _brief_sku
+    from ..agents.brief_agent import (
+        _assoc, _basket, _delist as _brief_delist, _sku_master as _brief_sku,
+        _safety_supplier_sku_level, _sales_by_sku,
+    )
 
     for fn in [
         _base_frame, _demand_raw, _forecast_raw, _delist_raw,
         _sku, _store, _clusters, _assoc_raw, _basket_raw,
         _delist, _loc_clusters, _sku_master,
         _assoc, _basket, _brief_delist, _brief_sku,
+        _safety_supplier_sku_level, _sales_by_sku,
     ]:
         fn.cache_clear()
 

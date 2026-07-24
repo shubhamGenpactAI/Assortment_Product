@@ -16,11 +16,13 @@ sources:
     table: sales_tx
     csv: Raw_Input/Sales_Tx.csv
     kind: fact
-    description: Transaction-line grain sales history (~200K rows). The source of truth for actual historical revenue, units, and margin.
+    description: Transaction-line grain sales history (~382K rows) covering the full 12 months 2025-06-01 .. 2026-05-31. The source of truth for actual historical revenue, units, and margin.
     join_keys: [sku_id, store_id]
     business_notes: >
       Grain is one row per transaction line. net_sales_usd and gross_margin_usd
-      are already computed. abc_class is the Pareto classification (A/B/C).
+      are already computed; cost_price is the per-line unit cost (from
+      SKU_Master.Unit_Cost_USD) so gross_margin_usd = (unit_price_usd -
+      cost_price) * units_sold. abc_class is the Pareto classification (A/B/C).
       For "top selling SKUs" / "top revenue" questions, aggregate this table
       (GROUP BY sku_id) rather than assuming a pre-computed ranking exists.
     sample_questions:
@@ -33,7 +35,7 @@ sources:
     kind: dimension
     description: One row per SKU (60 SKUs) — the master product dimension (brand, category, price, ingredients, claims).
     join_keys: [sku_id]
-    business_notes: "Join to this table to resolve a SKU_ID into a human-readable product name/brand/sub-category."
+    business_notes: "Join to this table to resolve a SKU_ID into a human-readable product name/brand/sub-category. Also the single source of truth for substitution/similarity attribute inputs (category, segment, ingredients, claims, price/cost) — there is no separate substitution-specific table."
     sample_questions:
       - "What brand does SKU0007 belong to?"
       - "List all sulphate-free SKUs."
@@ -42,7 +44,7 @@ sources:
     table: store_master
     csv: Raw_Input/Store_Master.csv
     kind: dimension
-    description: One row per store (10 stores) — store demographics, size, traffic, and format.
+    description: One row per store (15 stores) — store demographics, size, traffic, and format.
     join_keys: [store_id]
     business_notes: "Join to resolve a Store_ID into region/geography/format, or to segment by store characteristics (urban/rural, income, footfall)."
     sample_questions:
@@ -62,9 +64,9 @@ sources:
     table: weekly_demand_output
     csv: Outputs/weekly_demand_output.csv
     kind: fact
-    description: Actual historical weekly demand, aggregated to Week x Store x SKU grain.
+    description: Actual historical weekly demand, aggregated to Week x Store x SKU grain (full 900-pair x 53-week grid, weeks 2025-22 .. 2026-22). Produced by Backend/pipelines/etl/build_weekly_demand.py from Sales_Tx (quantity_sold = sum units_sold per ISO week) + Inventory_Report (quantity_available = end-of-week on_hand).
     join_keys: [sku_id, store_id, year_wk]
-    business_notes: "year_wk is an ISO-style 'YYYY-WW' week label, sortable as text. Use this table for historical trend questions; use forecast_output for future weeks."
+    business_notes: "year_wk is an ISO-style 'YYYY-WW' week label, sortable as text. Zero-sales weeks are present explicitly (calendar continuity), so demand is not left-censored. Use this table for historical trend questions; use forecast_output for future weeks."
     sample_questions:
       - "What was the weekly demand trend for SKU0012 over the last 8 weeks?"
 
@@ -158,15 +160,6 @@ sources:
     sample_questions:
       - "What demand do we expect for the new SKU in its first 6 weeks?"
 
-  sku_similarity_for_substitution:
-    table: sku_similarity_for_substitution
-    csv: Raw_Input/SKU_Similarity_For_Substitution.csv
-    kind: dimension
-    description: Attribute snapshot of every SKU used specifically as the input basis for substitution/similarity scoring (subset of SKU_Master's attribute columns).
-    join_keys: [sku_id]
-    business_notes: "Prefer sku_master for general product lookups; use this table only when the question is specifically about substitution attribute inputs."
-    sample_questions: []
-
   market_data:
     table: market_data
     csv: Raw_Input/Market_Data.csv
@@ -186,9 +179,9 @@ sources:
     table: inventory_report
     csv: Raw_Input/Inventory_Report.csv
     kind: fact
-    description: Daily inventory position per Store x SKU — on-hand units, stockout flag, days of supply, and inventory value.
+    description: Daily inventory position per Store x SKU (~215K rows) — one row per Date x Store x SKU over the full 12 months 2025-06-01 .. 2026-05-31 for the 590 stocked pairs — on-hand units, stockout flag, days of supply, and inventory value.
     join_keys: [sku_id, store_id]
-    business_notes: "stockout_flag=1 means out of stock that day; use days_of_supply for replenishment-urgency questions."
+    business_notes: "stockout_flag=1 means out of stock that day; use days_of_supply for replenishment-urgency questions. Grain is daily; aggregate to week using END-OF-WEEK on_hand (not sum) — see weekly_demand_output.quantity_available."
     sample_questions:
       - "Which SKUs are currently at risk of stocking out?"
 
@@ -211,3 +204,32 @@ sources:
     business_notes: "This is a decision LOG (append-only, one row per decision event), not the current live decision — a SKU may appear multiple times if revisited."
     sample_questions:
       - "What decisions has the category manager made on SKU0021 over time?"
+
+  safety_stock_supplier_scores:
+    table: safety_stock_supplier_scores
+    csv: Outputs/safety_stock_supplier_scores.csv
+    kind: fact
+    description: >
+      One row per Store_ID x SKU_ID with a formula-based Safety_Stock_Units
+      target and a Supplier_Confidence_Score (Sell-Through + Margin + a
+      derived Supplier Fill Rate). Also carries Latest_Days_Of_Supply and
+      Mean_Days_Of_Supply — the most-recent and trailing-3-month rollup of the
+      daily Days_Of_Supply series in Inventory_Report (blank where that report
+      has no rows for the pair). Feeds the Watchdog agent's stock-out Root Cause
+      Analysis. Produced by
+      Backend/pipelines/inventory_planning/safety_stock_supplier.py.
+    join_keys: [sku_id, store_id]
+    business_notes: >
+      No raw file carries Safety_Stock, Lead_Time, or Supplier Fill Rate /
+      On-Time-Delivery data, so these are derived: Safety_Stock_Units uses the
+      classic max/average formula
+      (Max_Daily_Sales * Max_Lead_Time) - (Avg_Daily_Sales * Avg_Lead_Time)
+      over a trailing 3-month (13-week) window, with a per Store x SKU x Week
+      lead time randomly generated in a 3-21 day range (fixed seed; see
+      LEAD_TIME_MIN_DAYS / LEAD_TIME_MAX_DAYS); Supplier_Fill_Rate_Pct_3M is a
+      3-month trailing proxy built from how often ending inventory
+      (Quantity_Available) ran thin relative to that week's Quantity_Sold —
+      not a measured supplier on-time-delivery record.
+    sample_questions:
+      - "Which SKU x Store combinations have the largest safety-stock shortfall?"
+      - "Which supplier has the lowest confidence score?"

@@ -54,7 +54,15 @@ function WatchCard({ item, index }: { item: WatchItem; index: number }) {
             </span>
             <span className="text-[#4F46E5] font-medium">{item.suggested_action}</span>
           </div>
-          <p className="text-[12px] text-gray-600 italic leading-relaxed">{item.narrative}</p>
+          <p className="text-[12px] text-gray-600 italic leading-relaxed">{item.narrative.split('\n')[0]}</p>
+          {item.root_cause && (
+            <div className="mt-2 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5">
+              <span className="text-[13px] leading-none">🔍</span>
+              <p className="text-[11px] text-amber-900 leading-relaxed">
+                <strong>Root Cause: {item.root_cause.root_cause}</strong> — {item.root_cause.root_cause_detail}
+              </p>
+            </div>
+          )}
           {item.source_signals && Object.keys(item.source_signals).length > 0 && (
             <button
               onClick={() => setOpen(v => !v)}

@@ -37,6 +37,7 @@ CREATE TABLE sales_tx (line_id TEXT PRIMARY KEY,
                             geography TEXT,
                             units_sold INTEGER,
                             unit_price_usd NUMERIC,
+                            cost_price NUMERIC,
                             net_sales_usd NUMERIC,
                             gross_margin_usd NUMERIC,
                             promo_flag BOOLEAN,
@@ -71,6 +72,7 @@ CREATE TABLE reviews_social (review_id TEXT PRIMARY KEY,
 
 ```sql
 CREATE TABLE sku_master (sku_id TEXT PRIMARY KEY,
+                            ean_id BIGINT,
                             product_name TEXT,
                             brand TEXT,
                             manufacturer TEXT,
@@ -104,15 +106,25 @@ CREATE TABLE sku_master (sku_id TEXT PRIMARY KEY,
 ```
 
 ```sql
-CREATE TABLE sku_similarity_for_substitution (sku_id TEXT PRIMARY KEY,
+CREATE TABLE new_skus (sku_id TEXT PRIMARY KEY,
+                            ean_id BIGINT,
+                            product_name TEXT,
+                            brand TEXT,
+                            manufacturer TEXT,
+                            ownership TEXT,
                             category TEXT,
                             sub_category TEXT,
                             segment TEXT,
                             attribute_claim TEXT,
                             pack_size_ml INTEGER,
                             price_band TEXT,
+                            supplier TEXT,
                             list_price_usd NUMERIC,
                             unit_cost_usd NUMERIC,
+                            margin_pct NUMERIC,
+                            case_pack INTEGER,
+                            launch_date DATE,
+                            status TEXT,
                             hair_type TEXT,
                             gender TEXT,
                             age_group TEXT,
@@ -126,6 +138,35 @@ CREATE TABLE sku_similarity_for_substitution (sku_id TEXT PRIMARY KEY,
                             dandruff_flag BOOLEAN,
                             hair_fall_flag BOOLEAN,
                             color_protection_flag BOOLEAN);
+```
+
+```sql
+-- Derived/proxy data — see Backend/pipelines/inventory_planning/safety_stock_supplier.py.
+-- Grain: one row per store_id x sku_id. Lead_time_days is randomly generated
+-- (no real per-order lead-time data exists); everything else is computed
+-- from weekly_demand_output + sku_master.
+CREATE TABLE safety_stock_supplier_scores (store_id TEXT,
+                            sku_id TEXT,
+                            ean_id BIGINT,
+                            product_name TEXT,
+                            supplier TEXT,
+                            weekly_demand_mean NUMERIC,
+                            weekly_demand_std NUMERIC,
+                            current_inventory NUMERIC,
+                            max_daily_sales_3m NUMERIC,
+                            avg_daily_sales_3m NUMERIC,
+                            max_lead_time_days_3m NUMERIC,
+                            avg_lead_time_days_3m NUMERIC,
+                            lead_time_target_days NUMERIC,
+                            safety_stock_units NUMERIC,
+                            safety_stock_gap_units NUMERIC,
+                            safety_stock_adequate_flag BOOLEAN,
+                            sell_through_pct NUMERIC,
+                            margin_pct NUMERIC,
+                            sku_store_fill_rate_pct_3m NUMERIC,
+                            supplier_fill_rate_pct_3m NUMERIC,
+                            supplier_confidence_score NUMERIC,
+                            supplier_rating TEXT);
 ```
 
 ```sql

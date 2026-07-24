@@ -15,8 +15,8 @@ Scalability strategy
                       threshold to reduce feature dimensionality while
                       retaining >= 95% of variance.
 
-Outputs (written to the same directory as Store_Master.csv)
------------------------------------------------------------
+Outputs (written to the project's Outputs/ directory)
+-------------------------------------------------------
   store_clusters.csv          Store_ID, Cluster_ID, Cluster_Label
   store_clusters_summary.json Cluster metadata (label, description, stats)
 
@@ -65,8 +65,10 @@ _PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(BASE_DIR)))
 STORE_FILE = os.path.join(_PROJECT_DIR, "Raw_Input", "Store_Master.csv")
 if not os.path.isfile(STORE_FILE):
     STORE_FILE = os.path.join(BASE_DIR, "Store_Master.csv")
-CLUSTER_CSV = os.path.join(BASE_DIR, "store_clusters.csv")
-CLUSTER_JSON = os.path.join(BASE_DIR, "store_clusters_summary.json")
+OUTPUTS_DIR = os.path.join(_PROJECT_DIR, "Outputs")
+os.makedirs(OUTPUTS_DIR, exist_ok=True)
+CLUSTER_CSV = os.path.join(OUTPUTS_DIR, "store_clusters.csv")
+CLUSTER_JSON = os.path.join(OUTPUTS_DIR, "store_clusters_summary.json")
 
 # Path to the React app's data directory (relative from this script).
 # The JS file is only written when this directory exists.

@@ -21,22 +21,28 @@ streamlit run Frontend/app.py
 Each backend script writes its outputs to `Outputs/` and can be run standalone:
 
 ```powershell
-python Backend/pipelines/forecasting/forecasting.py               # → Forecast_Output.csv, Forecast_Validation.csv, weekly_demand_output.csv
-python Backend/pipelines/basket_abc_analysis/basket_analysis.py   # → association_rules.csv, sku_basket_insights.csv, demand_transfer_matrix.csv, delisting_recommendations.csv
-python Backend/pipelines/basket_abc_analysis/similarity.py        # → new_sku_similarity_scores.csv, new_sku_analog_demand_forecast.csv
+python Backend/pipelines/etl/build_weekly_demand.py               # → weekly_demand_output.csv  (Week×Store×SKU from Sales_Tx + Inventory_Report)
 python Backend/pipelines/store_clustering/cluster.py               # → store_clusters.csv, store_clusters_summary.json
+python Backend/pipelines/forecasting/forecasting.py               # → Forecast_Output.csv, Forecast_Validation.csv  (reads weekly_demand_output.csv)
+python Backend/pipelines/basket_abc_analysis/basket_analysis.py   # → association_rules.csv, sku_basket_insights.csv, demand_transfer_matrix.csv, delisting_recommendations.csv
+python Backend/pipelines/inventory_planning/safety_stock_supplier.py  # → safety_stock_supplier_scores.csv
+python Backend/pipelines/basket_abc_analysis/similarity.py        # → new_sku_similarity_scores.csv, new_sku_analog_demand_forecast.csv
+python generate_workspace_data.py                                 # → Frontend/public/data/assortment_data.json
 ```
 
-Run order matters: forecasting and clustering should complete before basket analysis if you need fresh weekly demand data.
+Run order matters: `build_weekly_demand.py` and `cluster.py` must run first — forecasting reads `weekly_demand_output.csv` and the forecast enrichment joins cluster labels. `safety_stock_supplier.py` also depends on `weekly_demand_output.csv`. `basket_analysis.py` reads `Sales_Tx`/`Inventory_Report` directly plus `Forecast_Output.csv`. Regenerate `assortment_data.json` last so the frontend reflects fresh Outputs.
+
+The raw `Sales_Tx.csv` and `Inventory_Report.csv` are (re)generated from a sparse seed by `Backend/pipelines/inventory_planning/enrich_sales_daily.py` and `enrich_inventory_daily.py` (full 12-month daily window 2025-06-01 .. 2026-05-31); run those only when reseeding the raw data.
 
 ## Architecture
 
 ### Data Pipeline (7 Steps — see `ProcessFlow.md` for full spec)
 
 ```
-Raw_Input/ CSVs
-  → ETL (quality gates: referential integrity, grain, nulls, calendar continuity)
-  → Star Schema (Facts: Weekly_Sales, Weekly_Inventory; Dims: SKU, Store, Calendar)
+Raw_Input/ CSVs (Sales_Tx, Inventory_Report daily, full year 2025-06→2026-05)
+  → ETL: Backend/pipelines/etl/build_weekly_demand.py
+         (Sales_Tx SUM(units) + Inventory_Report end-of-week on-hand → Week×Store×SKU,
+          calendar continuity / zero-fill) → Outputs/weekly_demand_output.csv
   → 7 Backend Modules (run independently, produce Outputs/ CSVs)
   → Outputs/ CSVs (standardized contracts with explainability payloads)
   → Frontend/app.py (Streamlit serving layer)
@@ -76,7 +82,7 @@ Single-file Streamlit app. Default landing page is a unified 3-column dashboard.
 
 | File | Grain | Dashboard use |
 |------|-------|--------------|
-| `Raw_Input/Sales_Tx.csv` | Transaction line (~200K rows) | ABC Pareto chart (ABC_Class + Net_Sales_USD) |
+| `Raw_Input/Sales_Tx.csv` | Transaction line (~382K rows, full year 2025-06→2026-05; carries `Cost_Price`) | ABC Pareto chart (ABC_Class + Net_Sales_USD) |
 | `Raw_Input/SKU_Master.csv` | SKU (60 rows) | SKU name lookups, similarity scoring |
 | `Raw_Input/Store_Master.csv` | Store (10 rows) | Store dimensions; drives clustering |
 | `Outputs/weekly_demand_output.csv` | Week × Store × SKU | Sales Trend actual line; growth % calc |

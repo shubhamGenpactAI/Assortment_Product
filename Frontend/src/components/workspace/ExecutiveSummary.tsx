@@ -20,24 +20,6 @@ function fmtM(n: number | null | undefined): string {
   return `$${n.toFixed(0)}`
 }
 
-function buildInsightBanner(s: WorkspaceSummary): string {
-  const delistCount   = (s.decisions['DELIST'] || 0) + (s.decisions['PHASE_OUT'] || 0)
-  const expandCount   = (s.decisions['EXPAND'] || 0) + (s.decisions['FUTURE_STAR'] || 0)
-  const watchCount    = s.decisions['KEEP_WATCH'] || 0
-  const investCount   = s.decisions['INVESTIGATE'] || 0
-  const growth        = s.avgForecastGrowth
-
-  const parts: string[] = []
-  if (delistCount > 0) parts.push(`${delistCount} SKU${delistCount > 1 ? 's' : ''} flagged for exit or phase-out`)
-  if (expandCount > 0) parts.push(`${expandCount} showing expansion potential`)
-  if (watchCount  > 0) parts.push(`${watchCount} under active monitoring`)
-  if (investCount > 0) parts.push(`${investCount} require${investCount === 1 ? 's' : ''} deeper investigation`)
-  if (growth != null)  parts.push(`category forecast trending at ${fmtPct(growth)}`)
-
-  if (parts.length === 0) return 'Category intelligence workspace ready. Select a SKU to begin.'
-  return parts.join(' · ') + '.'
-}
-
 interface KPIChipProps {
   icon:    React.ReactNode
   label:   string
@@ -131,17 +113,6 @@ export function ExecutiveSummary({ summary: s }: Props) {
           sub="Category total"
           accent="text-amber-400"
         />
-      </div>
-
-      {/* AI insight banner */}
-      <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
-        <div className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full bg-[#F2A93B]/20 flex items-center justify-center">
-          <Zap size={11} className="text-[#F2A93B]" />
-        </div>
-        <p className="text-[12px] text-gray-300 leading-relaxed">
-          <span className="font-bold text-[#F2A93B]">AI Insight: </span>
-          {buildInsightBanner(s)}
-        </p>
       </div>
     </div>
   )
